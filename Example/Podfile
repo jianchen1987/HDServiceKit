@@ -1,0 +1,13 @@
+use_frameworks!
+
+platform :ios, '8.0'
+
+target 'HDServiceKit_Example' do
+  pod 'HDServiceKit', :path => '../'
+
+  target 'HDServiceKit_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
