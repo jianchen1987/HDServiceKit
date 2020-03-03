@@ -1,42 +1,21 @@
-#
-# Be sure to run `pod lib lint HDServiceKit.podspec' to ensure this is a
-# valid spec before submitting.
-#
-# Any lines starting with a # are optional, but their use is encouraged
-# To learn more about a Podspec see https://guides.cocoapods.org/syntax/podspec.html
-#
-
 Pod::Spec.new do |s|
-  s.name             = 'HDServiceKit'
-  s.version          = '0.1.0'
-  s.summary          = 'A short description of HDServiceKit.'
-
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
-
+  s.name             = "HDServiceKit"
+  s.version          = "0.0.1"
+  s.summary          = "混沌 iOS 服务"
   s.description      = <<-DESC
-TODO: Add long description of the pod here.
+                       HDServiceKit 是一系列服务以及能力，用于快速在其他项目使用或者第三方接入
                        DESC
+  s.homepage         = "https://git.vipaylife.com/vipay/HDServiceKit"
+  s.license          = 'MIT'
+  s.author           = {"VanJay" => "wangwanjie1993@gmail.com"}
+  s.source           = {:git => "git@git.vipaylife.com:vipay/HDServiceKit.git", :tag => s.version.to_s}
+  s.social_media_url = 'https://git.vipaylife.com/vipay/HDServiceKit'
+  s.requires_arc     = true
+  s.documentation_url = 'https://git.vipaylife.com/vipay/HDServiceKit'
+  s.screenshot       = 'https://xxx.png'
 
-  s.homepage         = 'https://github.com/wangwanjie/HDServiceKit'
-  # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
-  s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'wangwanjie' => 'wangwanjie1993@gmail.com' }
-  s.source           = { :git => 'https://github.com/wangwanjie/HDServiceKit.git', :tag => s.version.to_s }
-  # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
-
-  s.ios.deployment_target = '8.0'
-
-  s.source_files = 'HDServiceKit/Classes/**/*'
-  
-  # s.resource_bundles = {
-  #   'HDServiceKit' => ['HDServiceKit/Assets/*.png']
-  # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
+  s.platform         = :ios, '9.0'
+  s.frameworks       = 'Foundation', 'UIKit'
+  s.source_files     = 'HDServiceKit/HDServiceKit.h'
+  s.resource_bundles = {'HDResources' => ['HDServiceKit/HDResources/*.*']}
 end
