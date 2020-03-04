@@ -1,3 +1,6 @@
+source 'git@git.vipaylife.com:vipay/Chaos-specs.git'
+source 'https://github.com/CocoaPods/Specs.git'
+
 use_frameworks!
 
 platform :ios, '9.0'

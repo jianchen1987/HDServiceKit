@@ -14,12 +14,9 @@ echo "podspec名称:$podspec_name"
 version=`grep -E "s.version |s.version=" $podspec_path | head -1 | sed 's/'s.version'//g' | sed 's/'='//g'| sed 's/'\"'//g'| sed 's/'\''//g' | sed 's/'[[:space:]]'//g'`
 echo "podspec版本:$version"
 
-echo "开始打包 framework"
-pod package ${podspec_name} --no-mangle --exclude-deps --force --spec-sources=https://github.com/CocoaPods/Specs.git,git@git.vipaylife.com:wangwanjie/tianxu-specs.git
-echo "打包 framework 结束\n"
-
 echo "开始提交代码并打 tag：$version"
 filename=$(echo $podspec_name | cut -d . -f1)
+git rm -r --cached . -f
 git add .
 git commit -m "published $filename $version"
 
@@ -36,5 +33,9 @@ echo "开始发布 $filename 版本 $version 到 Chaos"
 # 清除缓存
 pod cache clean --all
 
-pod repo push Chaos "${podspec_name}" --allow-warnings --verbose --sources=https://github.com/CocoaPods/Specs.git,git@git.vipaylife.com:wangwanjie/tianxu-specs.git
+pod repo push Chaos "${podspec_name}" --allow-warnings --verbose --sources=https://github.com/CocoaPods/Specs.git,git@git.vipaylife.com:vipay/Chaos-specs.git
 echo "发布 $filename 版本 $version 到 Chaos 结束\n"
+
+echo "开始打包 framework"
+pod package ${podspec_name} --no-mangle --exclude-deps --force --spec-sources=https://github.com/CocoaPods/Specs.git,git@git.vipaylife.com:vipay/Chaos-specs.git
+echo "打包 framework 结束\n"

@@ -208,7 +208,7 @@
 				6003F587195388D20070C39A /* Frameworks */,
 				6003F588195388D20070C39A /* Resources */,
 				959AE6F0240E337B00D3E3AE /* Create Umbrella Header File */,
-				348725463AE54CB72924FE02 /* [CP] Copy Pods Resources */,
+				5134F4A1EEBDFDA02FBDAB35 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -318,22 +318,26 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		348725463AE54CB72924FE02 /* [CP] Copy Pods Resources */ = {
+		5134F4A1EEBDFDA02FBDAB35 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-HDServiceKit_Example/Pods-HDServiceKit_Example-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/HDServiceKit/HDResources.bundle",
+				"${PODS_ROOT}/Target Support Files/Pods-HDServiceKit_Example/Pods-HDServiceKit_Example-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/HDServiceKit/HDServiceKit.framework",
+				"${BUILT_PRODUCTS_DIR}/UICKeyChainStore/UICKeyChainStore.framework",
+				"${BUILT_PRODUCTS_DIR}/YYModel/YYModel.framework",
 			);
-			name = "[CP] Copy Pods Resources";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/HDResources.bundle",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HDServiceKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UICKeyChainStore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YYModel.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-HDServiceKit_Example/Pods-HDServiceKit_Example-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-HDServiceKit_Example/Pods-HDServiceKit_Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		959AE6F0240E337B00D3E3AE /* Create Umbrella Header File */ = {
@@ -517,7 +521,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HDServiceKit/HDServiceKit-Prefix.pch";
 				INFOPLIST_FILE = "HDServiceKit/HDServiceKit-Info.plist";
-				MARKETING_VERSION = 0.0.1;
+				MARKETING_VERSION = 0.1.0;
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -535,7 +539,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HDServiceKit/HDServiceKit-Prefix.pch";
 				INFOPLIST_FILE = "HDServiceKit/HDServiceKit-Info.plist";
-				MARKETING_VERSION = 0.0.1;
+				MARKETING_VERSION = 0.1.0;
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "HDServiceKit"
-  s.version          = "0.0.1"
+  s.version          = "0.1.0"
   s.summary          = "混沌 iOS 服务"
   s.description      = <<-DESC
                        HDServiceKit 是一系列服务以及能力，用于快速在其他项目使用或者第三方接入
@@ -17,5 +17,11 @@ Pod::Spec.new do |s|
   s.platform         = :ios, '9.0'
   s.frameworks       = 'Foundation', 'UIKit'
   s.source_files     = 'HDServiceKit/HDServiceKit.h'
-  s.resource_bundles = {'HDResources' => ['HDServiceKit/HDResources/*.*']}
+
+  s.subspec 'HDCache' do |ss|
+    ss.source_files = 'HDServiceKit/HDCache', 'HDServiceKit/HDCache/*/*'
+    ss.dependency 'YYModel', '~> 1.0.4'
+    ss.dependency 'UICKeyChainStore', '~> 2.1.2'
+  end
+
 end
