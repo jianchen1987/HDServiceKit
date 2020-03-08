@@ -7,9 +7,10 @@
 //
 
 #import "HDWHDebugResponse.h"
+#import "HDFileUtil.h"
 #import "HDWHResponseManager.h"
-#import "HDWebViewHostViewController.h"
 #import "HDWebViewHostViewController+Scripts.h"
+#import "HDWebViewHostViewController.h"
 #import "NSBundle+HDWebViewHost.h"
 
 // 保存 weinre 注入脚本的地址，方便在加载其它页面时也能自动注入。
@@ -86,7 +87,7 @@ static NSString *kLastWeinreScript = nil;
                               }];
     } else if ([@"list" isEqualToString:action]) {
         // 遍历所有的可用接口和注释和测试用例
-        //TODO 分页
+        // TODO 分页
         [self fire:@"list" param:[[HDWHResponseManager defaultManager] allResponseMethods]];
     } else if ([@"apropos" isEqualToString:action]) {
         NSString *signature = [paramDict objectForKey:@"signature"];
@@ -108,14 +109,12 @@ static NSString *kLastWeinreScript = nil;
             } else {
                 err = [NSString stringWithFormat:@"The method (%@) doesn't exsit!", signature];
             }
-            [self fire:funcName param:@{ @"error": err }];
+            [self fire:funcName param:@{@"error": err}];
         }
     } else if ([@"testcase" isEqualToString:action]) {
         // 检查是否有文件生成，如果没有则遍历
-        NSString *docsdir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
-        NSString *file = [docsdir stringByAppendingPathComponent:kWebViewHostTestCaseFileName];
-
-        if (![[NSFileManager defaultManager] fileExistsAtPath:file]) {
+        NSString *file = [[DocumentsPath stringByAppendingPathComponent:kWebViewHostDBDir] stringByAppendingPathComponent:kWebViewHostTestCaseFileName];
+        if (![HDFileUtil isFileExistedFilePath:file]) {
             [self generatorHtml];
         }
         [self.webViewHost loadLocalFile:[NSURL fileURLWithPath:file] domain:@"http://you.163.com"];
@@ -139,7 +138,6 @@ static NSString *kLastWeinreScript = nil;
                                            [self fire:@"requestToTiming_on_mac" param:r];
                                        }];
         }
-        //
     } else if ([@"clearCookie" isEqualToString:action]) {
         // 清理 WKWebview 的 Cookie，和 NSHTTPCookieStorage 是独立的
         WKHTTPCookieStore *_Nonnull cookieStorage = [WKWebsiteDataStore defaultDataStore].httpCookieStore;
@@ -148,7 +146,7 @@ static NSString *kLastWeinreScript = nil;
                 [cookieStorage deleteCookie:cookie completionHandler:nil];
             }];
 
-            [self.webViewHost fire:@"clearCookieDone" param:@{ @"count": @(cookies.count) }];
+            [self.webViewHost fire:@"clearCookieDone" param:@{@"count": @(cookies.count)}];
         }];
     } else if ([@"console.log" isEqualToString:action]) {
         // 正常的日志输出时，不需要做特殊处理。
@@ -165,7 +163,6 @@ static NSString *kLastWeinreScript = nil;
 
 + (NSDictionary<NSString *, NSString *> *)supportActionList {
     return @{
-#ifdef HDWH_DEBUG
         @"eval_": @"1",
         @"list": @"1",
         @"apropos_": @"1",
@@ -174,7 +171,6 @@ static NSString *kLastWeinreScript = nil;
         @"timing_": @"1",
         @"console.log_": @"1",
         @"clearCookie": @"1"
-#endif
     };
 }
 
@@ -184,7 +180,7 @@ static NSString *kLastWeinreScript = nil;
         return;
     }
     [HDWebViewHostViewController prepareJavaScript:[NSURL URLWithString:kLastWeinreScript] when:WKUserScriptInjectionTimeAtDocumentEnd key:@"weinre.js"];
-    [self.webViewHost fire:@"weinre.enable" param:@{ @"jsURL": kLastWeinreScript }];
+    [self.webViewHost fire:@"weinre.enable" param:@{@"jsURL": kLastWeinreScript}];
 }
 
 - (void)disableWeinreSupport {
@@ -212,14 +208,10 @@ static NSString *kLastWeinreScript = nil;
  </fieldset>
 
  */
-- (void)generatorHtml {
+- (BOOL)generatorHtml {
 
     NSBundle *bundle = [NSBundle hd_WebViewHostRemoteDebugResourcesBundle];
 
-    if (!bundle.isLoaded) {
-        HDWHLog(@"bundle 未加载");
-        return;
-    }
     NSURL *url = [bundle URLForResource:@"testcase" withExtension:@"tmpl"];
     // 获取模板
     NSError *err = nil;
@@ -270,11 +262,11 @@ static NSString *kLastWeinreScript = nil;
                             // 缺少插值运算的字符串拼接，让人头大
                             [html appendFormat:@"<li id=\"%@\">\
                              <script type=\"text/javascript\">\
-                             function %@(){\
+                             function %@() {\
                                 var eleId = '%@';%@; %@;\
                              }\
                              </script>\
-                             <a href=\"javascript:void(0);\" onclick=\"%@();return false;\">%@%@, 执行后，%@</a>\
+                             <a href=\"javascript:void(0);\" onclick=\"%@();\">%@%@, 执行后，%@</a>\
                              <span>%@</span><label class=\"passed\">✅</label><label class=\"failed\">❌</label>\
                              </li>",
                                                itemEleId, fullFunctionName, itemEleId, [doc objectForKey:@"code"], alertOrNot, fullFunctionName, descPrefix, [doc objectForKey:@"name"], [doc objectForKey:@"expect"], [doc objectForKey:@"discuss"]];
@@ -291,17 +283,17 @@ static NSString *kLastWeinreScript = nil;
         if (docsHtml.count > 0) {
             template = [template stringByReplacingOccurrencesOfString:@"{{ALL_DOCS}}" withString:[docsHtml componentsJoinedByString:@""]];
         }
-        
-        NSString *docsdir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
-        NSString *file = [docsdir stringByAppendingPathComponent:kWebViewHostTestCaseFileName];
-        NSError *err = nil;
-        [template writeToFile:file atomically:YES encoding:NSUTF8StringEncoding error:&err];
+
+        NSString *file = [[DocumentsPath stringByAppendingPathComponent:kWebViewHostDBDir] stringByAppendingPathComponent:kWebViewHostTestCaseFileName];
+        [HDFileUtil writeToFile:file contents:template];
+
         if (err) {
             HDWHLog(@"解析文件有错误吗，%@", err);
         } else {
             HDWHLog(@"测试文件生成完毕，%@", file);
         }
-
+        return YES;
     }
+    return NO;
 }
 @end

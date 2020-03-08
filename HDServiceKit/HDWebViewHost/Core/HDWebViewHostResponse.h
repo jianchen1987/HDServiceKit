@@ -6,9 +6,9 @@
 //  Copyright © 2019 chaos network technology. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import "HDWebViewHostProtocol.h"
 #import "HDWebViewHostEnum.h"
+#import "HDWebViewHostProtocol.h"
+#import <Foundation/Foundation.h>
 
 @interface HDWebViewHostResponse : NSObject <HDWebViewHostProtocol>
 

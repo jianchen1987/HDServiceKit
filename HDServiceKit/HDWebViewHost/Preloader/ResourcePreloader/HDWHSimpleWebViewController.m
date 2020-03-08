@@ -22,9 +22,9 @@
     self.webView = webView;
     webView.frame = self.view.bounds;
     [self.view addSubview:webView];
-    
+
     if (self.htmlString.length > 0) {
-        [webView loadHTMLString:self.htmlString baseURL:[NSURL URLWithString:self.domain?:@"https://m.you.163.com"] ];
+        [webView loadHTMLString:self.htmlString baseURL:[NSURL URLWithString:self.domain ?: @"https://m.you.163.com"]];
     }
 }
 

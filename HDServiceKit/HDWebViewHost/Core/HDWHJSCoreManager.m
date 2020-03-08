@@ -11,13 +11,13 @@
 
 @implementation HDWHJSCoreManager
 
-+(instancetype)defaultManager{
++ (instancetype)defaultManager {
     static HDWHJSCoreManager *_instance = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _instance = [HDWHJSCoreManager new];
     });
-    
+
     return _instance;
 }
 

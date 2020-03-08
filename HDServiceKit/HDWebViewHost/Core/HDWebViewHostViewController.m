@@ -9,19 +9,19 @@
 
 #import "HDWebViewHostViewController.h"
 #import "HDReachability.h"
-#import "HDWHWebViewScrollPositionManager.h"
-#import "HDWHNavigationBarResponse.h"
 #import "HDWHAppLoggerResponse.h"
-#import "HDWebViewHostCookie.h"
+#import "HDWHNavigationBarResponse.h"
+#import "HDWHRequestMediate.h"
+#import "HDWHResponseManager.h"
 #import "HDWHScriptMessageDelegate.h"
 #import "HDWHURLChecker.h"
-#import "HDWHResponseManager.h"
-#import "HDWHRequestMediate.h"
-#import "HDWebViewHostViewController+Utils.h"
-#import "HDWebViewHostViewController+Scripts.h"
+#import "HDWHWebViewScrollPositionManager.h"
+#import "HDWebViewHostCookie.h"
 #import "HDWebViewHostViewController+Dispatch.h"
 #import "HDWebViewHostViewController+Progressor.h"
+#import "HDWebViewHostViewController+Scripts.h"
 #import "HDWebViewHostViewController+Timing.h"
+#import "HDWebViewHostViewController+Utils.h"
 
 @interface HDWebViewHostViewController () <UIScrollViewDelegate, WKUIDelegate, WKScriptMessageHandler>
 
@@ -38,7 +38,11 @@ static NSString *const kWHScriptHandlerName = @"kWHScriptHandlerName";
 NSString *_Nonnull kFakeCookieWebPageURLWithQueryString;
 // 以下两个是为了设置进度条颜色和日志开关
 long long kWebViewProgressTintColorRGB;
-BOOL kGCDWebServer_logging_enabled = YES;
+#if DEBUG
+BOOL kGCDWebServer_logging_enabled = true;
+#else
+BOOL kGCDWebServer_logging_enabled = false;
+#endif
 
 /**
  * 代理类，管理所有 HDWebViewHostViewController 自身和 HDWebViewHostViewController 子类。
@@ -79,7 +83,7 @@ BOOL kGCDWebServer_logging_enabled = YES;
         urlStr = self.url;
     }
 
-    [self fire:@"pageshow" param:@{ @"url": urlStr ?: @"null" }];
+    [self fire:@"pageshow" param:@{@"url": urlStr ?: @"null"}];
     // 检查是否有上次遗留下来的进度条,避免 webview 在 tabbar 第一屏时出现进度条残留
     if (self.webView.estimatedProgress >= 1.f) {
         [self stopProgressor];
@@ -92,7 +96,7 @@ BOOL kGCDWebServer_logging_enabled = YES;
     if (urlStr.length == 0) {
         urlStr = self.url;
     }
-    [self fire:@"pagehide" param:@{ @"url": urlStr ?: @"null" }];
+    [self fire:@"pagehide" param:@{@"url": urlStr ?: @"null"}];
 }
 
 - (void)viewDidLoad {
@@ -124,7 +128,7 @@ BOOL kGCDWebServer_logging_enabled = YES;
 
 - (void)dealloc {
     [self teardownProgressor];
-    
+
     [_webView.configuration.userContentController removeScriptMessageHandlerForName:kWHScriptHandlerName];
 
     _webView.navigationDelegate = nil;
@@ -195,7 +199,7 @@ BOOL kGCDWebServer_logging_enabled = YES;
     if (!navigationAction.targetFrame.isMainFrame) {
         [webView loadRequest:navigationAction.request];
     }
-    NSLog(@"%@", NSStringFromSelector(_cmd));
+    HDWHLog(@"%@", NSStringFromSelector(_cmd));
     return nil;
 }
 
@@ -213,7 +217,7 @@ BOOL kGCDWebServer_logging_enabled = YES;
 #pragma mark - wkwebview navigation delegate
 
 #define TIMING_WK_METHOD \
-    NSLog(@"[Timing] %@, nowTime = %f", NSStringFromSelector(_cmd), [[NSDate date] timeIntervalSince1970] * 1000);
+    HDWHLog(@"[Timing] %@, nowTime = %f", NSStringFromSelector(_cmd), [[NSDate date] timeIntervalSince1970] * 1000);
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler {
     TIMING_WK_METHOD
@@ -222,7 +226,7 @@ BOOL kGCDWebServer_logging_enabled = YES;
     [self measure:kWebViewHostTimingDecidePolicyForNavigationAction to:kWebViewHostTimingWebViewInit];
 
     NSURLRequest *request = navigationAction.request;
-    //此url解析规则自己定义
+    // 此url解析规则自己定义
     NSString *rurl = [[request URL] absoluteString];
     HDWHLog(@"加载网页地址 = %@", rurl);
     WKNavigationActionPolicy policy = WKNavigationActionPolicyAllow;
@@ -236,7 +240,6 @@ BOOL kGCDWebServer_logging_enabled = YES;
         [[UIApplication sharedApplication] openURL:[request URL] options:@{} completionHandler:nil];
         policy = WKNavigationActionPolicyCancel;
     }
-    //
     decisionHandler(policy);
     if (self.disabledProgressor) {
         self.progressorView.hidden = YES;
@@ -320,7 +323,7 @@ BOOL kGCDWebServer_logging_enabled = YES;
     if ([message.name isEqualToString:kWHScriptHandlerName]) {
         NSURL *actualUrl = [NSURL URLWithString:self.url];
         if (![[HDWHURLChecker sharedManager] checkURL:actualUrl forAuthorizationType:HDWHAuthorizationTypeWebViewHost]) {
-            NSLog(@"invalid url visited : %@", self.url);
+            HDWHLog(@"invalid url visited : %@", self.url);
         } else {
             NSDictionary *contentJSON = message.body;
             [self dispatchParsingParameter:contentJSON];
@@ -375,11 +378,11 @@ BOOL kGCDWebServer_logging_enabled = YES;
 
         WKWebView *webview = [[WKWebView alloc] initWithFrame:CGRectZero configuration:webViewConfig];
         webview.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
- 
+
         webview.navigationDelegate = self;
         webview.UIDelegate = self;
         webview.scrollView.delegate = self;
-   
+
         _webView = webview;
     }
     return _webView;
@@ -387,8 +390,7 @@ BOOL kGCDWebServer_logging_enabled = YES;
 
 #pragma mark - vc settings
 
-- (UIStatusBarStyle)preferredStatusBarStyle
-{
+- (UIStatusBarStyle)preferredStatusBarStyle {
     return self.navBarStyle;
 }
 

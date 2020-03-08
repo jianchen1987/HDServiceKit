@@ -21,7 +21,7 @@
 static HDWHViewControllerPreRender *_myRender = nil;
 @implementation HDWHViewControllerPreRender
 
-+ (instancetype)defaultRender{
++ (instancetype)defaultRender {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _myRender = [HDWHViewControllerPreRender new];
@@ -52,10 +52,10 @@ static HDWHViewControllerPreRender *_myRender = nil;
         UIWindow *no2 = [[UIWindow alloc] initWithFrame:CGRectOffset(full, CGRectGetWidth(full) - gap, 0)];
         UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:[UIViewController new]];
         no2.rootViewController = nav;
-        no2.hidden = NO;// 必须是显示的 window，才会触发预热 ViewController，隐藏的 window 不可用。但是和是否在屏幕可见没关系
+        no2.hidden = NO;  // 必须是显示的 window，才会触发预热 ViewController，隐藏的 window 不可用。但是和是否在屏幕可见没关系
         no2.windowLevel = UIWindowLevelStatusBar + 14;
-        
-        _windowNO2= no2;
+
+        _windowNO2 = no2;
     }
 }
 /**
@@ -68,10 +68,10 @@ static HDWHViewControllerPreRender *_myRender = nil;
  */
 - (UIViewController *)getRendered:(Class)viewControllerClass cacheKey:(NSString *)key afterRender:(void (^)(UIViewController *))afterRender {
     [self setupWindowNO2];
-    
+
     UIViewController *cacheVC = [self.renderedViewControllers objectForKey:key];
-    if (cacheVC == nil) { // 下次使用缓存
-        
+    if (cacheVC == nil) {  // 下次使用缓存
+
         dispatch_async(dispatch_get_main_queue(), ^{
             UIViewController *nextVC = [viewControllerClass new];
             if (afterRender) {
@@ -88,7 +88,7 @@ static HDWHViewControllerPreRender *_myRender = nil;
         });
         //
         return [viewControllerClass new];
-    }  else { // 本次使用缓存，同时储备下次
+    } else {  // 本次使用缓存，同时储备下次
         dispatch_async(dispatch_get_main_queue(), ^{
             UIViewController *fresh = [viewControllerClass new];
             if (afterRender) {
@@ -100,8 +100,8 @@ static HDWHViewControllerPreRender *_myRender = nil;
             UINavigationController *nav = (UINavigationController *)self.windowNO2.rootViewController;
             // NOTE: 相同的 ViewControllerClass 只能缓存一个。
             NSMutableArray *newStacks = [NSMutableArray arrayWithCapacity:3];
-            
-            [nav.viewControllers enumerateObjectsUsingBlock:^(__kindof UIViewController * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+
+            [nav.viewControllers enumerateObjectsUsingBlock:^(__kindof UIViewController *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
                 if (obj != cacheVC) {
                     [newStacks addObject:obj];
                 }
@@ -109,7 +109,7 @@ static HDWHViewControllerPreRender *_myRender = nil;
             [newStacks addObject:fresh];
             nav.viewControllers = newStacks;
         });
-        
+
         return cacheVC;
     }
 }
@@ -120,11 +120,11 @@ static HDWHViewControllerPreRender *_myRender = nil;
  @param viewControllerClass  必须是 UIViewController 的 Class 对象
  @param block 业务逻辑回调
  */
-- (void)getRenderedViewController:(Class)viewControllerClass completion:(void (^)(UIViewController *vc))block{
+- (void)getRenderedViewController:(Class)viewControllerClass completion:(void (^)(UIViewController *vc))block {
     // CATransaction 为了避免一个 push 动画和另外一个 push 动画同时进行的问题。
     [CATransaction begin];
     UIViewController *vc1 = [self getRendered:viewControllerClass cacheKey:NSStringFromClass(viewControllerClass) afterRender:nil];
-    
+
     // 这里包含一个陷阱—— 必须先渲染将要被 cached 的 ViewController，然后再执行真实的 block
     // 理想情况，应该是先执行 block，然后执行 cache ViewController，因为 block 更重要些。暂时没想到方法
     [CATransaction setCompletionBlock:^{
@@ -133,21 +133,22 @@ static HDWHViewControllerPreRender *_myRender = nil;
     [CATransaction commit];
 }
 
-
-- (void)getWebViewController:(Class)viewControllerClass preloadURL:(NSString *)url completion:(void (^)(HDWebViewHostViewController *vc))block{
+- (void)getWebViewController:(Class)viewControllerClass preloadURL:(NSString *)url completion:(void (^)(HDWebViewHostViewController *vc))block {
     // CATransaction 为了避免一个 push 动画和另外一个 push 动画同时进行的问题。
     if (viewControllerClass != HDWebViewHostViewController.class && ![viewControllerClass isSubclassOfClass:HDWebViewHostViewController.class]) {
         HDWHLog(@"Error ClassName = %@", NSStringFromClass(viewControllerClass));
         block([viewControllerClass new]);
         return;
     }
-    
+
     NSString *key = [NSStringFromClass(viewControllerClass) stringByAppendingString:url];
-    HDWebViewHostViewController *cached = (HDWebViewHostViewController *)[self getRendered:viewControllerClass cacheKey:key afterRender:^(UIViewController *obj) {
-        HDWebViewHostViewController *nextVC = (HDWebViewHostViewController *)obj;
-        nextVC.url = url;
-    }];
-    
+    HDWebViewHostViewController *cached = (HDWebViewHostViewController *)[self getRendered:viewControllerClass
+                                                                                  cacheKey:key
+                                                                               afterRender:^(UIViewController *obj) {
+                                                                                   HDWebViewHostViewController *nextVC = (HDWebViewHostViewController *)obj;
+                                                                                   nextVC.url = url;
+                                                                               }];
+
     [CATransaction begin];
     [CATransaction setCompletionBlock:^{
         block(cached);
@@ -155,9 +156,8 @@ static HDWHViewControllerPreRender *_myRender = nil;
     [CATransaction commit];
 }
 
-- (void)dealMemoryWarnings:(id)notif
-{
-    NSLog(@"release memory pressure");
+- (void)dealMemoryWarnings:(id)notif {
+    HDWHLog(@"release memory pressure");
     [self.renderedViewControllers removeAllObjects];
 }
 @end

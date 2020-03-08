@@ -7,8 +7,8 @@
 //
 
 #import "HDWebViewHostResponse.h"
-#import "HDWebViewHostViewController.h"
 #import "HDWebViewHostViewController+Scripts.h"
+#import "HDWebViewHostViewController.h"
 #import <objc/runtime.h>
 
 @interface HDWebViewHostResponse ()
@@ -23,8 +23,7 @@
 
 @implementation HDWebViewHostResponse
 
-- (instancetype)initWithWebViewHost:(HDWebViewHostViewController *)webViewHost
-{
+- (instancetype)initWithWebViewHost:(HDWebViewHostViewController *)webViewHost {
     if (self = [self init]) {
         self.webView = webViewHost.webView;
         self.navigationController = webViewHost.navigationController;
@@ -34,18 +33,15 @@
     return self;
 }
 
-- (void)fireCallback:(NSString *)callbackKey param:(NSDictionary *)paramDict
-{
+- (void)fireCallback:(NSString *)callbackKey param:(NSDictionary *)paramDict {
     [self.webViewHost fireCallback:callbackKey param:paramDict];
 }
 
-- (void)fire:(NSString *)actionName param:(NSDictionary *)paramDict
-{
+- (void)fire:(NSString *)actionName param:(NSDictionary *)paramDict {
     [self.webViewHost fire:actionName param:paramDict];
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     _webView = nil;
     self.navigationController = nil;
     self.webViewHost = nil;
@@ -53,8 +49,7 @@
 
 #pragma mark - protocol
 
-- (BOOL)handleAction:(NSString *)action withParam:(NSDictionary *)paramDict callbackKey:(NSString *)callbackKey;
-{
+- (BOOL)handleAction:(NSString *)action withParam:(NSDictionary *)paramDict callbackKey:(NSString *)callbackKey {
     if (action == nil) {
         return false;
     }
@@ -72,7 +67,7 @@
             sel = NSSelectorFromString([NSString stringWithFormat:@"%@:callback:", action]);
         }
     }
-    
+
     if (![self respondsToSelector:sel]) {
         return NO;
     }
@@ -85,9 +80,9 @@
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
     [invocation setTarget:self];
     [invocation setSelector:aSelector];
-    
+
     NSUInteger i = 1;
-    
+
     if (objects.count) {
         for (id object in objects) {
             id tempObject = object;
@@ -95,7 +90,7 @@
         }
     }
     [invocation invoke];
-    
+
     if (methodSignature.methodReturnLength > 0) {
         id value;
         [invocation getReturnValue:&value];
@@ -104,8 +99,7 @@
     return nil;
 }
 
-+ (BOOL)isSupportedActionSignature:(NSString *)signature
-{
++ (BOOL)isSupportedActionSignature:(NSString *)signature {
     NSDictionary *support = [self supportActionList];
 
     // 如果数值大于0，表示是支持的，返回 YES
@@ -115,8 +109,7 @@
     return NO;
 }
 
-+ (NSDictionary<NSString *, NSString *> *)supportActionList
-{
++ (NSDictionary<NSString *, NSString *> *)supportActionList {
     NSAssert(NO, @"Must implement handleActionFromH5 method");
     return @{};
 }
@@ -128,29 +121,28 @@
  @param desc 默认描述，如果是偶数个参数，则生成 param 对象。如果是单个参数则认为整体参数描述，不细分为小参数
  @return 返回一个字段对象
  */
-+ (NSDictionary *)getParams:(NSString *)desc, ... NS_REQUIRES_NIL_TERMINATION;
-{
++ (NSDictionary *)getParams:(NSString *)desc, ... NS_REQUIRES_NIL_TERMINATION {
     NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:4];
-    
+
     va_list arg_list;
-    va_start(arg_list, desc);// 获取后续参数的偏移
+    va_start(arg_list, desc);  // 获取后续参数的偏移
     NSString *device = va_arg(arg_list, NSString *);
     NSMutableArray *lst = [NSMutableArray arrayWithCapacity:3];
-    if(device){
+    if (device) {
         [lst addObject:[device copy]];
     }
-    
-    while(device){
+
+    while (device) {
         device = va_arg(arg_list, NSString *);
         [lst addObject:[device copy]];
     }
     va_end(arg_list);
-    
-    if(lst.count == 1){
+
+    if (lst.count == 1) {
         [result setObject:[lst firstObject] forKey:@"paraDict"];
-    } else if(lst.count > 1){
+    } else if (lst.count > 1) {
         NSInteger count = lst.count / 2;
-        for (NSInteger i = 0; i < count; i++){
+        for (NSInteger i = 0; i < count; i++) {
             [result setObject:[lst objectAtIndex:i * 2 + 1] forKey:[lst objectAtIndex:i * 2]];
         }
     }

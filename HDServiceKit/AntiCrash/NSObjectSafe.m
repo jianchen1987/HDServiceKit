@@ -444,40 +444,40 @@ void SFLog(const char *file, const char *func, int line, NSString *fmt, ...) {
 
         /* 普通方法 */
         hd_swizzleInstanceMethod(NSClassFromString(@"NSConcreteMutableAttributedString"),
-                              @selector(attributedSubstringFromRange:), @selector(hookAttributedSubstringFromRange:));
+                                 @selector(attributedSubstringFromRange:), @selector(hookAttributedSubstringFromRange:));
 
         hd_swizzleInstanceMethod(NSClassFromString(@"NSConcreteMutableAttributedString"),
-                              @selector(attribute:atIndex:effectiveRange:), @selector(hookAttribute:atIndex:effectiveRange:));
+                                 @selector(attribute:atIndex:effectiveRange:), @selector(hookAttribute:atIndex:effectiveRange:));
 
         hd_swizzleInstanceMethod(NSClassFromString(@"NSConcreteMutableAttributedString"),
-                              @selector(addAttribute:value:range:), @selector(hookAddAttribute:value:range:));
+                                 @selector(addAttribute:value:range:), @selector(hookAddAttribute:value:range:));
 
         hd_swizzleInstanceMethod(NSClassFromString(@"NSConcreteMutableAttributedString"),
-                              @selector(addAttributes:range:), @selector(hookAddAttributes:range:));
+                                 @selector(addAttributes:range:), @selector(hookAddAttributes:range:));
 
         hd_swizzleInstanceMethod(NSClassFromString(@"NSConcreteMutableAttributedString"),
-                              @selector(addAttributes:range:), @selector(hookAddAttributes:range:));
+                                 @selector(addAttributes:range:), @selector(hookAddAttributes:range:));
 
         hd_swizzleInstanceMethod(NSClassFromString(@"NSConcreteMutableAttributedString"),
-                              @selector(setAttributes:range:), @selector(hookSetAttributes:range:));
+                                 @selector(setAttributes:range:), @selector(hookSetAttributes:range:));
 
         hd_swizzleInstanceMethod(NSClassFromString(@"NSConcreteMutableAttributedString"),
-                              @selector(removeAttribute:range:), @selector(hookRemoveAttribute:range:));
+                                 @selector(removeAttribute:range:), @selector(hookRemoveAttribute:range:));
 
         hd_swizzleInstanceMethod(NSClassFromString(@"NSConcreteMutableAttributedString"),
-                              @selector(deleteCharactersInRange:), @selector(hookDeleteCharactersInRange:));
+                                 @selector(deleteCharactersInRange:), @selector(hookDeleteCharactersInRange:));
 
         hd_swizzleInstanceMethod(NSClassFromString(@"NSConcreteMutableAttributedString"),
-                              @selector(replaceCharactersInRange:withString:), @selector(hookReplaceCharactersInRange:withString:));
+                                 @selector(replaceCharactersInRange:withString:), @selector(hookReplaceCharactersInRange:withString:));
 
         hd_swizzleInstanceMethod(NSClassFromString(@"NSConcreteMutableAttributedString"),
-                              @selector(replaceCharactersInRange:withAttributedString:), @selector(hookReplaceCharactersInRange:withAttributedString:));
+                                 @selector(replaceCharactersInRange:withAttributedString:), @selector(hookReplaceCharactersInRange:withAttributedString:));
 
         hd_swizzleInstanceMethod(NSClassFromString(@"NSConcreteMutableAttributedString"),
-                              @selector(enumerateAttribute:inRange:options:usingBlock:), @selector(hookEnumerateAttribute:inRange:options:usingBlock:));
+                                 @selector(enumerateAttribute:inRange:options:usingBlock:), @selector(hookEnumerateAttribute:inRange:options:usingBlock:));
 
         hd_swizzleInstanceMethod(NSClassFromString(@"NSConcreteMutableAttributedString"),
-                              @selector(enumerateAttributesInRange:options:usingBlock:), @selector(hookEnumerateAttributesInRange:options:usingBlock:));
+                                 @selector(enumerateAttributesInRange:options:usingBlock:), @selector(hookEnumerateAttributesInRange:options:usingBlock:));
     });
 }
 

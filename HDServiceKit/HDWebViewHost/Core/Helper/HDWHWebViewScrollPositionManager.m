@@ -15,22 +15,20 @@ static NSMutableDictionary *positionHolder = nil;
 
 @implementation HDWHWebViewScrollPositionManager
 
-+ (instancetype)sharedInstance
-{
++ (instancetype)sharedInstance {
     static HDWHWebViewScrollPositionManager *_sharedManager = nil;
     static dispatch_once_t onceToken;
-    
+
     dispatch_once(&onceToken, ^{
         _sharedManager = [[self alloc] init];
         positionHolder = [NSMutableDictionary dictionaryWithCapacity:10];
     });
-    
+
     return _sharedManager;
 }
 
-- (void)cacheURL:(NSURL *)url position:(CGFloat)y
-{
-//    记录2个网站的位置，达到 quote，清空
+- (void)cacheURL:(NSURL *)url position:(CGFloat)y {
+    //    记录2个网站的位置，达到 quote，清空
     if (positionHolder.allKeys.count > 2) {
         [positionHolder removeAllObjects];
     }
@@ -39,8 +37,7 @@ static NSMutableDictionary *positionHolder = nil;
     }
 }
 
-- (CGFloat)positionForCacheURL:(NSURL *)url
-{
+- (CGFloat)positionForCacheURL:(NSURL *)url {
     CGFloat y = 0;
     if (url) {
         y = [[positionHolder objectForKey:url] floatValue];
@@ -48,13 +45,11 @@ static NSMutableDictionary *positionHolder = nil;
     return y;
 }
 
-- (void)emptyURLCache:(NSURL *)url
-{
+- (void)emptyURLCache:(NSURL *)url {
     [positionHolder removeObjectForKey:url];
 }
 
-- (void)clearAllCache
-{
+- (void)clearAllCache {
     [positionHolder removeAllObjects];
 }
 

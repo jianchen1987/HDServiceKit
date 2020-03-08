@@ -44,28 +44,28 @@ Pod::Spec.new do |s|
     ss.source_files = 'HDServiceKit/HDReachability'
   end
 
-  s.subspec 'GCDWebServer' do |ss|
-    ss.source_files = 'HDServiceKit/GCDWebServer', 'HDServiceKit/GCDWebServer/**/*'
-  end
-
   s.subspec 'HDWebViewHost' do |ss|
+    ss.dependency 'HDServiceKit/FileOperation'
 
     ss.subspec 'Core' do |ss|
       ss.libraries = 'xml2'
+      ss.xcconfig = { "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2" }
       ss.source_files = 'HDServiceKit/HDWebViewHost/Core', 'HDServiceKit/HDWebViewHost/Core/**/*.{h,m}'
+      ss.resource_bundles = {'HDWebViewHostCoreResources' => ['HDServiceKit/HDWebViewHost/Core/Resources/*.*']}
       ss.dependency  'HDUIKit/MainFrame'
       ss.dependency  'HDServiceKit/HDReachability'
     end
 
     ss.subspec 'RemoteDebug' do |ss|
+      ss.source_files = 'HDServiceKit/HDWebViewHost/RemoteDebug', 'HDServiceKit/HDWebViewHost/RemoteDebug/GCDWebServer/**/*'
       ss.resource_bundles = {'HDWebViewHostRemoteDebugResources' => ['HDServiceKit/HDWebViewHost/RemoteDebug/src']}
-      ss.source_files = 'HDServiceKit/HDWebViewHost/RemoteDebug'
-      ss.dependency "HDServiceKit/GCDWebServer"
+      ss.dependency  'HDServiceKit/HDWebViewHost/Core'
     end
 
     ss.subspec 'Preloader' do |ss|
-      ss.resource_bundles = {'HDWebViewHostPreloaderResources' => ['HDServiceKit/HDWebViewHost/Preloader/ResourcePreloader/Resources/*.*']}
       ss.source_files = 'HDServiceKit/HDWebViewHost/Preloader', 'HDServiceKit/HDWebViewHost/Preloader/**/*'
+      ss.resource_bundles = {'HDWebViewHostPreloaderResources' => ['HDServiceKit/HDWebViewHost/Preloader/ResourcePreloader/Resources/*.*']}
+      ss.dependency  'HDServiceKit/HDWebViewHost/Core'
     end
 
   end

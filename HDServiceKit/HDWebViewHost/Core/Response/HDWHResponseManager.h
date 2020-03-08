@@ -6,8 +6,8 @@
 //  Copyright © 2019 chaos network technology. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import "HDWebViewHostResponse.h"
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)addCustomResponse:(Class<HDWebViewHostProtocol>)cls;
 
-- (id<HDWebViewHostProtocol>)responseForActionSignature:(NSString *)action withWebViewHost:(HDWebViewHostViewController * _Nonnull)webViewHost;
+- (id<HDWebViewHostProtocol>)responseForActionSignature:(NSString *)action withWebViewHost:(HDWebViewHostViewController *_Nonnull)webViewHost;
 
 - (Class)responseForActionSignature:(NSString *)signature;
 

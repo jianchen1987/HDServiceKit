@@ -84,7 +84,7 @@ NSString *const kLocationPermissionChangedUserInfoKey = @"kLocationPermissionCha
         [self.locationManager stopUpdatingLocation];
     }
     // 发送通知
-    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationNameLocationPermissionChanged object:nil userInfo:@{ kLocationPermissionChangedUserInfoKey: @(status) }];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationNameLocationPermissionChanged object:nil userInfo:@{kLocationPermissionChangedUserInfoKey: @(status)}];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations {

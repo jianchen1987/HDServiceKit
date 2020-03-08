@@ -35,8 +35,10 @@ NSString *kWebViewHostTimingAddUserScript = @"addUserScript";
 }
 #else
 
-- (void)mark:(NSString *)markName{};
-- (void)measure:(NSString *)endMarkName to:(NSString *)startMark{};
+- (void)mark:(NSString *)markName {
+};
+- (void)measure:(NSString *)endMarkName to:(NSString *)startMark {
+};
 
 #endif
 

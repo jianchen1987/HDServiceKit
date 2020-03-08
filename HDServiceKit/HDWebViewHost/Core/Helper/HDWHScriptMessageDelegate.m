@@ -8,7 +8,7 @@
 
 #import "HDWHScriptMessageDelegate.h"
 
-@interface HDWHScriptMessageDelegate()
+@interface HDWHScriptMessageDelegate ()
 
 @property (nonatomic, weak) id<WKScriptMessageHandler> scriptDelegate;
 
@@ -16,8 +16,7 @@
 
 @implementation HDWHScriptMessageDelegate
 
-- (instancetype)initWithDelegate:(id<WKScriptMessageHandler>)scriptDelegate
-{
+- (instancetype)initWithDelegate:(id<WKScriptMessageHandler>)scriptDelegate {
     self = [super init];
     if (self) {
         _scriptDelegate = scriptDelegate;
@@ -25,13 +24,11 @@
     return self;
 }
 
-- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
-{
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message {
     [self.scriptDelegate userContentController:userContentController didReceiveScriptMessage:message];
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     NSLog(@"MKScriptMessageDelegate dealloc");
 }
 

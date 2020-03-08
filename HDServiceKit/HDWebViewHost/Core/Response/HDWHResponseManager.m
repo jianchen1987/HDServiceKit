@@ -7,8 +7,9 @@
 //
 
 #import "HDWHResponseManager.h"
-#import<pthread.h>
+#import "HDFileUtil.h"
 #import "HDWHDebugResponse.h"
+#import <pthread.h>
 
 @interface HDWHResponseManager ()
 
@@ -27,66 +28,55 @@
 
 @implementation HDWHResponseManager
 
-+(instancetype)defaultManager
-{
++ (instancetype)defaultManager {
     static dispatch_once_t onceToken;
     static HDWHResponseManager *kResponeManger = nil;
     dispatch_once(&onceToken, ^{
         kResponeManger = [HDWHResponseManager new];
-        
+
         kResponeManger.responseClassObjs = [NSMutableDictionary dictionaryWithCapacity:10];
         kResponeManger.customResponseClasses = [NSMutableArray arrayWithCapacity:10];
-        
+
         // 静态注册 可响应的类
         NSArray<NSString *> *responseClassNames = @[
-                                                    @"HDWHNavigationResponse",
-                                                    @"HDWHNavigationBarResponse",
-                                                    @"HDWHBuiltInResponse",
+            @"HDWHNavigationResponse",
+            @"HDWHNavigationBarResponse",
+            @"HDWHBuiltInResponse",
 #ifdef HDWH_DEBUG
-                                                    @"HDWHDebugResponse",
+            @"HDWHDebugResponse",
 #endif
-                                                    @"HDWHAppLoggerResponse"];
-        [responseClassNames enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            @"HDWHAppLoggerResponse"
+        ];
+        [responseClassNames enumerateObjectsUsingBlock:^(NSString *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
             [kResponeManger.customResponseClasses addObject:NSClassFromString(obj)];
         }];
-        
-        // TODO
+
+        // 删除旧的测试用例文件
 #ifdef HDWH_DEBUG
-        NSString *docsdir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
-        NSString *file = [docsdir stringByAppendingPathComponent:kWebViewHostTestCaseFileName];
-        
-        if ([[NSFileManager defaultManager] fileExistsAtPath:file]) {
-            NSError *err = nil;
-            [[NSFileManager defaultManager] removeItemAtPath:file error:&err];
-            if (err) {
-                HDWHLog(@"删除文件错误");
-            }
-        }
+        NSString *file = [[DocumentsPath stringByAppendingPathComponent:kWebViewHostDBDir] stringByAppendingPathComponent:kWebViewHostTestCaseFileName];
+        [HDFileUtil removeFileOrDirectory:file];
 #endif
     });
-    
+
     return kResponeManger;
 }
 
 #pragma mark - public
-- (NSString *)actionSignature:(NSString *)action withParam:(BOOL)hasParamDict withCallback:(BOOL)hasCallback
-{
-    return [NSString stringWithFormat:@"%@%@%@", action, (hasParamDict?@"_":@""), (hasCallback?@"$":@"")];
+- (NSString *)actionSignature:(NSString *)action withParam:(BOOL)hasParamDict withCallback:(BOOL)hasCallback {
+    return [NSString stringWithFormat:@"%@%@%@", action, (hasParamDict ? @"_" : @""), (hasCallback ? @"$" : @"")];
 }
 
-- (void)addCustomResponse:(Class<HDWebViewHostProtocol>)cls
-{
+- (void)addCustomResponse:(Class<HDWebViewHostProtocol>)cls {
     if (cls) {
         [self.customResponseClasses addObject:cls];
     }
 }
 
-- (id<HDWebViewHostProtocol>)responseForActionSignature:(NSString *)signature withWebViewHost:(HDWebViewHostViewController * _Nonnull)webViewHost
-{
+- (id<HDWebViewHostProtocol>)responseForActionSignature:(NSString *)signature withWebViewHost:(HDWebViewHostViewController *_Nonnull)webViewHost {
     if (self.customResponseClasses.count == 0) {
         return nil;
     }
-    
+
     id<HDWebViewHostProtocol> vc = nil;
     // 逆序遍历，让后添加的 Response 能够覆盖内置的方法；
     for (NSInteger i = self.customResponseClasses.count - 1; i >= 0; i--) {
@@ -101,19 +91,18 @@
                     // 缓存住
                     [self.responseClassObjs setObject:vc forKey:key];
                 }
-            }  else {
+            } else {
                 vc = [responseClass new];
             }
-            
+
             break;
         }
     }
-    
+
     return vc;
 }
 
-- (Class)responseForActionSignature:(NSString *)action
-{
+- (Class)responseForActionSignature:(NSString *)action {
     // 逆序遍历，让后添加的 Response 能够覆盖内置的方法；
     Class r = nil;
     for (NSInteger i = self.customResponseClasses.count - 1; i >= 0; i--) {
@@ -123,7 +112,7 @@
             break;
         }
     }
-    
+
     return r;
 }
 
@@ -134,45 +123,42 @@
  */
 static NSDictionary *kAllResponseMethods = nil;
 static pthread_mutex_t lock;
-- (NSDictionary *)allResponseMethods
-{
+- (NSDictionary *)allResponseMethods {
     pthread_mutex_init(&lock, NULL);
     pthread_mutex_lock(&lock);
     if (kAllResponseMethods) {
         pthread_mutex_unlock(&lock);
         return kAllResponseMethods;
     }
-    
+
     kAllResponseMethods = [NSMutableDictionary dictionaryWithCapacity:10];
     //
     for (NSInteger i = 0; i < self.customResponseClasses.count; i++) {
         Class responseClass = [self.customResponseClasses objectAtIndex:i];
         NSMutableArray *methods = [NSMutableArray arrayWithCapacity:10];
-        [[responseClass supportActionList] enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, NSString * _Nonnull obj, BOOL * _Nonnull stop) {
+        [[responseClass supportActionList] enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull key, NSString *_Nonnull obj, BOOL *_Nonnull stop) {
             if ([obj integerValue] > 0) {
                 [methods addObject:key];
             }
         }];
-        
+
         if (methods.count > 0) {
             [kAllResponseMethods setValue:methods forKey:NSStringFromClass(responseClass)];
         }
     }
-    
+
     pthread_mutex_unlock(&lock);
     return kAllResponseMethods;
 }
 
 #endif
 
--(void)dealloc
-{
+- (void)dealloc {
     // 清理 response
     [self.responseClassObjs enumerateKeysAndObjectsUsingBlock:^(NSString *key, id _Nonnull obj, BOOL *_Nonnull stop) {
         obj = nil;
     }];
     [self.responseClassObjs removeAllObjects];
     self.responseClassObjs = nil;
-    
 }
 @end

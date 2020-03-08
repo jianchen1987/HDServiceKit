@@ -21,7 +21,7 @@
 - (void)addWebviewProgressor {
     // 仿微信进度条
     self.progressorView = [[UIProgressView alloc] initWithFrame:CGRectMake(0, HDWH_NAVIGATION_BAR_HEIGHT, HDWH_SCREEN_WIDTH, 20.0f)];
-    
+
     self.progressorView.progressTintColor = kWebViewProgressTintColorRGB > 0 ? HDWHColorFromRGB(kWebViewProgressTintColorRGB) : [UIColor grayColor];
     self.progressorView.trackTintColor = [UIColor whiteColor];
     [self.view addSubview:self.progressorView];

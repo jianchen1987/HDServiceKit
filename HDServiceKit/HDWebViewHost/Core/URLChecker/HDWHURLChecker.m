@@ -12,8 +12,7 @@
 
 static HDWHURLChecker *_sharedManager = nil;
 static NSDictionary *_authorizedTable = nil;
-+ (instancetype)sharedManager
-{
++ (instancetype)sharedManager {
 
     static dispatch_once_t onceToken;
 
@@ -28,8 +27,7 @@ static NSDictionary *_authorizedTable = nil;
     return _sharedManager;
 }
 
-- (BOOL)checkURL:(NSURL *)url forAuthorizationType:(HDWHAuthorizationType)authType
-{
+- (BOOL)checkURL:(NSURL *)url forAuthorizationType:(HDWHAuthorizationType)authType {
 #ifdef DEBUG
     return YES;
 #else
@@ -37,10 +35,10 @@ static NSDictionary *_authorizedTable = nil;
         return NO;
     }
     // 本地测试地址。
-    NSString *directory = NSHomeDirectory();                                  // user文件根目录 /var/mobile/..
-    NSString *bundlePath = [[NSBundle mainBundle] bundlePath];                // /var/containers/
-    NSString *bundleURL = [[[NSBundle mainBundle] bundleURL] absoluteString]; // file:///
-    NSString *tempDir = NSTemporaryDirectory();                               //在真机上/private/..
+    NSString *directory = NSHomeDirectory();                                   // user文件根目录 /var/mobile/..
+    NSString *bundlePath = [[NSBundle mainBundle] bundlePath];                 // /var/containers/
+    NSString *bundleURL = [[[NSBundle mainBundle] bundleURL] absoluteString];  // file:///
+    NSString *tempDir = NSTemporaryDirectory();                                //在真机上/private/..
     if ([url.absoluteString hasPrefix:directory] || [url.absoluteString hasPrefix:bundlePath] || [url.absoluteString hasPrefix:bundleURL] ||
         [url.absoluteString hasPrefix:tempDir]) {
         return YES;
@@ -49,17 +47,16 @@ static NSDictionary *_authorizedTable = nil;
     NSString *key = nil;
     if (authType == HDWHAuthorizationTypeSchema) {
         key = @"schema-open-url";
-    }
-    else if (authType == HDWHAuthorizationTypeWebViewHost) {
+    } else if (authType == HDWHAuthorizationTypeWebViewHost) {
         key = @"webviewhost";
     }
     if (key) {
         NSArray *rules = [_authorizedTable objectForKey:key];
         if ([rules count] == 0) {
-            return YES; // 白名单为空，放行
+            return YES;  // 白名单为空，放行
         }
         BOOL pass = NO;
-        
+
         for (NSInteger i = 0, l = [rules count]; i < l; i++) {
             NSString *rule = [rules objectAtIndex:i];
             // 将.号处理为\.如mail.163.com => mail\\.163\\.com;
@@ -76,7 +73,7 @@ static NSDictionary *_authorizedTable = nil;
                                        error:&regexError];
 
             if (regexError) {
-                NSLog(@"Regex creation failed with error: %@", [regexError description]);
+                HDWHLog(@"Regex creation failed with error: %@", [regexError description]);
                 continue;
             }
             // 使用host
@@ -88,12 +85,10 @@ static NSDictionary *_authorizedTable = nil;
             }
         }
         return pass;
-    }
-    else {
-        return YES; // 不在授权类型里的，默认返回通过。
+    } else {
+        return YES;  // 不在授权类型里的，默认返回通过。
     }
 #endif
 }
-
 
 @end

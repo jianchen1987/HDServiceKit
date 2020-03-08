@@ -13,40 +13,31 @@
 #define HDWH_DEBUG
 #define HDWHLog(fmt, ...) fprintf(stderr, "[HDWebViewHost]: %s:%d\t%s\n", [[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String], __LINE__, [[NSString stringWithFormat:fmt, ##__VA_ARGS__] UTF8String])
 #else
-#define HDWHLog(...);
+#define HDWHLog(...) ;
 #endif
 
-//// 在 debug 模式下打印带前缀的日志，非 debug 模式下，不输出。
-//#if !defined(HDWHLog)
-//#ifdef HDWH_DEBUG
-//#define HDWHLog(format, ...)  do {\
-//(NSLog)((@"[HDWebViewHost] " format), ##__VA_ARGS__); \
-//} while (0)
-//#else
-//#define HDWHLog(format, ...)
-//#endif
-//#endif
-
-//获取设备的物理高度
+// 获取设备的物理高度
 #define HDWH_SCREEN_HEIGHT [UIScreen mainScreen].bounds.size.height
-//获取设备的物理宽度
+// 获取设备的物理宽度
 #define HDWH_SCREEN_WIDTH [UIScreen mainScreen].bounds.size.width
 #define HDWH_IS_SCREEN_HEIGHT_X (HDWH_SCREEN_HEIGHT == 812.0f || HDWH_SCREEN_HEIGHT == 896.0f)
 
-#define HDWH_PURE_NAVBAR_HEIGHT 44 // 单纯的导航的高度
-#define HDWH_NAVIGATION_BAR_HEIGHT (HDWH_PURE_NAVBAR_HEIGHT + [[UIApplication sharedApplication] statusBarFrame].size.height) //顶部（导航+状态栏）的高度
+#define HDWH_PURE_NAVBAR_HEIGHT 44                                                                                             // 单纯的导航的高度
+#define HDWH_NAVIGATION_BAR_HEIGHT (HDWH_PURE_NAVBAR_HEIGHT + [[UIApplication sharedApplication] statusBarFrame].size.height)  //顶部（导航+状态栏）的高度
 
-#define HDWHColorFromRGB(rgbValue) [UIColor \
-colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 \
-green:((float)((rgbValue & 0x00FF00) >> 8))/255.0 \
-blue:((float)(rgbValue & 0x0000FF))/255.0 \
-alpha:1.0]
+#define HDWHColorFromRGB(rgbValue) [UIColor                     \
+    colorWithRed:((float)((rgbValue & 0xFF0000) >> 16)) / 255.0 \
+           green:((float)((rgbValue & 0x00FF00) >> 8)) / 255.0  \
+            blue:((float)(rgbValue & 0x0000FF)) / 255.0         \
+           alpha:1.0]
 
-#define HDWHColorFromRGBA(rgbValue, alphaValue) [UIColor \
-colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 \
-green:((float)((rgbValue & 0x00FF00) >> 8))/255.0 \
-blue:((float)(rgbValue & 0x0000FF))/255.0 \
-alpha:alphaValue]
+#define HDWHColorFromRGBA(rgbValue, alphaValue) [UIColor        \
+    colorWithRed:((float)((rgbValue & 0xFF0000) >> 16)) / 255.0 \
+           green:((float)((rgbValue & 0x00FF00) >> 8)) / 255.0  \
+            blue:((float)(rgbValue & 0x0000FF)) / 255.0         \
+           alpha:alphaValue]
+
+// clang-format off
 // 定义多行文字
 #define wh_ml(str) @#str
 //# 字段含义说明；
@@ -70,12 +61,12 @@ alpha:alphaValue]
 
 // 定义 oc-doc，为自动化生成测试代码和自动化注释做准备
 // 凡是可能多行的文字描述都用 @result,传入的数据需要有双引号，而不是@#result
-#define wh_doc_begin(signature, desc) \
-+(NSDictionary *)wh_concat(wh_doc_for_, signature) { \
-    NSMutableArray *lst = [NSMutableArray arrayWithCapacity:3]; \
-    NSMutableDictionary *docs = [@{ \
-            @"name":@#signature, \
-            @"discuss":@desc \
+#define wh_doc_begin(signature, desc)                               \
+    +(NSDictionary *)wh_concat(wh_doc_for_, signature) {            \
+        NSMutableArray *lst = [NSMutableArray arrayWithCapacity:3]; \
+        NSMutableDictionary *docs = [@{                             \
+            @"name": @#signature,                                   \
+            @"discuss": @desc                                       \
         } mutableCopy];
 
 #define wh_doc_code(code) [docs setObject:@#code forKey:@"code"];
@@ -87,29 +78,32 @@ alpha:alphaValue]
 
 #define wh_doc_return(type, desc) [docs setObject:@{@#type:@desc} forKey:@"return"];
 
-#define wh_doc_end \
-    if(lst.count > 0) { \
+#define wh_doc_end                            \
+    if (lst.count > 0) {                      \
         [docs setObject:lst forKey:@"param"]; \
-    } \
-    return docs; \
+    }                                         \
+    return docs;                              \
 }
 // oc-doc 结束
+// clang-format on
 
 #endif /* HDWebViewHostEnum_h */
 
 #define NOW_TIME [[NSDate date] timeIntervalSince1970] * 1000
 
 // 为了解决 webview Cookie 而需要提前加载的页面
-extern NSString * _Nonnull kFakeCookieWebPageURLWithQueryString;
+extern NSString *_Nonnull kFakeCookieWebPageURLWithQueryString;
 // 设置进度条的颜色，如 "0xff00ff";
 extern long long kWebViewProgressTintColorRGB;
 // 是否打开 debug server 的日志。
 extern BOOL kGCDWebServer_logging_enabled;
 
-static NSString * _Nonnull kWHLogoutNotification = @"kWHLogoutNotification";
-static NSString * _Nonnull kWHLoginSuccessNotification = @"kWHLoginSuccessNotification";
+static NSString *_Nonnull kWHLogoutNotification = @"kWHLogoutNotification";
+static NSString *_Nonnull kWHLoginSuccessNotification = @"kWHLoginSuccessNotification";
 
-static NSString * _Nonnull kWebViewHostEventDismissalFromPresented = @"kWebViewHostEventDismissalFromPresented";
+static NSString *_Nonnull kWebViewHostEventDismissalFromPresented = @"kWebViewHostEventDismissalFromPresented";
 // core
-static NSString * _Nonnull kWHActionKey = @"action";
-static NSString * _Nonnull kWHParamKey = @"param";
+static NSString *_Nonnull kWHActionKey = @"action";
+static NSString *_Nonnull kWHParamKey = @"param";
+// 沙盒目录
+static NSString *kWebViewHostDBDir = @"WebViewHost";

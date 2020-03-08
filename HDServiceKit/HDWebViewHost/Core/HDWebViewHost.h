@@ -17,14 +17,14 @@ FOUNDATION_EXPORT const unsigned char HDWebViewHostVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import "PublicHeader.h"
 
+#import "HDWHResponseManager.h"
 #import "HDWebViewHostEnum.h"
 #import "HDWebViewHostProtocol.h"
 #import "HDWebViewHostResponse.h"
-#import "HDWebViewHostViewController.h"
+#import "HDWebViewHostViewController+Dispatch.h"
 #import "HDWebViewHostViewController+Extend.h"
 #import "HDWebViewHostViewController+Scripts.h"
-#import "HDWebViewHostViewController+Dispatch.h"
-#import "HDWHResponseManager.h"
+#import "HDWebViewHostViewController.h"
 
 #if __has_include("HDWHDebugServerManager.h")
 #import "HDWHDebugServerManager.h"

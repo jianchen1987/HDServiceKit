@@ -6,10 +6,10 @@
 //  Copyright © 2019 chaos network technology. All rights reserved.
 //
 
-#import "HDWebViewHostViewController+Utils.h"
-#import "HDWebViewHostViewController+Dispatch.h"
-#import "HDWHWebViewScrollPositionManager.h"
 #import "HDWHResponseManager.h"
+#import "HDWHWebViewScrollPositionManager.h"
+#import "HDWebViewHostViewController+Dispatch.h"
+#import "HDWebViewHostViewController+Utils.h"
 
 @implementation HDWebViewHostViewController (Utils)
 
@@ -32,7 +32,7 @@
 
     NSMutableDictionary *appInfo = [NSMutableDictionary dictionaryWithCapacity:10];
     if (HDWH_IS_SCREEN_HEIGHT_X) {
-        [appInfo setObject:@{ @"iPhoneXVersion": @"1" } forKey:@"iPhoneXInfo"];
+        [appInfo setObject:@{@"iPhoneXVersion": @"1"} forKey:@"iPhoneXInfo"];
     }
 
     [lst setObject:appInfo forKey:@"appInfo"];
@@ -79,7 +79,7 @@
         return;
     }
     CGFloat y = scrollView.contentOffset.y;
-    NSLog(@"contentOffset.y = %.2f", y);
+    HDWHLog(@"contentOffset.y = %.2f", y);
     [[HDWHWebViewScrollPositionManager sharedInstance] cacheURL:self.webView.URL position:y];
 }
 

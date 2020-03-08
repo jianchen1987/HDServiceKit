@@ -6,8 +6,8 @@
 //  Copyright (c) 2020 wangwanjie. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
 #import <HDUIKit/HDCommonViewController.h>
+#import <UIKit/UIKit.h>
 
 @interface HDViewController : HDCommonViewController
 

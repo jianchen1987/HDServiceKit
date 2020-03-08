@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param output 将所有资源都内置到 html 的文件。
  @return 是否内侧处理时，发生过错误。非 0 表示出错过，但不代码 output 是无效的。
  */
-+ (int)interMediateFile:(NSString *)fileName inDirectory:(NSURL *)directory domain:(NSString *)domain output:(NSString *_Nonnull*_Nonnull)output;
++ (int)interMediateFile:(NSString *)fileName inDirectory:(NSURL *)directory domain:(NSString *)domain output:(NSString *_Nonnull *_Nonnull)output;
 
 @end
 

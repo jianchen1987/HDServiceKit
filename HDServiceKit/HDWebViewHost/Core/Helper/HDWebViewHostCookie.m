@@ -11,8 +11,7 @@
 
 @implementation HDWebViewHostCookie
 
-+ (NSMutableArray<NSString *> *)cookieJavaScriptArray
-{
++ (NSMutableArray<NSString *> *)cookieJavaScriptArray {
     NSMutableArray<NSString *> *cookieStrings = [[NSMutableArray alloc] init];
     //取出cookie
     NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
@@ -31,7 +30,7 @@
         if (cookie.secure) {
             excuteJSString = [excuteJSString stringByAppendingString:@"secure=true"];
         }
-        
+
         [cookieStrings addObject:excuteJSString];
         HDWHLog(@"cookie to be set = %@", excuteJSString);
     }
@@ -43,24 +42,22 @@ static WKProcessPool *_sharedManager = nil;
 // 当从未登录到登录时，这个状态需要置为 No
 static BOOL kLoginCookieHasBeenSynced = NO;
 
-+ (WKProcessPool *)sharedPoolManager
-{
++ (WKProcessPool *)sharedPoolManager {
 
     static dispatch_once_t onceToken;
-    
+
     dispatch_once(&onceToken, ^{
         _sharedManager = [[WKProcessPool alloc] init];
         // 监听 urs 登出的事件。
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didLogout:) name:kWHLogoutNotification object:nil];
-        
+
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUserLoginSucss:) name:kWHLoginSuccessNotification object:nil];
     });
-    
+
     return _sharedManager;
 }
 
-+ (void)didLogout:(id)notif
-{
++ (void)didLogout:(id)notif {
     // 清空旧的 WKProcessPool
     HDWHLog(@"didLogout, old pool is destoryed");
     _sharedManager = [[WKProcessPool alloc] init];
@@ -68,18 +65,15 @@ static BOOL kLoginCookieHasBeenSynced = NO;
 
 #pragma mark - cookie sync part
 
-+ (void)didUserLoginSucss:(id)notif
-{
++ (void)didUserLoginSucss:(id)notif {
     kLoginCookieHasBeenSynced = NO;
 }
 
-+ (void)setLoginCookieHasBeenSynced:(BOOL)synced
-{
++ (void)setLoginCookieHasBeenSynced:(BOOL)synced {
     kLoginCookieHasBeenSynced = synced;
 }
 
-+ (BOOL)loginCookieHasBeenSynced
-{
++ (BOOL)loginCookieHasBeenSynced {
     return kLoginCookieHasBeenSynced;
 }
 @end

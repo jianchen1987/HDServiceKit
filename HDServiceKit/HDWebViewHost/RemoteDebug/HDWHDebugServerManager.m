@@ -9,11 +9,12 @@
 #import "HDWHDebugServerManager.h"
 #import "GCDWebServer.h"
 #import "GCDWebServerDataResponse.h"
-#import "HDWebViewHostViewController.h"
 #import "GCDWebServerURLEncodedFormRequest.h"
-#import "HDWHDebugViewController.h"
+#import "HDFileUtil.h"
 #import "HDWHDebugResponse.h"
+#import "HDWHDebugViewController.h"
 #import "HDWebViewHostViewController+Dispatch.h"
+#import "HDWebViewHostViewController.h"
 #import "NSBundle+HDWebViewHost.h"
 
 @interface HDWHDebugServerManager () <HDWHDebugViewDelegate>
@@ -47,7 +48,6 @@ static off_t _log_offset = 0;
     dispatch_once(&onceToken, ^{
         _manager = [HDWHDebugServerManager new];
         _manager.logQueue = dispatch_queue_create("com.effetiveobjectivec.syncQueue", DISPATCH_QUEUE_SERIAL);
-
     });
     return _manager;
 }
@@ -66,15 +66,15 @@ static off_t _log_offset = 0;
 
 - (void)requestEventOccur:(NSNotification *)notification {
     dispatch_async(_logQueue, ^{
-        [self->_eventLogs addObject:@{ @"type": @".invoke",
-                                       @"value": notification.object }];
+        [self->_eventLogs addObject:@{@"type": @".invoke",
+                                      @"value": notification.object}];
     });
 }
 
 - (void)responseEventOccur:(NSNotification *)notification {
     dispatch_async(_logQueue, ^{
-        [self->_eventLogs addObject:@{ @"type": @".on",
-                                       @"value": notification.object }];
+        [self->_eventLogs addObject:@{@"type": @".on",
+                                      @"value": notification.object}];
     });
 }
 
@@ -111,9 +111,9 @@ static off_t _log_offset = 0;
 
 - (UIViewController *)getVisibleViewControllerFrom:(UIViewController *)vc {
     if ([vc isKindOfClass:[UINavigationController class]]) {
-        return [self getVisibleViewControllerFrom:[((UINavigationController *)vc)visibleViewController]];
+        return [self getVisibleViewControllerFrom:[((UINavigationController *)vc) visibleViewController]];
     } else if ([vc isKindOfClass:[UITabBarController class]]) {
-        return [self getVisibleViewControllerFrom:[((UITabBarController *)vc)selectedViewController]];
+        return [self getVisibleViewControllerFrom:[((UITabBarController *)vc) selectedViewController]];
     } else {
         if (vc.presentedViewController) {
             return [self getVisibleViewControllerFrom:vc.presentedViewController];
@@ -163,9 +163,9 @@ CGFloat kDebugWinInitHeight = 46.f;
     }
     // 注意：这里的 offset 是相对于在手势开始之前的位置作为基准，和当前手势做差值得出来的位移
     CGPoint offset = [pan translationInView:self.debugWindow];
-    //    SELog(@"drag %@", NSStringFromCGPoint(offset));
+    // HDWH_DEBUG(@"drag %@", NSStringFromCGPoint(offset));
     CGRect newFrame = CGRectOffset(self.debugWindow.frame, offset.x - self.lastOffset.x, offset.y - self.lastOffset.y);
-    //    SELog(@"drag new %@", NSStringFromCGRect(newFrame));
+    // HDWH_DEBUG(@"drag new %@", NSStringFromCGRect(newFrame));
     self.debugWindow.frame = newFrame;
     self.lastOffset = offset;
 
@@ -204,32 +204,30 @@ CGFloat kDebugWinInitHeight = 46.f;
 }
 
 - (void)fetchData:(HDWHDebugViewController *)viewController completion:(void (^)(NSArray<NSString *> *))completion {
-    [self parseLog:completion];
+    [self parHDWH_DEBUG:completion];
 }
 #pragma mark - public
 
 - (void)start {
     // Create server
     _webServer = [[GCDWebServer alloc] initWithLogServer:kGCDWebServer_logging_enabled];
-    [GCDWebServer setLogLevel:2 /*kGCDWebServerLoggingLevel_Warning*/];
+    // kGCDWebServerLoggingLevel_Warning
+    [GCDWebServer setLogLevel:3];
 
-    NSLog(@"Document = %@", [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject]);
+    HDWHLog(@"Document = %@", [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject]);
 
     // Add a handler to respond to GET requests on any URL
     typeof(self) __weak weakSelf = self;
     [_webServer addDefaultHandlerForMethod:@"GET"
                               requestClass:[GCDWebServerRequest class]
                               processBlock:^GCDWebServerResponse *(GCDWebServerRequest *request) {
-
-                                  // NSBundle *bundle = [NSBundle bundleForClass:[weakSelf class]];
-
                                   NSBundle *bundle = [NSBundle hd_WebViewHostRemoteDebugResourcesBundle];
-                                  if (!bundle || !bundle.isLoaded) {
-                                      NSString *errorInfo = [NSString stringWithFormat:@"Bundle 未加载<br/>%@", bundle.bundleURL.absoluteString];
-                                      HDWHLog(@"%@", errorInfo);
-                                      NSString *errorHtmlContent = [NSString stringWithFormat:@"<html><body><p>%@</p></body></html>", errorInfo];
-                                      return [GCDWebServerDataResponse responseWithHTML:errorInfo];
-                                  }
+                                  // if (!bundle.isLoaded) {
+                                  // NSString *errorInfo = [NSString stringWithFormat:@"Bundle 未加载<br/>%@", bundle.bundleURL.absoluteString];
+                                  // HDWHLog(@"%@", errorInfo);
+                                  // NSString *errorHtmlContent = [NSString stringWithFormat:@"<html><body><p>%@</p></body></html>", errorInfo];
+                                  // return [GCDWebServerDataResponse responseWithHTML:errorInfo];
+                                  // }
                                   NSString *filePath = request.URL.path;
 
                                   if ([filePath isEqualToString:@"/"]) {
@@ -262,12 +260,10 @@ CGFloat kDebugWinInitHeight = 46.f;
                                       return [GCDWebServerDataResponse responseWithData:contentData contentType:contentType];
                                   }
                                   return [GCDWebServerDataResponse responseWithHTML:@"<html><body><p>Error </p></body></html>"];
-
                               }];
     [_webServer addDefaultHandlerForMethod:@"POST"
                               requestClass:[GCDWebServerURLEncodedFormRequest class]
                               processBlock:^GCDWebServerResponse *(GCDWebServerURLEncodedFormRequest *request) {
-
                                   NSURL *url = request.URL;
                                   NSDictionary __block *result = @{};
                                   typeof(weakSelf) __strong strongSelf = weakSelf;
@@ -275,18 +271,17 @@ CGFloat kDebugWinInitHeight = 46.f;
                                       dispatch_sync(strongSelf->_logQueue, ^{
                                           NSMutableArray *logStrs = [NSMutableArray arrayWithCapacity:10];
                                           [strongSelf->_eventLogs enumerateObjectsUsingBlock:^(id _Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
-
                                               NSError *error;
                                               NSData *jsonData = [NSJSONSerialization dataWithJSONObject:obj options:NSJSONWritingPrettyPrinted error:&error];
 
                                               if (!jsonData) {
-                                                  NSLog(@"%s: error: %@", __func__, error.localizedDescription);
+                                                  HDWHLog(@"%s: error: %@", __func__, error.localizedDescription);
                                               } else {
                                                   [logStrs addObject:[[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding]];
                                               }
                                           }];
-                                          result = @{ @"count": @(strongSelf->_eventLogs.count),
-                                                      @"logs": logStrs };
+                                          result = @{@"count": @(strongSelf->_eventLogs.count),
+                                                     @"logs": logStrs};
 
                                           [strongSelf->_eventLogs removeAllObjects];
                                       });
@@ -313,21 +308,19 @@ CGFloat kDebugWinInitHeight = 46.f;
                                           HDWHLog(@"command.do arguments error");
                                       }
                                   }
-                                  return [GCDWebServerDataResponse responseWithJSONObject:@{ @"code": @"OK",
-                                                                                             @"data": result }];
-
+                                  return [GCDWebServerDataResponse responseWithJSONObject:@{@"code": @"OK",
+                                                                                            @"data": result}];
                               }];
     // Start server on port 8080
     [_webServer startWithPort:12344 bonjourName:@"hite-mac.local"];
     NSURL *_Nullable serverURL = _webServer.serverURL;
-    NSLog(@"Visit %@ in your web browser", serverURL);
+    HDWHLog(@"Visit %@ in your web browser", serverURL);
 
     if (kGCDWebServer_logging_enabled) {
         if (_logFile_io == nil) {
-            NSString *docsdir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
-            NSString *logFile = [docsdir stringByAppendingPathComponent:GCDWebServer_accessLogFileName];
 
-            if ([[NSFileManager defaultManager] fileExistsAtPath:logFile]) {
+            NSString *logFile = [[DocumentsPath stringByAppendingPathComponent:kWebViewHostDBDir] stringByAppendingPathComponent:GCDWebServer_accessLogFileName];
+            if ([HDFileUtil isFileExistedFilePath:logFile]) {
                 // 同时设置读取流对象
                 dispatch_queue_t dq = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
 
@@ -338,16 +331,16 @@ CGFloat kDebugWinInitHeight = 46.f;
                                                            dq, ^(int error) {
                                                                // Cleanup code for normal channel operation.
                                                                // Assumes that dispatch_io_close was called elsewhere.
-                                                               NSLog(@"I am ok ");
+                                                               HDWHLog(@"I am ok ");
                                                            });
             } else {
-                NSLog(@"日志文件不存在");
+                HDWHLog(@"日志文件不存在");
             }
         }
     }
 }
 
-- (void)parseLog:(void (^)(NSArray<NSString *> *))completion {
+- (void)parHDWH_DEBUG:(void (^)(NSArray<NSString *> *))completion {
     if (_logFile_io) {
         if (self.isSyncing) {
             return;
@@ -383,23 +376,21 @@ CGFloat kDebugWinInitHeight = 46.f;
                 // clean up
                 //                free(buffer);
             } else if (error != 0) {
-                NSLog(@"出错了");
+                HDWHLog(@"出错了");
             }
-            
+
             self.isSyncing = NO;
         });
     }
 }
 
-- (NSString *)stringDecodeURIComponent:(NSString *)encoded
-{
+- (NSString *)stringDecodeURIComponent:(NSString *)encoded {
     NSString *decoded = [encoded stringByRemovingPercentEncoding];
-    //    NSLog(@"decodedString %@", decoded);
+    // HDWHLog(@"decodedString %@", decoded);
     return decoded;
 }
 
-- (void)stop
-{
+- (void)stop {
     [_webServer stop];
 }
 @end

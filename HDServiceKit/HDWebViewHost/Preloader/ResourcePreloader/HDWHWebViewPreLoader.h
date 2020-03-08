@@ -6,16 +6,16 @@
 //  Copyright © 2019 chaos network technology. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import "HDWebViewHostEnum.h"
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 // 表示目前本地的 .json 文件的版本。如果服务器较旧则不返回新配置
 static const int kWHPreloadResourceVersion = 1;
-extern NSString * const kPreloadResourceConfCacheKey;
+extern NSString *const kPreloadResourceConfCacheKey;
 
-typedef NSDictionary *_Nonnull(^HDWHPreloadFetchConfigHandler)(int version);
+typedef NSDictionary *_Nonnull (^HDWHPreloadFetchConfigHandler)(int version);
 
 @interface HDWHWebViewPreLoader : NSObject
 
@@ -55,7 +55,7 @@ typedef NSDictionary *_Nonnull(^HDWHPreloadFetchConfigHandler)(int version);
  如果有以前旧配置，使用旧配置下载。
  */
 - (void)loadResources;
-    
+
 @end
 
 NS_ASSUME_NONNULL_END

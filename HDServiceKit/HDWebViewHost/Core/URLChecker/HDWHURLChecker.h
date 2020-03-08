@@ -32,5 +32,4 @@ typedef NS_ENUM(NSUInteger, HDWHAuthorizationType) {
  */
 - (BOOL)checkURL:(NSURL *)url forAuthorizationType:(HDWHAuthorizationType)authType;
 
-
 @end

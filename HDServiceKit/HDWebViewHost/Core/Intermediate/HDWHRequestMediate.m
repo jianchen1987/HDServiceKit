@@ -7,10 +7,10 @@
 //
 
 #import "HDWHRequestMediate.h"
-#import "HDWebViewHostProtocol.h"
-//#import "HTMLParser.h"
 #import "HDWHUtil.h"
 #import "HDWebViewHostEnum.h"
+#import "HDWebViewHostProtocol.h"
+#import "HTMLParser.h"
 
 static NSString *kFilePrefix = @"file://";
 @implementation HDWHRequestMediate
@@ -25,15 +25,6 @@ static NSString *kFilePrefix = @"file://";
     }
 }
 
-+ (int)_above_iOS11_interMediateFile:(NSString *)fileName inDirectory:(NSURL *)directory output:(NSString **)output {
-    return 0;
-}
-
-+ (int)_below_iOS11_interMediateFile:(NSString *)fileName inDirectory:(NSURL *)directory output:(NSString **)output {
-    return 0;
-}
-
-/*
 + (int)_above_iOS11_interMediateFile:(NSString *)fileName inDirectory:(NSURL *)directory output:(NSString **)output {
     int ext = 0;
     // 实现方式是；将 js，css，图片全部都按照自定义 WKURLSchemeTask 来处理，好处是可以级联处理
@@ -50,7 +41,7 @@ static NSString *kFilePrefix = @"file://";
     HTMLParser *parser = [[HTMLParser alloc] initWithString:htmlContent error:&error];
 
     if (error) {
-        NSLog(@"Error: %@", error);
+        HDWHLog(@"Error: %@", error);
         return -1;
     }
 
@@ -154,7 +145,7 @@ static NSString *kFilePrefix = @"file://";
     HTMLParser *parser = [[HTMLParser alloc] initWithString:htmlContent error:&error];
 
     if (error) {
-        NSLog(@"Error: %@", error);
+        HDWHLog(@"Error: %@", error);
         return -1;
     }
 
@@ -240,7 +231,7 @@ static NSString *kFilePrefix = @"file://";
         }
     }
     // 遍历 replacements，执行替换动作
-    [replacements enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *obj, BOOL * _Nonnull stop) {
+    [replacements enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *obj, BOOL *_Nonnull stop) {
         if (![htmlContent containsString:key]) {
             // 如果遇到对写 htmlContent 不和规范，如在末位加 /,<link href="//www.cnbeta.com/css/style.css" rel="stylesheet"/>
             // 这样的模式，需要把 key 处理下，加上 / 符号。然后再替换
@@ -250,7 +241,7 @@ static NSString *kFilePrefix = @"file://";
     }];
     //
     *output = htmlContent;
-    return err == nil? 0: -1;
+    return err == nil ? 0 : -1;
 }
- */
+
 @end

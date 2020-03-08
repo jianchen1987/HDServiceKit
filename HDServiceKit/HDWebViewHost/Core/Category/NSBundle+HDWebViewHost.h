@@ -12,7 +12,13 @@ NS_ASSUME_NONNULL_BEGIN
 @interface NSBundle (HDWebViewHost)
 
 /// HDWebViewHostRemoteDebug 资源包
++ (NSBundle *)hd_WebViewHostCoreResources;
+
+/// HDWebViewHostRemoteDebugResources 资源包
 + (NSBundle *)hd_WebViewHostRemoteDebugResourcesBundle;
+
+/// HDWebViewHostPreloaderResources 资源包
++ (NSBundle *)hd_WebViewHostPreloaderResourcesBundle;
 @end
 
 NS_ASSUME_NONNULL_END

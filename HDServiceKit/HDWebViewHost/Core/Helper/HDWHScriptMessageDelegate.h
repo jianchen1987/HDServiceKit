@@ -10,7 +10,7 @@
 
 #import <WebKit/WebKit.h>
 
-@interface HDWHScriptMessageDelegate : NSObject<WKScriptMessageHandler>
+@interface HDWHScriptMessageDelegate : NSObject <WKScriptMessageHandler>
 
 - (instancetype)initWithDelegate:(id<WKScriptMessageHandler>)scriptDelegate;
 

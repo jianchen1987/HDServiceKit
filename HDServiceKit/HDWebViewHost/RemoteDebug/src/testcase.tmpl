@@ -92,10 +92,10 @@
             <legend>测试webview浏览器</legend>
             <ol>
                 <li class="f-err">
-                    <input type="text" id="url" style="width:100%;" name="url" value="http://html5test.com" />
+                    <input type="text" id="url" style="width:100%;" name="url" value="https://html5test.com" />
                     <br />
-                    <input type="button" id="testURL" name="go" value="Gooo">
-                    <span>使用webview页面，加载以上链接</span>
+                    <input type="button" id="testURL" name="go" value="打开">
+                    <span>使用 webview 页面，加载以上链接</span>
                 </li>
                 <li>
                     <label><input type="checkbox" checked="true" value="1" id="autoTestBool">关闭自动化测试，选中表示关闭。</label>
@@ -121,23 +121,24 @@
         testURL.onclick = function () {
             window.location.href = document.getElementById('url').value;
         }
+        
         // 一开始就设置右侧导航文案，为 UI 自动化加一个把手
-        document.addEventListener('NEJsbridgeReady', function () {
-            NEJsbridge.call("setRightText", "{\"text\": \"测试下一步接口\"}")
-        }, false);
-
+        window.webViewHost.on('onready', function () {
+            window.webViewHost.invoke("setNavRight", "{\"text\": \"测试下一步接口\"}")
+        });
+        
         var idx = 1;
-        window.onRightClick = function () {
-            // 是否有有效返回值，作为是否需要 UITest 来检查；
-            // 具体的逻辑是这样的，如果返回了为空字符串，则弹出 alert 弹出，让 XCtest 去抓确认是正确的表现。
-            var func = window['f_' + idx++];
-            if (typeof func == 'function') {
-                func()
-            } else {
-                // 已经没用测试用例了，让 XCTest 来获知结束。
-                window.alert('finish')
-            }
-        }
+        window.webViewHost.on('navigator.rightbar.click', function () {
+           // 是否有有效返回值，作为是否需要 UITest 来检查；
+           // 具体的逻辑是这样的，如果返回了为空字符串，则弹出 alert 弹出，让 XCtest 去抓确认是正确的表现。
+           var func = window['f_' + idx++];
+           if (typeof func == 'function') {
+               func();
+           } else {
+               // 已经没用测试用例了，让 XCTest 来获知结束。
+               window.alert('finish')
+           }
+       });
     </script>
 </body>
 </html>
