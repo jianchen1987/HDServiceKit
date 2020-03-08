@@ -7,7 +7,7 @@
 //
 
 #import "HDViewController.h"
-#import <HDServiceKit/HDServiceKit.h>
+#import <HDServiceKit/HDWebViewHost.h>
 
 @interface HDViewController ()
 
@@ -17,5 +17,17 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.view.backgroundColor = UIColor.whiteColor;
+
+    [HDWHDebugServerManager.sharedInstance showDebugWindow];
+    [HDWHDebugServerManager.sharedInstance start];
+}
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    NSString *url = @"https://www.baidu.com";
+    HDWebViewHostViewController *vc = [[HDWebViewHostViewController alloc] init];
+    vc.url = url;
+    [self.navigationController pushViewController:vc animated:true];
 }
 @end

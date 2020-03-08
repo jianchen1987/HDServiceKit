@@ -40,4 +40,34 @@ Pod::Spec.new do |s|
     ss.source_files = 'HDServiceKit/FileOperation'
   end
 
+  s.subspec 'HDReachability' do |ss|
+    ss.source_files = 'HDServiceKit/HDReachability'
+  end
+
+  s.subspec 'GCDWebServer' do |ss|
+    ss.source_files = 'HDServiceKit/GCDWebServer', 'HDServiceKit/GCDWebServer/**/*'
+  end
+
+  s.subspec 'HDWebViewHost' do |ss|
+
+    ss.subspec 'Core' do |ss|
+      ss.libraries = 'xml2'
+      ss.source_files = 'HDServiceKit/HDWebViewHost/Core', 'HDServiceKit/HDWebViewHost/Core/**/*.{h,m}'
+      ss.dependency  'HDUIKit/MainFrame'
+      ss.dependency  'HDServiceKit/HDReachability'
+    end
+
+    ss.subspec 'RemoteDebug' do |ss|
+      ss.resource_bundles = {'HDWebViewHostRemoteDebugResources' => ['HDServiceKit/HDWebViewHost/RemoteDebug/src']}
+      ss.source_files = 'HDServiceKit/HDWebViewHost/RemoteDebug'
+      ss.dependency "HDServiceKit/GCDWebServer"
+    end
+
+    ss.subspec 'Preloader' do |ss|
+      ss.resource_bundles = {'HDWebViewHostPreloaderResources' => ['HDServiceKit/HDWebViewHost/Preloader/ResourcePreloader/Resources/*.*']}
+      ss.source_files = 'HDServiceKit/HDWebViewHost/Preloader', 'HDServiceKit/HDWebViewHost/Preloader/**/*'
+    end
+
+  end
+
 end
