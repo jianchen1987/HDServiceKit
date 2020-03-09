@@ -33,7 +33,11 @@ wh_doc_end;
     NSString *urlTxt = [paramDict objectForKey:@"url"];
     BOOL forceOpenInSafari = [[paramDict objectForKey:@"openInSafari"] boolValue];
     if (forceOpenInSafari) {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlTxt] options:@{} completionHandler:nil];
+        if (@available(iOS 10.0, *)) {
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlTxt] options:@{} completionHandler:nil];
+        } else {
+            [[UIApplication sharedApplication]  openURL:[NSURL URLWithString:urlTxt]];
+        }
     } else {
         SFSafariViewController *safari = [[SFSafariViewController alloc] initWithURL:[NSURL URLWithString:urlTxt]];
         [self.navigationController presentViewController:safari animated:YES completion:nil];

@@ -8,6 +8,7 @@
 
 #import "HDWHBuiltInResponse.h"
 #import "HDWebViewHostViewController.h"
+#import <HDUIKit/HDTips.h>
 
 @implementation HDWHBuiltInResponse
 
@@ -31,7 +32,11 @@ wh_doc_end;
 // clang-format on
 - (void)showLoading:(NSDictionary *)paramDict {
     NSString *tip = [paramDict objectForKey:@"text"];
-    HDWHLog(@"Info: 正在显示 Loading 提示: %@，请使用本 App 的的 HUD 接口实现，以保持一致体验", tip);
+    if (tip && [tip isKindOfClass:NSString.class] && tip.length > 0) {
+        [HDTips showLoading:tip inView:self.webViewHost.webView];
+    } else {
+        [HDTips showLoadingInView:self.webViewHost.webView];
+    }
 }
 
 // clang-format off
@@ -41,7 +46,7 @@ wh_doc_code_expect("在有 loading 动画的情况下，调用此接口，会隐
 wh_doc_end;
 // clang-format on
 - (void)hideLoading {
-    HDWHLog(@"Info: 关闭显示 HUD ，请使用本 App 的的 HUD 接口实现，以保持一致体验");
+    [HDTips hideAllTipsInView:self.webViewHost.webView];
 }
 
 // clang-format off
@@ -53,11 +58,13 @@ wh_doc_end;
 // clang-format on
 - (void)toast:(NSDictionary *)paramDict {
     CGFloat delay = [[paramDict objectForKey:@"delay"] floatValue];
-    [self showTextTip:[paramDict objectForKey:@"text"] delay:delay];
+    NSString *text = [paramDict objectForKey:@"text"];
+    [self showTextTip:text delay:delay];
 }
 
-- (void)showTextTip:(NSString *)tip delay:(CGFloat)delay {
-    HDWHLog(@"Info: 正在显示 Toast 提示: %@, %f秒消失，请使用本 App 的的 HUD 接口实现，以保持一致体验", tip, delay);
+- (void)showTextTip:(NSString *)text delay:(CGFloat)delay {
+    HDTips *tip = [HDTips showWithText:text inView:self.webViewHost.webView hideAfterDelay:delay];
+    tip.toastPosition = HDToastViewPositionBottom;
 }
 
 // clang-format off
