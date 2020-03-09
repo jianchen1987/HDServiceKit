@@ -10,21 +10,14 @@
 #import "HDWebViewHostViewController+Utils.h"
 #import "NSBundle+HDWebViewHost.h"
 
-@interface _HDWebViewHostCustomJavscript : NSObject
-/// 脚本
-@property (nonatomic, copy) NSString *script;
-/// 注入时机
-@property (nonatomic, assign) WKUserScriptInjectionTime injectionTime;
-/// key
-@property (nonatomic, copy) NSString *key;
-
-+ (instancetype)customJavscriptWithScript:(NSString *)script injectionTime:(WKUserScriptInjectionTime)injectionTime key:(NSString *)key;
-@end
-
-@implementation _HDWebViewHostCustomJavscript
-+ (instancetype)customJavscriptWithScript:(NSString *)script injectionTime:(WKUserScriptInjectionTime)injectionTime key:(NSString *)key {
-    _HDWebViewHostCustomJavscript *obj = [_HDWebViewHostCustomJavscript new];
-    obj.script = script;
+@implementation HDWebViewHostCustomJavscript
++ (instancetype)customJavscriptWithScript:(id)script injectionTime:(WKUserScriptInjectionTime)injectionTime key:(NSString *)key {
+    HDWebViewHostCustomJavscript *obj = [HDWebViewHostCustomJavscript new];
+    if ([script respondsToSelector:@selector(copy)]) {
+        obj.script = [script copy];
+    } else {
+        obj.script = script;
+    }
     obj.injectionTime = injectionTime;
     obj.key = key;
     return obj;
@@ -108,7 +101,7 @@
     }
 }
 
-static NSMutableArray<_HDWebViewHostCustomJavscript *> *kWebViewHostCustomJavscripts = nil;
+static NSMutableArray<HDWebViewHostCustomJavscript *> *kWebViewHostCustomJavscripts = nil;
 + (void)_addJavaScript:(NSString *)script when:(WKUserScriptInjectionTime)injectTime forKey:(NSString *)key {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -116,14 +109,14 @@ static NSMutableArray<_HDWebViewHostCustomJavscript *> *kWebViewHostCustomJavscr
     });
 
     @synchronized(kWebViewHostCustomJavscripts) {
-        _HDWebViewHostCustomJavscript *obj = [_HDWebViewHostCustomJavscript customJavscriptWithScript:script injectionTime:injectTime key:key];
+        HDWebViewHostCustomJavscript *obj = [HDWebViewHostCustomJavscript customJavscriptWithScript:script injectionTime:injectTime key:key];
         [kWebViewHostCustomJavscripts addObject:obj];
     }
 }
 
 + (void)removeJavaScriptForKey:(NSString *)key {
     @synchronized(kWebViewHostCustomJavscripts) {
-        [kWebViewHostCustomJavscripts enumerateObjectsUsingBlock:^(_HDWebViewHostCustomJavscript *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
+        [kWebViewHostCustomJavscripts enumerateObjectsUsingBlock:^(HDWebViewHostCustomJavscript *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
             if (obj.key) {
                 [kWebViewHostCustomJavscripts removeObject:obj];
                 *stop = YES;
@@ -148,7 +141,7 @@ static NSString *kWebViewHostSource = nil;
         NSString *evalJS = [NSString stringWithContentsOfURL:jsLibURL encoding:NSUTF8StringEncoding error:nil];
         [self.class _addJavaScript:evalJS when:WKUserScriptInjectionTimeAtDocumentEnd forKey:@"eval.js"];
     }
-    [kWebViewHostCustomJavscripts enumerateObjectsUsingBlock:^(_HDWebViewHostCustomJavscript *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
+    [kWebViewHostCustomJavscripts enumerateObjectsUsingBlock:^(HDWebViewHostCustomJavscript *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
         WKUserScript *cookieScript = [[WKUserScript alloc] initWithSource:obj.script injectionTime:obj.injectionTime forMainFrameOnly:YES];
         [userContentController addUserScript:cookieScript];
     }];

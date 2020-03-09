@@ -21,7 +21,7 @@
     self.view.backgroundColor = UIColor.whiteColor;
 
     [HDWHDebugServerManager.sharedInstance showDebugWindow];
-    [HDWHDebugServerManager.sharedInstance start];
+    [HDWHDebugServerManager.sharedInstance startWithPort:12333 bonjourName:@"12333.local"];
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {

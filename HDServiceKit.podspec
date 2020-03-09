@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "HDServiceKit"
-  s.version          = "0.3.0"
+  s.version          = "0.3.1"
   s.summary          = "混沌 iOS 服务"
   s.description      = <<-DESC
                        HDServiceKit 是一系列服务以及能力，用于快速在其他项目使用或者第三方接入
@@ -19,6 +19,7 @@ Pod::Spec.new do |s|
   s.source_files     = 'HDServiceKit/HDServiceKit.h'
 
   s.subspec 'HDCache' do |ss|
+    ss.libraries = 'pthread'
     ss.source_files = 'HDServiceKit/HDCache', 'HDServiceKit/HDCache/*/*'
     ss.dependency 'YYModel', '~> 1.0.4'
     ss.dependency 'UICKeyChainStore', '~> 2.1.2'
@@ -44,12 +45,18 @@ Pod::Spec.new do |s|
     ss.source_files = 'HDServiceKit/HDReachability'
   end
 
+  s.subspec 'HDPodAsset' do |ss|
+    ss.source_files = 'HDServiceKit/HDPodAsset'
+  end
+
+
   s.subspec 'HDWebViewHost' do |ss|
     ss.dependency 'HDServiceKit/FileOperation'
 
     ss.subspec 'Core' do |ss|
-      ss.libraries = 'xml2'
-      ss.xcconfig = { "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2" }
+      ss.libraries = 'xml2', 'z'
+      ss.frameworks = 'SafariServices', 'WebKit', 'MobileCoreServices'
+      ss.xcconfig = { "HEADER_SEARCH_PATHS" => ["$(SDKROOT)/usr/include/libxml2", "$(SDKROOT)/usr/include/libz"] }
       ss.source_files = 'HDServiceKit/HDWebViewHost/Core', 'HDServiceKit/HDWebViewHost/Core/**/*.{h,m}'
       ss.resource_bundles = {'HDWebViewHostCoreResources' => ['HDServiceKit/HDWebViewHost/Core/Resources/*.*']}
       ss.dependency  'HDUIKit/MainFrame'
@@ -60,6 +67,7 @@ Pod::Spec.new do |s|
       ss.source_files = 'HDServiceKit/HDWebViewHost/RemoteDebug', 'HDServiceKit/HDWebViewHost/RemoteDebug/GCDWebServer/**/*'
       ss.resource_bundles = {'HDWebViewHostRemoteDebugResources' => ['HDServiceKit/HDWebViewHost/RemoteDebug/src']}
       ss.dependency  'HDServiceKit/HDWebViewHost/Core'
+      ss.dependency  'HDServiceKit/HDPodAsset'
     end
 
     ss.subspec 'Preloader' do |ss|

@@ -66,15 +66,15 @@ static off_t _log_offset = 0;
 
 - (void)requestEventOccur:(NSNotification *)notification {
     dispatch_async(_logQueue, ^{
-        [self->_eventLogs addObject:@{@"type": @".invoke",
-                                      @"value": notification.object}];
+        [self->_eventLogs addObject:@{ @"type": @".invoke",
+                                       @"value": notification.object }];
     });
 }
 
 - (void)responseEventOccur:(NSNotification *)notification {
     dispatch_async(_logQueue, ^{
-        [self->_eventLogs addObject:@{@"type": @".on",
-                                      @"value": notification.object}];
+        [self->_eventLogs addObject:@{ @"type": @".on",
+                                       @"value": notification.object }];
     });
 }
 
@@ -111,9 +111,9 @@ static off_t _log_offset = 0;
 
 - (UIViewController *)getVisibleViewControllerFrom:(UIViewController *)vc {
     if ([vc isKindOfClass:[UINavigationController class]]) {
-        return [self getVisibleViewControllerFrom:[((UINavigationController *)vc) visibleViewController]];
+        return [self getVisibleViewControllerFrom:[((UINavigationController *)vc)visibleViewController]];
     } else if ([vc isKindOfClass:[UITabBarController class]]) {
-        return [self getVisibleViewControllerFrom:[((UITabBarController *)vc) selectedViewController]];
+        return [self getVisibleViewControllerFrom:[((UITabBarController *)vc)selectedViewController]];
     } else {
         if (vc.presentedViewController) {
             return [self getVisibleViewControllerFrom:vc.presentedViewController];
@@ -140,7 +140,8 @@ CGFloat kDebugWinInitHeight = 46.f;
     self.debugWindow = window;
     // 增加显示隐藏按钮， 切换按钮，展开时，隐藏；收起时显示
     UIButton *toggle = [UIButton new];
-    UIImage *ico = [UIImage imageNamed:@"logo" inBundle:[NSBundle hd_WebViewHostRemoteDebugResourcesBundle] compatibleWithTraitCollection:nil];
+    NSURL *imageURL = [[NSBundle hd_WebViewHostRemoteDebugResourcesBundle] URLForResource:@"src/logo" withExtension:@"png"];
+    UIImage *ico = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:imageURL]];
     [toggle setImage:ico forState:UIControlStateNormal];
     [toggle addTarget:self action:@selector(toggleWin:) forControlEvents:UIControlEventTouchUpInside];
     [window addSubview:toggle];
@@ -211,9 +212,13 @@ CGFloat kDebugWinInitHeight = 46.f;
 #pragma mark - public
 
 - (void)start {
+    [self startWithPort:12344 bonjourName:@"hite-mac.local"];
+}
+
+- (void)startWithPort:(NSUInteger)port bonjourName:(NSString *)name {
     // Create server
     _webServer = [[GCDWebServer alloc] initWithLogServer:kGCDWebServer_logging_enabled];
-     // kGCDWebServerLoggingLevel_Info
+    // kGCDWebServerLoggingLevel_Info
     [GCDWebServer setLogLevel:2];
 
     HDWHLog(@"Document = %@", [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject]);
@@ -251,18 +256,20 @@ CGFloat kDebugWinInitHeight = 46.f;
                                       contentType = @"image/jpeg";
                                       dataType = @"data";
                                   }
-                                  if (![filePath isEqualToString:@"server.html"] && [filePath hasPrefix:@"/"]) {
-                                      filePath = [filePath substringFromIndex:1];
-                                  }
-                                  NSURL *htmlURL = [NSURL fileURLWithPath:[bundle pathForResource:filePath ofType:nil]];
 
-                                  //                                  NSURL *htmlURL = [[bundle bundleURL] URLByAppendingPathComponent:filePath];
-                                  NSData *contentData = [NSData dataWithContentsOfURL:htmlURL];
+                                  NSString *path = [bundle pathForResource:[NSString stringWithFormat:@"src/%@", filePath] ofType:nil];
+        
+        NSLog(@"-----------");
+        NSLog(@"----------path : %@-", path);
+        NSLog(@"-----------");
+        
+                                  NSData *contentData = [NSData dataWithContentsOfFile:path];
                                   if (contentData.length > 0) {
                                       return [GCDWebServerDataResponse responseWithData:contentData contentType:contentType];
                                   }
                                   return [GCDWebServerDataResponse responseWithHTML:@"<html><body><p>Error </p></body></html>"];
                               }];
+
     [_webServer addDefaultHandlerForMethod:@"POST"
                               requestClass:[GCDWebServerURLEncodedFormRequest class]
                               processBlock:^GCDWebServerResponse *(GCDWebServerURLEncodedFormRequest *request) {
@@ -282,8 +289,8 @@ CGFloat kDebugWinInitHeight = 46.f;
                                                   [logStrs addObject:[[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding]];
                                               }
                                           }];
-                                          result = @{@"count": @(strongSelf->_eventLogs.count),
-                                                     @"logs": logStrs};
+                                          result = @{ @"count": @(strongSelf->_eventLogs.count),
+                                                      @"logs": logStrs };
 
                                           [strongSelf->_eventLogs removeAllObjects];
                                       });
@@ -310,11 +317,10 @@ CGFloat kDebugWinInitHeight = 46.f;
                                           HDWHLog(@"command.do arguments error");
                                       }
                                   }
-                                  return [GCDWebServerDataResponse responseWithJSONObject:@{@"code": @"OK",
-                                                                                            @"data": result}];
+                                  return [GCDWebServerDataResponse responseWithJSONObject:@{ @"code": @"OK",
+                                                                                             @"data": result }];
                               }];
-    // Start server on port 8080
-    [_webServer startWithPort:12344 bonjourName:@"hite-mac.local"];
+    [_webServer startWithPort:port bonjourName:name];
     NSURL *_Nullable serverURL = _webServer.serverURL;
     HDWHLog(@"Visit %@ in your web browser", serverURL);
 

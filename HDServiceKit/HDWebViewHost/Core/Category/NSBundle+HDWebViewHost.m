@@ -26,7 +26,6 @@
     if (!resourceBundle) {
         NSBundle *mainBundle = [NSBundle mainBundle];
         NSString *resourcePath = [mainBundle pathForResource:@"Frameworks/HDServiceKit.framework/HDWebViewHostRemoteDebugResources" ofType:@"bundle"];
-        resourcePath = [resourcePath stringByAppendingPathComponent:@"src"];
         if (!resourcePath) {
             resourcePath = [mainBundle pathForResource:@"HDWebViewHostRemoteDebugResources" ofType:@"bundle"];
         }

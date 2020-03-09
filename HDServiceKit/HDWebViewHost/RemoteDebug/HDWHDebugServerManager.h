@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)start;
 
+- (void)startWithPort:(NSUInteger)port bonjourName:(NSString *)name;
+
 - (void)stop;
 
 - (void)showDebugWindow;

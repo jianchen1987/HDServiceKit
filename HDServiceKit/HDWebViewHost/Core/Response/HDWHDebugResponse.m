@@ -20,49 +20,39 @@ static NSString *kLastWeinreScript = nil;
 + (void)setupDebugger {
 #ifdef HDWH_DEBUG
     NSBundle *bundle = [NSBundle hd_WebViewHostRemoteDebugResourcesBundle];
-    NSMutableArray *scripts = [NSMutableArray arrayWithObjects:
-                                                  @{  // 记录 window.DocumentEnd 的时间
-                                                      @"code": @"window.DocumentEnd =(new Date()).getTime()",
-                                                      @"when": @(WKUserScriptInjectionTimeAtDocumentEnd),
-                                                      @"key": @"documentEndTime.js"
-                                                  },
-                                                  @{  // 记录 DocumentStart 的时间
-                                                      @"code": @"window.DocumentStart = (new Date()).getTime()",
-                                                      @"when": @(WKUserScriptInjectionTimeAtDocumentStart),
-                                                      @"key": @"documentStartTime.js"
-                                                  },
-                                                  @{  // 重写 console.log 方法
-                                                      @"code": @"window.__wh_consolelog = console.log; console.log = function(_msg){window.__wh_consolelog(_msg);webViewHost.invoke('console.log', {'text':_msg})}",
-                                                      @"when": @(WKUserScriptInjectionTimeAtDocumentStart),
-                                                      @"key": @"console.log.js"
-                                                  },
-                                                  @{  // 记录 readystatechange 的时间
-                                                      @"code": @"document.addEventListener('readystatechange', function (event) {window['readystate_' + document.readyState] = (new Date()).getTime();});",
-                                                      @"when": @(WKUserScriptInjectionTimeAtDocumentStart),
-                                                      @"key": @"readystatechange.js"
-                                                  },
-                                                  nil];
 
-    NSURL *profile = [[bundle bundleURL] URLByAppendingPathComponent:@"profile/profiler.js"];
+    NSMutableArray<HDWebViewHostCustomJavscript *> *scripts = [NSMutableArray array];
+    HDWebViewHostCustomJavscript *script;
+
+    // 记录 window.DocumentEnd 的时间
+    script = [HDWebViewHostCustomJavscript customJavscriptWithScript:@"window.DocumentEnd =(new Date()).getTime()" injectionTime:WKUserScriptInjectionTimeAtDocumentEnd key:@"documentEndTime.js"];
+    [scripts addObject:script];
+
+    // 记录 DocumentStart 的时间
+    script = [HDWebViewHostCustomJavscript customJavscriptWithScript:@"window.DocumentStart = (new Date()).getTime()" injectionTime:WKUserScriptInjectionTimeAtDocumentStart key:@"documentStartTime.js"];
+    [scripts addObject:script];
+
+    // 重写 console.log 方法
+    script = [HDWebViewHostCustomJavscript customJavscriptWithScript:@"window.__wh_consolelog = console.log; console.log = function(_msg){window.__wh_consolelog(_msg);webViewHost.invoke('console.log', {'text':_msg})}" injectionTime:WKUserScriptInjectionTimeAtDocumentStart key:@"console.log.js"];
+    [scripts addObject:script];
+
+    // 记录 readystatechange 的时间
+    script = [HDWebViewHostCustomJavscript customJavscriptWithScript:@"document.addEventListener('readystatechange', function (event) {window['readystate_' + document.readyState] = (new Date()).getTime();});" injectionTime:WKUserScriptInjectionTimeAtDocumentStart key:@"readystatechange.js"];
+    [scripts addObject:script];
+
+    // 性能测试
+    NSURL *profile = [[bundle bundleURL] URLByAppendingPathComponent:@"src/profile/profiler.js"];
     NSString *profileTxt = [NSString stringWithContentsOfURL:profile encoding:NSUTF8StringEncoding error:nil];
-    // profile
-    [scripts addObject:@{
-        @"code": profileTxt,
-        @"when": @(WKUserScriptInjectionTimeAtDocumentEnd),
-        @"key": @"profile.js"
-    }];
+    script = [HDWebViewHostCustomJavscript customJavscriptWithScript:profileTxt injectionTime:WKUserScriptInjectionTimeAtDocumentEnd key:@"profile.js"];
+    [scripts addObject:script];
 
-    NSURL *timing = [[bundle bundleURL] URLByAppendingPathComponent:@"profile/pageTiming.js"];
+    NSURL *timing = [[bundle bundleURL] URLByAppendingPathComponent:@"src/profile/pageTiming.js"];
     NSString *timingTxt = [NSString stringWithContentsOfURL:timing encoding:NSUTF8StringEncoding error:nil];
-    // timing
-    [scripts addObject:@{
-        @"code": timingTxt,
-        @"when": @(WKUserScriptInjectionTimeAtDocumentEnd),
-        @"key": @"timing.js"
-    }];
+    script = [HDWebViewHostCustomJavscript customJavscriptWithScript:timingTxt injectionTime:WKUserScriptInjectionTimeAtDocumentEnd key:@"timing.js"];
+    [scripts addObject:script];
 
-    [scripts enumerateObjectsUsingBlock:^(NSDictionary *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
-        [HDWebViewHostViewController prepareJavaScript:[obj objectForKey:@"code"] when:[[obj objectForKey:@"when"] integerValue] key:[obj objectForKey:@"key"]];
+    [scripts enumerateObjectsUsingBlock:^(HDWebViewHostCustomJavscript *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
+        [HDWebViewHostViewController prepareJavaScript:obj.script when:obj.injectionTime key:obj.key];
     }];
 #endif
 }
@@ -109,7 +99,7 @@ static NSString *kLastWeinreScript = nil;
             } else {
                 err = [NSString stringWithFormat:@"The method (%@) doesn't exsit!", signature];
             }
-            [self fire:funcName param:@{@"error": err}];
+            [self fire:funcName param:@{ @"error": err }];
         }
     } else if ([@"testcase" isEqualToString:action]) {
         // 检查是否有文件生成，如果没有则遍历
@@ -140,14 +130,18 @@ static NSString *kLastWeinreScript = nil;
         }
     } else if ([@"clearCookie" isEqualToString:action]) {
         // 清理 WKWebview 的 Cookie，和 NSHTTPCookieStorage 是独立的
-        WKHTTPCookieStore *_Nonnull cookieStorage = [WKWebsiteDataStore defaultDataStore].httpCookieStore;
-        [cookieStorage getAllCookies:^(NSArray<NSHTTPCookie *> *_Nonnull cookies) {
-            [cookies enumerateObjectsUsingBlock:^(NSHTTPCookie *_Nonnull cookie, NSUInteger idx, BOOL *_Nonnull stop) {
-                [cookieStorage deleteCookie:cookie completionHandler:nil];
-            }];
+        if (@available(iOS 11.0, *)) {
+            WKHTTPCookieStore *_Nonnull cookieStorage = [WKWebsiteDataStore defaultDataStore].httpCookieStore;
+            [cookieStorage getAllCookies:^(NSArray<NSHTTPCookie *> *_Nonnull cookies) {
+                [cookies enumerateObjectsUsingBlock:^(NSHTTPCookie *_Nonnull cookie, NSUInteger idx, BOOL *_Nonnull stop) {
+                    [cookieStorage deleteCookie:cookie completionHandler:nil];
+                }];
 
-            [self.webViewHost fire:@"clearCookieDone" param:@{@"count": @(cookies.count)}];
-        }];
+                [self.webViewHost fire:@"clearCookieDone" param:@{ @"count": @(cookies.count) }];
+            }];
+        } else {
+            // Fallback on earlier versions
+        }
     } else if ([@"console.log" isEqualToString:action]) {
         // 正常的日志输出时，不需要做特殊处理。
         // 因为在 invoke 的时候，已经向 debugger Server 发送过日志数据，已经打印过了
@@ -179,9 +173,10 @@ static NSString *kLastWeinreScript = nil;
     if (kLastWeinreScript.length == 0) {
         return;
     }
+
     [HDWebViewHostViewController prepareJavaScript:[NSURL URLWithString:kLastWeinreScript] when:WKUserScriptInjectionTimeAtDocumentEnd key:@"weinre.js"];
-    [self.webViewHost.webView reload];
-//    [self.webViewHost fire:@"weinre.enable" param:@{@"jsURL": kLastWeinreScript}];
+
+    [self.webViewHost fire:@"weinre.enable" param:@{ @"jsURL": kLastWeinreScript }];
 }
 
 - (void)disableWeinreSupport {
@@ -212,8 +207,7 @@ static NSString *kLastWeinreScript = nil;
 - (BOOL)generatorHtml {
 
     NSBundle *bundle = [NSBundle hd_WebViewHostRemoteDebugResourcesBundle];
-
-    NSURL *url = [bundle URLForResource:@"testcase" withExtension:@"tmpl"];
+    NSURL *url = [bundle URLForResource:@"src/testcase" withExtension:@"tmpl"];
     // 获取模板
     NSError *err = nil;
     NSString *template = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&err];
@@ -286,7 +280,7 @@ static NSString *kLastWeinreScript = nil;
         }
 
         NSString *file = [[DocumentsPath stringByAppendingPathComponent:kWebViewHostDBDir] stringByAppendingPathComponent:kWebViewHostTestCaseFileName];
-        [HDFileUtil writeToFile:file contents:template];
+        [HDFileUtil writeToFile:file contents:[template dataUsingEncoding:NSUTF8StringEncoding]];
 
         if (err) {
             HDWHLog(@"解析文件有错误吗，%@", err);

@@ -12,6 +12,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@interface HDWebViewHostCustomJavscript : NSObject
+/// 脚本
+@property (nonatomic, strong) id script;
+/// 注入时机
+@property (nonatomic, assign) WKUserScriptInjectionTime injectionTime;
+/// key
+@property (nonatomic, copy) NSString *key;
+
++ (instancetype)customJavscriptWithScript:(id)script injectionTime:(WKUserScriptInjectionTime)injectionTime key:(NSString *)key;
+@end
+
 @interface HDWebViewHostViewController (Scripts)
 
 /**
