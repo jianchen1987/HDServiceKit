@@ -19,7 +19,7 @@ static NSString *kLastWeinreScript = nil;
 
 + (void)setupDebugger {
 #ifdef HDWH_DEBUG
-    NSBundle *bundle = [NSBundle bundleForClass:HDWebViewHostViewController.class];
+    NSBundle *bundle = [NSBundle hd_WebViewHostRemoteDebugResourcesBundle];
     NSMutableArray *scripts = [NSMutableArray arrayWithObjects:
                                                   @{  // 记录 window.DocumentEnd 的时间
                                                       @"code": @"window.DocumentEnd =(new Date()).getTime()",
@@ -43,7 +43,7 @@ static NSString *kLastWeinreScript = nil;
                                                   },
                                                   nil];
 
-    NSURL *profile = [[bundle bundleURL] URLByAppendingPathComponent:@"/profile/profiler.js"];
+    NSURL *profile = [[bundle bundleURL] URLByAppendingPathComponent:@"profile/profiler.js"];
     NSString *profileTxt = [NSString stringWithContentsOfURL:profile encoding:NSUTF8StringEncoding error:nil];
     // profile
     [scripts addObject:@{
@@ -52,7 +52,7 @@ static NSString *kLastWeinreScript = nil;
         @"key": @"profile.js"
     }];
 
-    NSURL *timing = [[bundle bundleURL] URLByAppendingPathComponent:@"/profile/pageTiming.js"];
+    NSURL *timing = [[bundle bundleURL] URLByAppendingPathComponent:@"profile/pageTiming.js"];
     NSString *timingTxt = [NSString stringWithContentsOfURL:timing encoding:NSUTF8StringEncoding error:nil];
     // timing
     [scripts addObject:@{
@@ -117,7 +117,7 @@ static NSString *kLastWeinreScript = nil;
         if (![HDFileUtil isFileExistedFilePath:file]) {
             [self generatorHtml];
         }
-        [self.webViewHost loadLocalFile:[NSURL fileURLWithPath:file] domain:@"http://you.163.com"];
+        [self.webViewHost loadLocalFile:[NSURL fileURLWithPath:file] domain:@"https://www.chaosource.com"];
         // 支持 或者关闭 weinre 远程调试
     } else if ([@"weinre" isEqualToString:action]) {
         // $ weinre --boundHost 10.242.24.59 --httpPort 9090
@@ -180,7 +180,8 @@ static NSString *kLastWeinreScript = nil;
         return;
     }
     [HDWebViewHostViewController prepareJavaScript:[NSURL URLWithString:kLastWeinreScript] when:WKUserScriptInjectionTimeAtDocumentEnd key:@"weinre.js"];
-    [self.webViewHost fire:@"weinre.enable" param:@{@"jsURL": kLastWeinreScript}];
+    [self.webViewHost.webView reload];
+//    [self.webViewHost fire:@"weinre.enable" param:@{@"jsURL": kLastWeinreScript}];
 }
 
 - (void)disableWeinreSupport {

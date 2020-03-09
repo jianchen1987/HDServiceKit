@@ -54,7 +54,9 @@
         // 删除旧的测试用例文件
 #ifdef HDWH_DEBUG
         NSString *file = [[DocumentsPath stringByAppendingPathComponent:kWebViewHostDBDir] stringByAppendingPathComponent:kWebViewHostTestCaseFileName];
-        [HDFileUtil removeFileOrDirectory:file];
+        if ([HDFileUtil isFileExistedFilePath:file]) {
+            [HDFileUtil removeFileOrDirectory:file];
+        }
 #endif
     });
 
@@ -132,7 +134,6 @@ static pthread_mutex_t lock;
     }
 
     kAllResponseMethods = [NSMutableDictionary dictionaryWithCapacity:10];
-    //
     for (NSInteger i = 0; i < self.customResponseClasses.count; i++) {
         Class responseClass = [self.customResponseClasses objectAtIndex:i];
         NSMutableArray *methods = [NSMutableArray arrayWithCapacity:10];

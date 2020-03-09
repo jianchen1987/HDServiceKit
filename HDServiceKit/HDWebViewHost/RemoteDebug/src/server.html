@@ -42,7 +42,7 @@
                 <p v-else-if="item.type === 'error'" class="m-output-command"> 输入有误，错误: <span class="w-err-code">{{item.message}}</span></p>
                 <div v-else-if="item.type === 'help'" class="m-output-command">
                     <div class='w-example-title'>1. 调用 webViewHost 接口方式：</div>
-                    <div class="w-help-code">window.webViewHost.invoke('startNewPage', {'url': 'https://main.m.taobao.com/', 'title': 'title', 'type': 'push'});</div>
+                    <div class="w-help-code">window.webViewHost.invoke('startNewPage', {'url': 'https://www.chaosource.com/', 'title': 'title', 'type': 'push'});</div>
                     <div class='w-example-title'>2. 查看所有支持的 native 接口，输入如下；</div>
                     <div class="w-help-code">:list</div>
                     <div class='w-example-title'>3. 查看所有支持的 某个具体的接口，:apropos name, 如 `log_` 接口，输入如下；</div>
@@ -120,6 +120,7 @@
     <script type="text/javascript" src="./server.js" charset="utf-8"></script>
     <script type="text/javascript" src="./profile/profiler_for_mac.js" async="true"></script>
     <script type="text/javascript" src="./profile/pageTiming_for_mac.js" async="true"></script>
+    <script type="text/javascript" src="./thirdParty/weinreSupport.js" async="true"></script>
 </body>
 
 </html>

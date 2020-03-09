@@ -60,10 +60,9 @@ static NSString *kWebViewHostInvokeResponseEvent = @"kWebViewHostInvokeResponseE
  */
 @property (nonatomic, strong) NSDictionary *backPageParameter;
 
-// 处理 Response 内部发送的事件，这些事件，除了 h5 关心之外，可能 native 本身也很关心
+/// 处理 Response 内部发送的事件，这些事件，除了 h5 关心之外，可能 native 本身也很关心
 @property (nonatomic, weak) id<HDWebViewHostViewControllerDelegate> webViewHostDelegate;
-//核心的函数分发机制。可以继承，
-
+/// 核心的函数分发机制。可以继承，
 @property (nonatomic, strong, readonly) HDWHSchemeTaskDelegate *taskDelegate;
 
 #pragma mark - 使用缓存渲染界面
@@ -71,7 +70,7 @@ static NSString *kWebViewHostInvokeResponseEvent = @"kWebViewHostInvokeResponseE
  加载本地 html 资源，支持发送 xhr 请求
 
  @param url 打开的文件路径
- @param baseDomain 发送 xhr 请求的主域名地址，如 http://you.163.com
+ @param baseDomain 发送 xhr 请求的主域名地址，如 https://www.chaosource.com
  */
 - (void)loadLocalFile:(NSURL *)url domain:(NSString *)baseDomain;
 
@@ -81,7 +80,7 @@ static NSString *kWebViewHostInvokeResponseEvent = @"kWebViewHostInvokeResponseE
 
  @param fileName 主 HTML 文件的文件名，是个相对路径。 html 文件里应用的内部 js、css 文件都是相对于 directory 参数的
  @param directory 相对路径，包含 HTML，JS，CSS 文件
- @param baseDomain 为了解决相对路径 发送 xhr 请求的主域名地址，如 http://you.163.com
+ @param baseDomain 为了解决相对路径 发送 xhr 请求的主域名地址，如 https://www.chaosource.com
  */
 - (void)loadIndexFile:(NSString *)fileName inDirectory:(NSURL *)directory domain:(NSString *)baseDomain;
 

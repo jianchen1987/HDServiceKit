@@ -13,10 +13,10 @@
 
 + (NSMutableArray<NSString *> *)cookieJavaScriptArray {
     NSMutableArray<NSString *> *cookieStrings = [[NSMutableArray alloc] init];
-    //取出cookie
+    // 取出cookie
     NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
     for (NSHTTPCookie *cookie in cookieStorage.cookies) {
-        //
+
         NSString *excuteJSString = [NSString stringWithFormat:@"%@=%@;", cookie.name, cookie.value];
         if (cookie.domain.length > 0) {
             excuteJSString = [excuteJSString stringByAppendingFormat:@"domain=%@;", cookie.domain];

@@ -86,9 +86,9 @@ CGFloat kDebugHeadeHeight = 46.f;
     HDWHLog(@"Export access file");
     NSString *logFile = [[DocumentsPath stringByAppendingPathComponent:kWebViewHostDBDir] stringByAppendingPathComponent:GCDWebServer_accessLogFileName];
     if ([HDFileUtil isFileExistedFilePath:logFile]) {
-        NSURL *videoURL = [NSURL fileURLWithPath:logFile];
+        NSURL *logoURL = [NSURL fileURLWithPath:logFile];
 
-        UIActivityViewController *activity = [[UIActivityViewController alloc] initWithActivityItems:@[videoURL] applicationActivities:nil];
+        UIActivityViewController *activity = [[UIActivityViewController alloc] initWithActivityItems:@[logoURL] applicationActivities:nil];
         UIPopoverPresentationController *popover = activity.popoverPresentationController;
         if (popover) {
             popover.permittedArrowDirections = UIPopoverArrowDirectionUp;

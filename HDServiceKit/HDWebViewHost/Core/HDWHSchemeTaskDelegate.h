@@ -11,10 +11,12 @@
 
 #import <WebKit/WebKit.h>
 
+API_AVAILABLE(ios(11.0))
 typedef NSData *_Nonnull (^HDWHURLSchemeTaskHandler)(WKWebView *_Nonnull, id<WKURLSchemeTask> _Nonnull, NSString *_Nullable *_Nullable mime);
 
 NS_ASSUME_NONNULL_BEGIN
 
+API_AVAILABLE(ios(11.0))
 @interface HDWHSchemeTaskDelegate : NSObject <WKURLSchemeHandler>
 
 /**

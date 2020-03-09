@@ -48,7 +48,7 @@
 - (void)showTextTip:(NSString *)text hideAfterDelay:(CGFloat)delay {
     [self callNative:@"showTextTip"
            parameter:@{
-               @"text": text ?: @"<空>",
+               @"text": text ?: @"",
                @"hideAfterDelay": @(delay > 0 ?: 2.f)
            }];
 }
@@ -79,7 +79,7 @@
         return;
     }
     CGFloat y = scrollView.contentOffset.y;
-    HDWHLog(@"contentOffset.y = %.2f", y);
+    // HDWHLog(@"contentOffset.y = %.2f", y);
     [[HDWHWebViewScrollPositionManager sharedInstance] cacheURL:self.webView.URL position:y];
 }
 
@@ -109,8 +109,7 @@
 
 static NSString *const kWHRequestItmsApp = @"itms-apps://";
 - (BOOL)isItmsAppsRequest:(NSString *)url {
-    // itms-appss://itunes.apple.com/cn/app/id992055304
-    // https://itunes.apple.com/cn/app/id992055304
+    // https://itunes.apple.com/cn/app/id1440238257
     NSArray<NSString *> *prefixs = @[kWHRequestItmsApp, @"https://itunes.apple.com", @"itms-appss://", @"itms-services://", @"itmss://"];
     BOOL __block pass = NO;
 

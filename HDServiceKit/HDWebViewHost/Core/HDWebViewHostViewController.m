@@ -83,7 +83,7 @@ BOOL kGCDWebServer_logging_enabled = false;
         urlStr = self.url;
     }
 
-    [self fire:@"pageshow" param:@{@"url": urlStr ?: @"null"}];
+    [self fire:@"pageshow" param:@{ @"url": urlStr ?: @"null" }];
     // 检查是否有上次遗留下来的进度条,避免 webview 在 tabbar 第一屏时出现进度条残留
     if (self.webView.estimatedProgress >= 1.f) {
         [self stopProgressor];
@@ -96,7 +96,7 @@ BOOL kGCDWebServer_logging_enabled = false;
     if (urlStr.length == 0) {
         urlStr = self.url;
     }
-    [self fire:@"pagehide" param:@{@"url": urlStr ?: @"null"}];
+    [self fire:@"pagehide" param:@{ @"url": urlStr ?: @"null" }];
 }
 
 - (void)viewDidLoad {
@@ -108,7 +108,6 @@ BOOL kGCDWebServer_logging_enabled = false;
 - (void)setUrl:(NSString *)url {
     _url = url;
     if (kFakeCookieWebPageURLWithQueryString.length > 0 && [HDWebViewHostCookie loginCookieHasBeenSynced] == NO) {  // 此时需要同步 Cookie，走同步 Cookie 的流程
-        //
         NSURL *cookieURL = [NSURL URLWithString:kFakeCookieWebPageURLWithQueryString];
         NSMutableURLRequest *mutableRequest = [NSMutableURLRequest requestWithURL:cookieURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:120];
         WKWebView *cookieWebview = [self getCookieWebview];
@@ -122,7 +121,7 @@ BOOL kGCDWebServer_logging_enabled = false;
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    
     [[HDWHWebViewScrollPositionManager sharedInstance] clearAllCache];
 }
 
@@ -180,7 +179,7 @@ BOOL kGCDWebServer_logging_enabled = false;
         [self showTextTip:@"地址为空"];
         return;
     }
-    //检查网络是否联网；
+    // 检查网络是否联网；
     HDReachability *reachability = [HDReachability reachabilityForInternetConnection];
     if ([reachability isReachable]) {
         NSMutableURLRequest *mutableRequest = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:120];
@@ -191,7 +190,7 @@ BOOL kGCDWebServer_logging_enabled = false;
     }
 }
 
-#pragma mark - wkwebview uidelegate
+#pragma mark - WKUIDelegate
 - (WKWebView *)webView:(WKWebView *)webView
     createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration
                forNavigationAction:(WKNavigationAction *)navigationAction
@@ -214,15 +213,15 @@ BOOL kGCDWebServer_logging_enabled = false;
     [self presentViewController:alertController animated:YES completion:nil];
 }
 
-#pragma mark - wkwebview navigation delegate
+#pragma mark - WKNavigationDelegate
 
 #define TIMING_WK_METHOD \
     HDWHLog(@"[Timing] %@, nowTime = %f", NSStringFromSelector(_cmd), [[NSDate date] timeIntervalSince1970] * 1000);
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler {
-    TIMING_WK_METHOD
-        [self measure:kWebViewHostTimingDecidePolicyForNavigationAction
-                   to:kWebViewHostTimingLoadRequest];
+    TIMING_WK_METHOD;
+    [self measure:kWebViewHostTimingDecidePolicyForNavigationAction
+               to:kWebViewHostTimingLoadRequest];
     [self measure:kWebViewHostTimingDecidePolicyForNavigationAction to:kWebViewHostTimingWebViewInit];
 
     NSURLRequest *request = navigationAction.request;
@@ -234,10 +233,20 @@ BOOL kGCDWebServer_logging_enabled = false;
     if ([self isItmsAppsRequest:rurl]) {
         // URL Scheme and App Store links won't work https://github.com/ShingoFukuyama/WKWebViewTips#url-scheme-and-app-store-links-wont-work
         [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(popOutImmediately) userInfo:nil repeats:NO];
-        [[UIApplication sharedApplication] openURL:[request URL] options:@{} completionHandler:nil];
+        if (@available(iOS 10.0, *)) {
+            [[UIApplication sharedApplication] openURL:[request URL] options:@{} completionHandler:nil];
+        } else {
+            // Fallback on earlier versions
+            [[UIApplication sharedApplication] openURL:[request URL]];
+        }
         policy = WKNavigationActionPolicyCancel;
     } else if ([self isExternalSchemeRequest:rurl]) {  // 非 http，https 协议的请求，走默认逻辑，容许广告页面之间唤起响应的 App
-        [[UIApplication sharedApplication] openURL:[request URL] options:@{} completionHandler:nil];
+        if (@available(iOS 10.0, *)) {
+            [[UIApplication sharedApplication] openURL:[request URL] options:@{} completionHandler:nil];
+        } else {
+            // Fallback on earlier versions
+            [[UIApplication sharedApplication] openURL:[request URL]];
+        }
         policy = WKNavigationActionPolicyCancel;
     }
     decisionHandler(policy);
@@ -249,27 +258,27 @@ BOOL kGCDWebServer_logging_enabled = false;
 }
 
 - (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(WKNavigation *)navigation {
-    TIMING_WK_METHOD
-        [self startProgressor];
+    TIMING_WK_METHOD;
+    [self startProgressor];
 }
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(nonnull WKNavigationResponse *)navigationResponse decisionHandler:(nonnull void (^)(WKNavigationResponsePolicy))decisionHandler {
-    TIMING_WK_METHOD
+    TIMING_WK_METHOD;
     decisionHandler(WKNavigationResponsePolicyAllow);
 }
 
 - (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation {
-    TIMING_WK_METHOD
+    TIMING_WK_METHOD;
 }
 
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation {
-    TIMING_WK_METHOD
+    TIMING_WK_METHOD;
 }
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation {
-    TIMING_WK_METHOD
-        [self measure:kWebViewHostTimingDidFinishNavigation
-                   to:kWebViewHostTimingLoadRequest];
+    TIMING_WK_METHOD;
+    [self measure:kWebViewHostTimingDidFinishNavigation
+               to:kWebViewHostTimingLoadRequest];
     [self measure:kWebViewHostTimingDidFinishNavigation to:kWebViewHostTimingWebViewInit];
 
     if (webView.isLoading) {
@@ -297,28 +306,28 @@ BOOL kGCDWebServer_logging_enabled = false;
            parameter:@{
                @"text": self.webView.title ?: self.pageTitle
            }];
-    //设置发现的后台接口；
+    // 设置发现的后台接口；
     NSDictionary *inserted = [self supportListByNow];
     [inserted enumerateKeysAndObjectsUsingBlock:^(NSString *keyStr, id obj, BOOL *stop) {
         [self insertData:obj intoPageWithVarName:keyStr];
     }];
-
+    
     [self fire:@"onready" param:@{}];
     [self dealWithViewHistory];
 }
 
 - (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error {
-    TIMING_WK_METHOD
-        [self stopProgressor];
+    TIMING_WK_METHOD;
+    [self stopProgressor];
 }
 
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error {
-    TIMING_WK_METHOD
+    TIMING_WK_METHOD;
     HDWHLog(@"load page error = %@", error);
     [self stopProgressor];
 }
 
-#pragma mark -
+#pragma mark - WKScriptMessageHandler
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message {
     if ([message.name isEqualToString:kWHScriptHandlerName]) {
         NSURL *actualUrl = [NSURL URLWithString:self.url];
@@ -340,7 +349,7 @@ BOOL kGCDWebServer_logging_enabled = false;
 
 - (WKWebView *)getCookieWebview {
     if (![kFakeCookieWebPageURLWithQueryString containsString:@"?"]) {
-        NSAssert(NO, @"请配置 kFakeCookieWebPageURLString 参数，如在调用 HDWebViewHostViewController 的 .m 文件里定义，NSString *_Nonnull kFakeCookieWebPageURLWithQueryString = @\"https://www.163.com?028-983cnhd8-2\"");
+        NSAssert(NO, @"请配置 kFakeCookieWebPageURLString 参数，如在调用 HDWebViewHostViewController 的 .m 文件里定义，NSString *_Nonnull kFakeCookieWebPageURLWithQueryString = @\"https://www.chaosource.com?028-983cnhd8-2\"");
         return nil;
     }
     // 设置加载页面完毕后，里面的后续请求，如 xhr 请求使用的cookie
@@ -372,13 +381,20 @@ BOOL kGCDWebServer_logging_enabled = false;
         webViewConfig.userContentController = userContentController;
         webViewConfig.allowsInlineMediaPlayback = YES;
         webViewConfig.processPool = [HDWebViewHostCookie sharedPoolManager];
-        [webViewConfig setURLSchemeHandler:self.taskDelegate forURLScheme:kWebViewHostURLScheme];
+        if (@available(iOS 11.0, *)) {
+            [webViewConfig setURLSchemeHandler:self.taskDelegate forURLScheme:kWebViewHostURLScheme];
+        } else {
+            // Fallback on earlier versions
+        }
         [self injectScriptsToUserContent:userContentController];
         [self measure:kWebViewHostTimingAddUserScript to:kWebViewHostTimingWebViewInit];
 
         WKWebView *webview = [[WKWebView alloc] initWithFrame:CGRectZero configuration:webViewConfig];
-        webview.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
-
+        if (@available(iOS 11.0, *)) {
+            webview.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+        } else {
+            // Fallback on earlier versions
+        }
         webview.navigationDelegate = self;
         webview.UIDelegate = self;
         webview.scrollView.delegate = self;

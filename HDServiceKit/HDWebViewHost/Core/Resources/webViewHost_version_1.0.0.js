@@ -2,7 +2,7 @@
     window.webViewHost = {
         version: "1.0.0"
     };
-    
+
     var callbackPool = {};
     var ack_no = 1;
     window.webViewHost.invoke = function(_action, _data, _callback) {
@@ -32,7 +32,7 @@
         var func = callbackPool[_callbackKey];
         if (typeof func == 'function') {
             func(_param);
-            // 释放,只用一次
+            // 释放回调，只用一次
             callbackPool[_callbackKey] = nil;
         }
     }

@@ -23,10 +23,10 @@
 #pragma mark - inner
 // clang-format off
 wh_doc_begin(openExternalUrl_, "打开外部资源链接，可以用 SFSafariViewController 打开，也可以用系统的 Safari 浏览器打开。")
-wh_doc_code(window.webViewHost.invoke("openExternalUrl",{"url":"https://main.m.taobao.com/"}))
+wh_doc_code(window.webViewHost.invoke("openExternalUrl",{"url":"https://www.chaosource.com/"}))
 wh_doc_param(url, "字符串，合法的 url 地址，包括 http/mailto/telephone/https 等协议头")
 wh_doc_param(openInSafari, "布尔值，默认是 false，表示在 App 内部用 SFSafariViewController 内部打开；true 表示用系统的 Safari 浏览器打开")
-wh_doc_code_expect("在 App 内的浏览器里打开了’https://main.m.taobao.com/‘ 页面")
+wh_doc_code_expect("在 App 内的浏览器里打开了’https://www.chaosource.com/‘ 页面")
 wh_doc_end;
 // clang-format on
 - (void)openExternalUrl:(NSDictionary *)paramDict {

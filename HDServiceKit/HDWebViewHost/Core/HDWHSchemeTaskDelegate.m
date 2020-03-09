@@ -32,7 +32,7 @@
     HDWHLog(@"HDWHSchemeTaskDelegate dealloc");
 }
 
-- (void)addHandler:(HDWHURLSchemeTaskHandler)handler forDomain:(NSString * /* js */)domain;
+- (void)addHandler:(HDWHURLSchemeTaskHandler)handler forDomain:(NSString * /* js */)domain
 {
     if (domain.length == 0 || handler == nil) {
         HDWHLog(@"domain or handle is null");
@@ -99,7 +99,6 @@
 }
 
 - (void)webView:(nonnull WKWebView *)webView stopURLSchemeTask:(nonnull id<WKURLSchemeTask>)urlSchemeTask {
-    //
     HDWHLog(@"%@", NSStringFromSelector(_cmd));
 }
 

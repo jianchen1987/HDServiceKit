@@ -87,7 +87,7 @@ static off_t _log_offset = 0;
         if (![topViewController isKindOfClass:HDWebViewHostViewController.class]) {
             HDWebViewHostViewController *sam = [HDWebViewHostViewController new];
             sam.title = @"HDWebViewHost 容器";
-            sam.url = @"about:blank";  // 广告位
+            sam.url = @"debug.webViewHost";
             if (!topViewController.navigationController) {
                 UIWindow *win = [UIApplication sharedApplication].keyWindow;
                 win.rootViewController = sam;
@@ -198,7 +198,8 @@ CGFloat kDebugWinInitHeight = 46.f;
     self.toggleButton.hidden = NO;
     [self.debugWindow bringSubviewToFront:self.toggleButton];
 }
-#pragma mark - delegate
+
+#pragma mark - HDWHDebugViewDelegate
 - (void)onCloseWindow:(HDWHDebugViewController *)viewController {
     [self collapseWindow];
 }
@@ -206,13 +207,14 @@ CGFloat kDebugWinInitHeight = 46.f;
 - (void)fetchData:(HDWHDebugViewController *)viewController completion:(void (^)(NSArray<NSString *> *))completion {
     [self parHDWH_DEBUG:completion];
 }
+
 #pragma mark - public
 
 - (void)start {
     // Create server
     _webServer = [[GCDWebServer alloc] initWithLogServer:kGCDWebServer_logging_enabled];
-    // kGCDWebServerLoggingLevel_Warning
-    [GCDWebServer setLogLevel:3];
+     // kGCDWebServerLoggingLevel_Info
+    [GCDWebServer setLogLevel:2];
 
     HDWHLog(@"Document = %@", [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject]);
 
@@ -374,7 +376,7 @@ CGFloat kDebugWinInitHeight = 46.f;
                     completion(newLines);
                 }
                 // clean up
-                //                free(buffer);
+                // free(buffer);
             } else if (error != 0) {
                 HDWHLog(@"出错了");
             }

@@ -7,6 +7,7 @@
 
 #import "HDWHURLChecker.h"
 #import "HDWHAppWhiteListParser.h"
+#import "NSBundle+HDWebViewHost.h"
 
 @implementation HDWHURLChecker
 
@@ -15,11 +16,10 @@ static NSDictionary *_authorizedTable = nil;
 + (instancetype)sharedManager {
 
     static dispatch_once_t onceToken;
-
     dispatch_once(&onceToken, ^{
         _sharedManager = [[self alloc] init];
         // 默认数据
-        NSString *path = [[NSBundle mainBundle] pathForResource:@"app-access" ofType:@"txt"];
+        NSString *path = [[NSBundle hd_WebViewHostCoreResources] pathForResource:@"app-access" ofType:@"txt"];
         NSString *fileContents = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
         _authorizedTable = [[HDWHAppWhiteListParser sharedManager] parserFileContent:fileContents];
     });
@@ -28,9 +28,6 @@ static NSDictionary *_authorizedTable = nil;
 }
 
 - (BOOL)checkURL:(NSURL *)url forAuthorizationType:(HDWHAuthorizationType)authType {
-#ifdef DEBUG
-    return YES;
-#else
     if (url == nil) {
         return NO;
     }
@@ -59,7 +56,7 @@ static NSDictionary *_authorizedTable = nil;
 
         for (NSInteger i = 0, l = [rules count]; i < l; i++) {
             NSString *rule = [rules objectAtIndex:i];
-            // 将.号处理为\.如mail.163.com => mail\\.163\\.com;
+            // 将.号处理为\.如www.chaosource.com => www\\.chaosource\\.com;
             rule = [rule stringByReplacingOccurrencesOfString:@"." withString:@"\\."];
             // 将*号处理为 [a-z0-9]+,
             rule = [rule stringByReplacingOccurrencesOfString:@"*" withString:@"[\\w\\d-_]+"];
@@ -73,22 +70,26 @@ static NSDictionary *_authorizedTable = nil;
                                        error:&regexError];
 
             if (regexError) {
-                HDWHLog(@"Regex creation failed with error: %@", [regexError description]);
+                NSLog(@"Regex creation failed with error: %@", [regexError description]);
                 continue;
             }
             // 使用host
             NSString *host = [url host];
-            NSArray *matches = [regex matchesInString:host options:NSMatchingWithoutAnchoringBounds range:NSMakeRange(0, host.length)];
-            if ([matches count] > 0) {
-                pass = YES;
+            if (!host || ![host isKindOfClass:NSString.class] || host.length <= 0) {
+                pass = NO;
                 break;
+            } else {
+                NSArray *matches = [regex matchesInString:host options:NSMatchingWithoutAnchoringBounds range:NSMakeRange(0, host.length)];
+                if ([matches count] > 0) {
+                    pass = YES;
+                    break;
+                }
             }
         }
         return pass;
     } else {
         return YES;  // 不在授权类型里的，默认返回通过。
     }
-#endif
 }
 
 @end
