@@ -17,19 +17,31 @@ Vue.component("tool-panel", {
                     action: "help",
                     clsName: "w-tool-item w-tool-help",
                     title: "look for help",
-                    text: "Help"
+                    text: "帮助"
                 },
                 {
                     action: "list",
                     clsName: "w-tool-item w-tool-docs",
-                    title: "documents for api",
-                    text: "Docs"
+                    title: "列出所有接口",
+                    text: "接口"
                 },
                 {
                     action: "timing",
                     clsName: "w-tool-item w-tool-timing",
-                    title: "Audit",
-                    text: "Timing"
+                    title: "查看耗时统计",
+                    text: "耗时"
+                },
+                {
+                    action: "history",
+                    clsName: "w-tool-item w-tool-history",
+                    title: "正序列出所有命令历史",
+                    text: "历史"
+                },
+                {
+                    action: "testcase",
+                    clsName: "w-tool-item w-tool-testcase",
+                    title: "自动生成所有测试用例",
+                    text: "用例"
                 }
             ]
         };
@@ -57,8 +69,7 @@ Vue.component("tool-panel", {
             var ele = e.target;
             var action = ele.dataset.action;
             switch (action) {
-                case "switch":
-                    {
+                case "switch": {
                         window.wh_env.isMobile = !window.wh_env.isMobile;
                         _real_switch_env();
                     }
@@ -66,7 +77,8 @@ Vue.component("tool-panel", {
                 case 'help':
                 case 'list':
                 case 'timing':
-                    {
+                case 'testcase':
+                case 'history': {
                         window.wh_env.isMobile = false;
                         _real_switch_env();
                         _run_command(':' + action);
@@ -77,5 +89,3 @@ Vue.component("tool-panel", {
     },
     template: "#tool-panel-template"
 });
-
-console.log(1)

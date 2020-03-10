@@ -59,6 +59,8 @@
                     <div class="w-help-code">:eval document.cookie</div>
                     <div class='w-example-title'>8. 清除 WKWebview 里的 Cookie。注意：不是当前的 Cookie，而是 Cookie 管理器的 Cookie，下次访问才生效。</div>
                     <div class="w-help-code">:clearCookie</div>
+                    <div class='w-example-title'>9. 查看执行命令历史</div>
+                    <div class="w-help-code">:history</div>
                 </div>
                 <div v-else-if="item.type === 'history'" class="m-output-result">
                     <ol v-if="item.data.length > 0" class="c-command-history">

@@ -18,6 +18,13 @@
     if (objects.count) {
         for (id object in objects) {
             id tempObject = object;
+            if ([tempObject isKindOfClass:NSString.class]) {
+                // 解决字符串为空时崩溃
+                NSString *str = (NSString *)tempObject;
+                if (str.length <= 0) {
+                    continue;
+                }
+            }
             [invocation setArgument:&tempObject atIndex:++i];
         }
     }

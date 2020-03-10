@@ -39,7 +39,6 @@
         },
         // 原生回调
         __callback: function (_callbackKey, _param) {
-            this.invoke("log", {'logData': '回调：'+JSON.stringify(_param)})
             if (this.isFunction(this.callbackPool[_callbackKey])) {
                 this.callbackPool[_callbackKey](_param);
                 this.callbackPool[_callbackKey] = undefined;

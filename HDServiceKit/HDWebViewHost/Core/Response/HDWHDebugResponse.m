@@ -23,7 +23,7 @@ static NSString *kLastWeinreScript = nil;
         @"usage_": kHDWHResponseMethodOn,
         @"testcase": kHDWHResponseMethodOn,
         @"weinre_": kHDWHResponseMethodOn,
-        @"timing_": kHDWHResponseMethodOn,
+        @"timing": kHDWHResponseMethodOn,
         @"console.log_": kHDWHResponseMethodOn,
         @"clearCookie": kHDWHResponseMethodOn
     };

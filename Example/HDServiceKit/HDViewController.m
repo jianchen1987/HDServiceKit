@@ -8,6 +8,7 @@
 
 #import "HDViewController.h"
 #import <HDServiceKit/HDWebViewHost.h>
+#import "HDCallBackExample.h"
 
 @interface HDViewController ()
 
@@ -19,6 +20,9 @@
     [super viewDidLoad];
 
     self.view.backgroundColor = UIColor.whiteColor;
+    
+    
+    [HDWHResponseManager.defaultManager addCustomResponse:HDCallBackExample.class];
 
     [HDWHDebugServerManager.sharedInstance showDebugWindow];
     [HDWHDebugServerManager.sharedInstance startWithPort:12333 bonjourName:@"12333.local"];

@@ -1,14 +1,17 @@
 window.webViewHost = {
-    invoke: function (action, param) {
+    invoke: function (action, param, callback) {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/command.do", true);
         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xhr.onload = function () {
             console.log(xhr.responseURL); // http://example.com/test
         };
-
+        var params = "action=" + action + "&param=" + encodeURIComponent(window.JSON.stringify(param))
+        if (callback != null && callback != 'undefined' && callback != undefined) {
+            params = params + "&callbackKey=" + 'cbk_' + parseInt((Math.random() * 1000), 10)
+        }
         xhr.send(
-            "action=" + action + "&param=" + encodeURIComponent(window.JSON.stringify(param))
+            params
         );
     }
 };
@@ -221,7 +224,7 @@ function _run_command(com) {
     } else if (com == ":history") {
         var cm = [];
         var len = clientStorage.length;
-        for (var i = len - 1; i >= 0; i--){
+        for (var i = 0; i < len; i++){
             cm.push(clientStorage.getItem(COMMOND_HISTORY + i));
         }
         addStore({
@@ -296,7 +299,7 @@ Vue.component("command-value", {
             _run_command(com);
             command.value = '';
             this.command = '';
-            //
+
             clientStorage.setItem(COMMOND_HISTORY + (history_header_cursor++), oldCom);
             history_search_cursor = history_header_cursor;
         }
@@ -352,25 +355,5 @@ document.addEventListener("readystatechange", function (event) {
         window.__bri = -1;
 
         var command = document.getElementById("command");
-        // jdb(0);
-        // var run = document.getElementById('run');
-        // jdb(1);
-        // var a = 10;
-        // jdb(2)
-        // var c = 9;
-        // jdb(3)
-        // a = a + ~c + 1;
-        // jdb(4)
-        // console.log(a);
-        // jdb(5)
-
-        // run.onclick = function (e) {
-        //     var com = command.value; jdb(6);
-        //     if (com.length > 0) {
-        //         eval(com); jdb(7);
-        //     } else {
-        //         alert('请输入命令'); jdb(8);
-        //     }
-        // }
     }
 });

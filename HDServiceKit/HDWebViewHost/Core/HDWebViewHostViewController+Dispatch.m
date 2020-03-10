@@ -37,7 +37,7 @@
 
 - (BOOL)callNative:(NSString *)action parameter:(NSDictionary *)paramDict callbackKey:(NSString *)key {
     HDWHResponseManager *rm = [HDWHResponseManager defaultManager];
-    NSString *actionSig = [rm actionSignature:action withParam:paramDict withCallback:key.length > 0];
+    NSString *actionSig = [rm actionSignature:action withParam:paramDict.allKeys.count > 0 withCallback:key.length > 0];
     id<HDWebViewHostProtocol> response = [rm responseForActionSignature:actionSig withWebViewHost:self];
     if (response == nil || ![response handleAction:action withParam:paramDict callbackKey:key]) {
         NSString *errMsg = [NSString stringWithFormat:@"action (%@) not supported yet.", action];

@@ -80,7 +80,7 @@ static off_t _log_offset = 0;
 
 #pragma mark - debug
 
-- (void)debugCommand:(NSString *)action param:(NSDictionary *)param {
+- (void)debugCommand:(NSString *)action param:(NSDictionary *)param callbackKey:(NSString *)callbackKey {
     if (action.length > 0) {
         // 检查当前是否有 HDWebViewHostViewController 正在展示，如果有则使用此界面，如果没有新开一个页面
         UIViewController *topViewController = [self visibleViewController];
@@ -97,7 +97,7 @@ static off_t _log_offset = 0;
             }
             topViewController = sam;
         }
-        [(HDWebViewHostViewController *)topViewController callNative:action parameter:param];
+        [(HDWebViewHostViewController *)topViewController callNative:action parameter:param callbackKey:callbackKey];
     } else {
         HDWHLog(@"irregular action %@", param);
     }
@@ -287,6 +287,7 @@ CGFloat kDebugWinInitHeight = 46.f;
                                   } else if ([url.path hasPrefix:@"/command.do"]) {
                                       NSString *action = [request.arguments objectForKey:kWHActionKey];
                                       NSString *param = [request.arguments objectForKey:kWHParamKey] ?: @"";
+                                      NSString *callbackKey = [request.arguments objectForKey:kWHCallbackKey] ?: @"";
 
                                       NSDictionary *contentJSON = nil;
                                       NSError *contentParseError;
@@ -296,11 +297,11 @@ CGFloat kDebugWinInitHeight = 46.f;
                                       }
                                       if (action.length > 0) {
                                           if ([NSThread isMainThread]) {
-                                              [strongSelf debugCommand:action param:contentJSON];
+                                              [strongSelf debugCommand:action param:contentJSON callbackKey:callbackKey];
                                           } else {
                                               HDWHLog(@"switch to main thread");
                                               dispatch_async(dispatch_get_main_queue(), ^{
-                                                  [strongSelf debugCommand:action param:contentJSON];
+                                                  [strongSelf debugCommand:action param:contentJSON callbackKey:callbackKey];
                                               });
                                           }
                                       } else {
