@@ -14,9 +14,8 @@
 
 + (NSDictionary<NSString *, NSString *> *)supportActionList {
     return @{
-        // 增加webviewhost的supportTypeFunction
-        @"startNewPage_": @"4",
-        @"openExternalUrl_": @"3"
+        @"startNewPage_": kHDWHResponseMethodOn,
+        @"openExternalUrl_": kHDWHResponseMethodOn
     };
 }
 
@@ -84,7 +83,6 @@ wh_doc_end;
     freshOne.url = [paramDict objectForKey:@"url"];
     freshOne.pageTitle = [paramDict objectForKey:@"title"];
     freshOne.rightActionBarTitle = [paramDict objectForKey:@"actionTitle"];
-
     freshOne.backPageParameter = [paramDict objectForKey:@"backPageParameter"];
     NSString *loadType = [paramDict objectForKey:@"type"];
     if (freshOne.backPageParameter) {

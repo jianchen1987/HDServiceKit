@@ -10,6 +10,11 @@
 #import "HDWebViewHostProtocol.h"
 #import <Foundation/Foundation.h>
 
+/// 开
+static NSString * const kHDWHResponseMethodOn = @"1";
+/// 关
+static NSString * const kHDWHResponseMethodOff = @"0";
+
 @interface HDWebViewHostResponse : NSObject <HDWebViewHostProtocol>
 
 /**

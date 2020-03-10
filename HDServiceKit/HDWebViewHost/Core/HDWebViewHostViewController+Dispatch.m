@@ -35,18 +35,22 @@
     return [self callNative:action parameter:paramDict callbackKey:nil];
 }
 
-#pragma mark - private
 - (BOOL)callNative:(NSString *)action parameter:(NSDictionary *)paramDict callbackKey:(NSString *)key {
     HDWHResponseManager *rm = [HDWHResponseManager defaultManager];
     NSString *actionSig = [rm actionSignature:action withParam:paramDict withCallback:key.length > 0];
     id<HDWebViewHostProtocol> response = [rm responseForActionSignature:actionSig withWebViewHost:self];
     if (response == nil || ![response handleAction:action withParam:paramDict callbackKey:key]) {
         NSString *errMsg = [NSString stringWithFormat:@"action (%@) not supported yet.", action];
-        HDWHLog(@"action (%@) not supported yet.", action);
-        [self fire:@"NotSupported"
+        HDWHLog(@"%@", errMsg);
+        
+        // 通知 web 事件不支持
+        [self fire:@"notSupportedCommand"
              param:@{
                  @"error": errMsg
              }];
+#ifdef DEBUG
+        [self callNative:@"toast" parameter:@{@"text": errMsg}];
+#endif
         return NO;
     } else {
         return YES;

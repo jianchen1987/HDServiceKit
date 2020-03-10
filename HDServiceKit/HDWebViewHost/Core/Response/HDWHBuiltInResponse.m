@@ -14,10 +14,10 @@
 
 + (NSDictionary<NSString *, NSString *> *)supportActionList {
     return @{
-        @"toast_": @"1",
-        @"showLoading_": @"1",
-        @"hideLoading": @"1",
-        @"enablePageBounce_": @"1"
+        @"toast_": kHDWHResponseMethodOn,
+        @"showLoading_": kHDWHResponseMethodOn,
+        @"hideLoading": kHDWHResponseMethodOn,
+        @"enablePageBounce_": kHDWHResponseMethodOn
     };
 }
 
@@ -63,6 +63,7 @@ wh_doc_end;
 }
 
 - (void)showTextTip:(NSString *)text delay:(CGFloat)delay {
+    delay = delay <= 0 ? -1 : delay;
     HDTips *tip = [HDTips showWithText:text inView:self.webViewHost.webView hideAfterDelay:delay];
     tip.toastPosition = HDToastViewPositionBottom;
 }

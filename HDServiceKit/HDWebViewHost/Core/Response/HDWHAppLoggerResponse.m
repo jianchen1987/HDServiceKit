@@ -12,7 +12,7 @@
 
 + (NSDictionary<NSString *, NSString *> *)supportActionList {
     return @{
-        @"log_": @"1"
+        @"log_": kHDWHResponseMethodOn
     };
 }
 

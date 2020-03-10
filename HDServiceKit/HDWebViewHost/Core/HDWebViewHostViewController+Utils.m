@@ -14,12 +14,12 @@
 @implementation HDWebViewHostViewController (Utils)
 
 #pragma mark - supportType
-- (NSDictionary *)supportListByNow {
+- (NSDictionary *)supportMethodListAndAppInfo {
     // 人肉维护支持列表；
     NSMutableDictionary *supportedFunctions = [@{
-        //增加webviewhost的supportTypeFunction
-        @"pageshow": @"2",
-        @"pagehide": @"2"
+        // 增加 webviewhost 的supportTypeFunction
+        @"pageshow": kHDWHResponseMethodOn,
+        @"pagehide": kHDWHResponseMethodOn
     } mutableCopy];
     // 内置接口
     // 各个response 的 supportFunction
@@ -30,9 +30,9 @@
     NSMutableDictionary *lst = [NSMutableDictionary dictionaryWithCapacity:10];
     [lst setObject:supportedFunctions forKey:@"supportFunctionType"];
 
-    NSMutableDictionary *appInfo = [NSMutableDictionary dictionaryWithCapacity:10];
+    NSMutableDictionary *appInfo = [NSMutableDictionary dictionaryWithCapacity:5];
     if (HDWH_IS_SCREEN_HEIGHT_X) {
-        [appInfo setObject:@{@"iPhoneXVersion": @"1"} forKey:@"iPhoneXInfo"];
+        [appInfo setObject:@"1" forKey:@"isIPhoneXSeries"];
     }
 
     [lst setObject:appInfo forKey:@"appInfo"];
@@ -46,7 +46,7 @@
 }
 
 - (void)showTextTip:(NSString *)text hideAfterDelay:(CGFloat)delay {
-    [self callNative:@"showTextTip"
+    [self callNative:@"toast"
            parameter:@{
                @"text": text ?: @"",
                @"hideAfterDelay": @(delay > 0 ?: 2.f)
@@ -121,15 +121,6 @@ static NSString *const kWHRequestItmsApp = @"itms-apps://";
     }];
 
     return pass;
-}
-
-- (void)logRequestAndResponse:(NSString *)str type:(NSString *)type {
-    NSInteger limit = 500;
-    if (str.length > limit) {
-        HDWHLog(@"debug type: %@ , url : %@", type, [str substringToIndex:limit]);
-    } else {
-        HDWHLog(@"debug type: %@ , url : %@", type, str);
-    }
 }
 
 @end

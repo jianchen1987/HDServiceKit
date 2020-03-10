@@ -12,7 +12,7 @@
 #import <UIKit/UIKit.h>
 
 /// 版本号
-static NSString * const HDServiceKit_VERSION = @"0.3.1";
+static NSString * const HDServiceKit_VERSION = @"0.3.5";
 
 #if __has_include("HDWHViewControllerPreRender.h")
 #import "HDWHViewControllerPreRender.h"
@@ -108,6 +108,10 @@ static NSString * const HDServiceKit_VERSION = @"0.3.1";
 
 #if __has_include("HDWHResponseManager.h")
 #import "HDWHResponseManager.h"
+#endif
+
+#if __has_include("NSObject+HDWebViewHost.h")
+#import "NSObject+HDWebViewHost.h"
 #endif
 
 #if __has_include("NSBundle+HDWebViewHost.h")

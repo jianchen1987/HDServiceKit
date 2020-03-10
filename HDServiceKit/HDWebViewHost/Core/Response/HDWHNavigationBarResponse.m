@@ -20,9 +20,9 @@
 
 + (NSDictionary<NSString *, NSString *> *)supportActionList {
     return @{
-        @"goBack": @"1",
-        @"setNavRight_": @"1",
-        @"setNavTitle_": @"1"
+        @"goBack": kHDWHResponseMethodOn,
+        @"setNavRight_": kHDWHResponseMethodOn,
+        @"setNavTitle_": kHDWHResponseMethodOn
     };
 }
 

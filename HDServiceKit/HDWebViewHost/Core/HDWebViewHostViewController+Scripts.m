@@ -140,6 +140,10 @@ static NSString *kWebViewHostSource = nil;
         jsLibURL = [bundle URLForResource:@"eval.js" withExtension:nil];
         NSString *evalJS = [NSString stringWithContentsOfURL:jsLibURL encoding:NSUTF8StringEncoding error:nil];
         [self.class _addJavaScript:evalJS when:WKUserScriptInjectionTimeAtDocumentEnd forKey:@"eval.js"];
+
+        // 消除与安卓端 h5 调用原生差异
+        evalJS = [NSString stringWithFormat:@"window.%@ = webkit.messageHandlers.%@;", kWHScriptHandlerName, kWHScriptHandlerName];
+        [self.class _addJavaScript:evalJS when:WKUserScriptInjectionTimeAtDocumentStart forKey:@"eliminateDifferences.js"];
     }
     [kWebViewHostCustomJavscripts enumerateObjectsUsingBlock:^(HDWebViewHostCustomJavscript *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
         WKUserScript *cookieScript = [[WKUserScript alloc] initWithSource:obj.script injectionTime:obj.injectionTime forMainFrameOnly:YES];

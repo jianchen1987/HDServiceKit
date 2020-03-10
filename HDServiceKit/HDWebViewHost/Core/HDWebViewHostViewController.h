@@ -26,6 +26,7 @@ static NSString *kWebViewHostInvokeResponseEvent = @"kWebViewHostInvokeResponseE
 
 @end
 
+
 @interface HDWebViewHostViewController : HDCommonViewController <WKNavigationDelegate>
 
 @property (nonatomic, copy) NSString *pageTitle;
@@ -39,7 +40,6 @@ static NSString *kWebViewHostInvokeResponseEvent = @"kWebViewHostInvokeResponseE
  */
 @property (nonatomic, copy) NSString *rightActionBarTitle;
 
-//
 @property (nonatomic, strong, readonly) WKWebView *webView;
 
 /**
@@ -62,8 +62,8 @@ static NSString *kWebViewHostInvokeResponseEvent = @"kWebViewHostInvokeResponseE
 
 /// 处理 Response 内部发送的事件，这些事件，除了 h5 关心之外，可能 native 本身也很关心
 @property (nonatomic, weak) id<HDWebViewHostViewControllerDelegate> webViewHostDelegate;
-/// 核心的函数分发机制。可以继承，
-@property (nonatomic, strong, readonly) HDWHSchemeTaskDelegate *taskDelegate;
+/// 核心的函数分发机制。可以继承
+@property (nonatomic, strong, readonly) HDWHSchemeTaskDelegate *taskDelegate API_AVAILABLE(ios(11.0));
 
 #pragma mark - 使用缓存渲染界面
 /**

@@ -31,8 +31,6 @@
 
 @end
 
-static NSString *const kWHScriptHandlerName = @"kWHScriptHandlerName";
-
 // 是否将客户端的 cookie 同步到 WKWebview 的 cookie 当中
 // 作为写 cookie 的假地址
 NSString *_Nonnull kFakeCookieWebPageURLWithQueryString;
@@ -58,13 +56,16 @@ BOOL kGCDWebServer_logging_enabled = false;
     self = [super init];
     if (self) {
         // 注意：此时还没有 navigationController。
-        self.taskDelegate = [HDWHSchemeTaskDelegate new];
+        if (@available(iOS 11.0, *)) {
+            self.taskDelegate = [HDWHSchemeTaskDelegate new];
+        } else {
+            // Fallback on earlier versions
+        }
         [self.view addSubview:self.webView];
         self.webView.translatesAutoresizingMaskIntoConstraints = NO;
         [NSLayoutConstraint activateConstraints:@[
             [self.webView.leftAnchor constraintEqualToAnchor:self.view.leftAnchor],
-            [self.webView.topAnchor constraintEqualToAnchor:self.view.topAnchor
-                                                   constant:CGRectGetMaxY(self.hd_navigationBar.frame)],
+            [self.webView.topAnchor constraintEqualToAnchor:self.hd_navigationBar.bottomAnchor],
             [self.webView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor],
             [self.webView.rightAnchor constraintEqualToAnchor:self.view.rightAnchor]
         ]];
@@ -307,7 +308,7 @@ BOOL kGCDWebServer_logging_enabled = false;
                @"text": self.webView.title ?: self.pageTitle
            }];
     // 设置发现的后台接口；
-    NSDictionary *inserted = [self supportListByNow];
+    NSDictionary *inserted = [self supportMethodListAndAppInfo];
     [inserted enumerateKeysAndObjectsUsingBlock:^(NSString *keyStr, id obj, BOOL *stop) {
         [self insertData:obj intoPageWithVarName:keyStr];
     }];

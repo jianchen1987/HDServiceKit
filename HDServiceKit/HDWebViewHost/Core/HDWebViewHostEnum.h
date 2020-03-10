@@ -105,5 +105,9 @@ static NSString *_Nonnull kWebViewHostEventDismissalFromPresented = @"kWebViewHo
 // core
 static NSString *_Nonnull kWHActionKey = @"action";
 static NSString *_Nonnull kWHParamKey = @"param";
+static NSString *_Nonnull kWHCallbackKey = @"callbackKey";
 // 沙盒目录
-static NSString *kWebViewHostDBDir = @"WebViewHost";
+static NSString *_Nonnull kWebViewHostDBDir = @"WebViewHost";
+
+/// 与 Web 交互的 WKScriptMessageHandler 名称
+static NSString *_Nonnull const kWHScriptHandlerName = @"kWHScriptHandlerName";

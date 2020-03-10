@@ -123,7 +123,6 @@ static NSString *kFilePrefix = @"file://";
         }
         htmlContent = [htmlContent stringByReplacingOccurrencesOfString:key withString:obj];
     }];
-    //
     *output = htmlContent;
     return err == nil ? 0 : -1;
 }
@@ -239,7 +238,6 @@ static NSString *kFilePrefix = @"file://";
         }
         htmlContent = [htmlContent stringByReplacingOccurrencesOfString:key withString:obj];
     }];
-    //
     *output = htmlContent;
     return err == nil ? 0 : -1;
 }

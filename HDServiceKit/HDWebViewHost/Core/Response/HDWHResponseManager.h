@@ -38,10 +38,19 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)addCustomResponse:(Class<HDWebViewHostProtocol>)cls;
 
-- (id<HDWebViewHostProtocol>)responseForActionSignature:(NSString *)action withWebViewHost:(HDWebViewHostViewController *_Nonnull)webViewHost;
+/// 根据方法签名获取可以响应的 response 对象
+/// @param signature 方法签名
+/// @param webViewHost webViewHost 实例
+- (id<HDWebViewHostProtocol>)responseForActionSignature:(NSString *)signature withWebViewHost:(HDWebViewHostViewController *_Nonnull)webViewHost;
 
+/// 根据方法签名获取可以响应的 response 对象
+/// @param signature 方法签名
 - (Class)responseForActionSignature:(NSString *)signature;
 
+/// 根据方法名、参数、是否有回调生成方法签名
+/// @param action 方法名
+/// @param hasParamDict 参数
+/// @param hasCallback 是否有回调
 - (NSString *)actionSignature:(NSString *)action withParam:(BOOL)hasParamDict withCallback:(BOOL)hasCallback;
 @end
 

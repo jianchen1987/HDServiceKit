@@ -12,21 +12,32 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface HDWebViewHostViewController (Utils)
 
-- (NSDictionary *)supportListByNow;
+/// 当前支持的所有的方法和设备信息
+- (NSDictionary *)supportMethodListAndAppInfo;
 
+/// 提示
+/// @param text 文字
 - (void)showTextTip:(NSString *)text;
 
+/// 提示
+/// @param text 文字
+/// @param delay 多久隐藏
 - (void)showTextTip:(NSString *)text hideAfterDelay:(CGFloat)delay;
 
+/// 记录当前 url 当前滚动位置，缓存
 - (void)dealWithViewHistory;
 
+/// 退出界面
 - (void)popOutImmediately;
 
+/// 是否需要外部浏览器打开
+/// @param url 地址
 - (BOOL)isExternalSchemeRequest:(NSString *)url;
 
+/// 是否 itunes 相关请求
+/// @param url 地址
 - (BOOL)isItmsAppsRequest:(NSString *)url;
 
-- (void)logRequestAndResponse:(NSString *)str type:(NSString *)type;
 
 @end
 

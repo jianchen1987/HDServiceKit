@@ -99,9 +99,10 @@ static off_t _log_offset = 0;
         }
         [(HDWebViewHostViewController *)topViewController callNative:action parameter:param];
     } else {
-        HDWHLog(@"irregular param %@", param);
+        HDWHLog(@"irregular action %@", param);
     }
 }
+
 // https://stackoverflow.com/questions/11637709/get-the-current-displaying-uiviewcontroller-on-the-screen-in-appdelegate-m/40760970#40760970
 - (UIViewController *)visibleViewController {
     UIWindow *win = [UIApplication sharedApplication].keyWindow;
@@ -229,12 +230,6 @@ CGFloat kDebugWinInitHeight = 46.f;
                               requestClass:[GCDWebServerRequest class]
                               processBlock:^GCDWebServerResponse *(GCDWebServerRequest *request) {
                                   NSBundle *bundle = [NSBundle hd_WebViewHostRemoteDebugResourcesBundle];
-                                  // if (!bundle.isLoaded) {
-                                  // NSString *errorInfo = [NSString stringWithFormat:@"Bundle 未加载<br/>%@", bundle.bundleURL.absoluteString];
-                                  // HDWHLog(@"%@", errorInfo);
-                                  // NSString *errorHtmlContent = [NSString stringWithFormat:@"<html><body><p>%@</p></body></html>", errorInfo];
-                                  // return [GCDWebServerDataResponse responseWithHTML:errorInfo];
-                                  // }
                                   NSString *filePath = request.URL.path;
 
                                   if ([filePath isEqualToString:@"/"]) {
@@ -258,11 +253,6 @@ CGFloat kDebugWinInitHeight = 46.f;
                                   }
 
                                   NSString *path = [bundle pathForResource:[NSString stringWithFormat:@"src/%@", filePath] ofType:nil];
-        
-        NSLog(@"-----------");
-        NSLog(@"----------path : %@-", path);
-        NSLog(@"-----------");
-        
                                   NSData *contentData = [NSData dataWithContentsOfFile:path];
                                   if (contentData.length > 0) {
                                       return [GCDWebServerDataResponse responseWithData:contentData contentType:contentType];

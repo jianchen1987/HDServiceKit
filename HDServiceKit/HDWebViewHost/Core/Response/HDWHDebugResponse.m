@@ -16,6 +16,18 @@
 // 保存 weinre 注入脚本的地址，方便在加载其它页面时也能自动注入。
 static NSString *kLastWeinreScript = nil;
 @implementation HDWHDebugResponse
++ (NSDictionary<NSString *, NSString *> *)supportActionList {
+    return @{
+        @"eval_": kHDWHResponseMethodOn,
+        @"list": kHDWHResponseMethodOn,
+        @"usage_": kHDWHResponseMethodOn,
+        @"testcase": kHDWHResponseMethodOn,
+        @"weinre_": kHDWHResponseMethodOn,
+        @"timing_": kHDWHResponseMethodOn,
+        @"console.log_": kHDWHResponseMethodOn,
+        @"clearCookie": kHDWHResponseMethodOn
+    };
+}
 
 + (void)setupDebugger {
 #ifdef HDWH_DEBUG
@@ -62,7 +74,7 @@ static NSString *kLastWeinreScript = nil;
     if ([@"eval" isEqualToString:action]) {
         [self.webViewHost evalExpression:[paramDict objectForKey:@"code"]
                               completion:^(id _Nonnull result, NSString *_Nonnull error) {
-                                  HDWHLog(@"%@, error = %@", result, error);
+                                  HDWHLog(@"debug eval 执行结果：%@, error = %@", result, error);
                                   NSDictionary *r = nil;
                                   if (result) {
                                       r = @{
@@ -77,13 +89,12 @@ static NSString *kLastWeinreScript = nil;
                               }];
     } else if ([@"list" isEqualToString:action]) {
         // 遍历所有的可用接口和注释和测试用例
-        // TODO 分页
         [self fire:@"list" param:[[HDWHResponseManager defaultManager] allResponseMethods]];
-    } else if ([@"apropos" isEqualToString:action]) {
+    } else if ([@"usage" isEqualToString:action]) {
         NSString *signature = [paramDict objectForKey:@"signature"];
         Class webViewHostCls = [[HDWHResponseManager defaultManager] responseForActionSignature:signature];
         SEL targetMethod = wh_doc_selector(signature);
-        NSString *funcName = [@"apropos." stringByAppendingString:signature];
+        NSString *funcName = [@"usage." stringByAppendingString:signature];
         if (webViewHostCls && [webViewHostCls respondsToSelector:targetMethod]) {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
@@ -155,19 +166,6 @@ static NSString *kLastWeinreScript = nil;
 #endif
 }
 
-+ (NSDictionary<NSString *, NSString *> *)supportActionList {
-    return @{
-        @"eval_": @"1",
-        @"list": @"1",
-        @"apropos_": @"1",
-        @"testcase": @"1",
-        @"weinre_": @"1",
-        @"timing_": @"1",
-        @"console.log_": @"1",
-        @"clearCookie": @"1"
-    };
-}
-
 // 注入 weinre 文件
 - (void)enableWeinreSupport {
     if (kLastWeinreScript.length == 0) {
@@ -219,6 +217,8 @@ static NSString *kLastWeinreScript = nil;
         NSArray *allClazz = [HDWHResponseManager defaultManager].customResponseClasses;
         NSMutableArray *docsHtml = [NSMutableArray arrayWithCapacity:4];
         for (Class clazz in allClazz) {
+            // debug 的 responseClass 跳过
+            if ([clazz isKindOfClass:HDWHDebugResponse.class]) continue;
             NSDictionary *supportFunc = [clazz supportActionList];
             NSMutableString *html = [NSMutableString stringWithFormat:@"<fieldset><legend>%@</legend><ol>", NSStringFromClass(clazz)];
 

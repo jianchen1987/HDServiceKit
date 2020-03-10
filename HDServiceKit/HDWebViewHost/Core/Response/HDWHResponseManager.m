@@ -104,12 +104,12 @@
     return vc;
 }
 
-- (Class)responseForActionSignature:(NSString *)action {
+- (Class)responseForActionSignature:(NSString *)signature {
     // 逆序遍历，让后添加的 Response 能够覆盖内置的方法；
     Class r = nil;
     for (NSInteger i = self.customResponseClasses.count - 1; i >= 0; i--) {
         Class responseClass = [self.customResponseClasses objectAtIndex:i];
-        if ([responseClass isSupportedActionSignature:action]) {
+        if ([responseClass isSupportedActionSignature:signature]) {
             r = responseClass;
             break;
         }
@@ -119,11 +119,7 @@
 }
 
 #ifdef HDWH_DEBUG
-
-/**
- //TODO: 缓存
- */
-static NSDictionary *kAllResponseMethods = nil;
+static NSMutableDictionary *kAllResponseMethods = nil;
 static pthread_mutex_t lock;
 - (NSDictionary *)allResponseMethods {
     pthread_mutex_init(&lock, NULL);
@@ -161,5 +157,9 @@ static pthread_mutex_t lock;
     }];
     [self.responseClassObjs removeAllObjects];
     self.responseClassObjs = nil;
+    
+#ifdef HDWH_DEBUG
+    kAllResponseMethods = nil;
+#endif
 }
 @end

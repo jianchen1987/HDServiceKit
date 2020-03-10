@@ -10,6 +10,7 @@
 #import "HDWebViewHostViewController+Scripts.h"
 #import "HDWebViewHostViewController.h"
 #import <objc/runtime.h>
+#import "NSObject+HDWebViewHost.h"
 
 @interface HDWebViewHostResponse ()
 
@@ -47,15 +48,15 @@
     self.webViewHost = nil;
 }
 
-#pragma mark - protocol
+#pragma mark - HDWebViewHostProtocol
 
 - (BOOL)handleAction:(NSString *)action withParam:(NSDictionary *)paramDict callbackKey:(NSString *)callbackKey {
-    if (action == nil) {
+    if (!action) {
         return false;
     }
     SEL sel = nil;
-    if (paramDict == nil || paramDict.allKeys.count == 0) {
-        if (callbackKey.length == 0) {
+    if (!paramDict || paramDict.allKeys.count == 0) {
+        if (!callbackKey || callbackKey.length == 0) {
             sel = NSSelectorFromString([NSString stringWithFormat:@"%@", action]);
         } else {
             sel = NSSelectorFromString([NSString stringWithFormat:@"%@WithCallback:", action]);
@@ -71,32 +72,9 @@
     if (![self respondsToSelector:sel]) {
         return NO;
     }
-    [self runSelector:sel withObjects:[NSArray arrayWithObjects:paramDict, callbackKey, nil]];
+    
+    [self hd_performSelector:sel withObjects:[NSArray arrayWithObjects:paramDict, callbackKey, nil]];
     return YES;
-}
-
-- (id)runSelector:(SEL)aSelector withObjects:(NSArray *)objects {
-    NSMethodSignature *methodSignature = [self methodSignatureForSelector:aSelector];
-    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
-    [invocation setTarget:self];
-    [invocation setSelector:aSelector];
-
-    NSUInteger i = 1;
-
-    if (objects.count) {
-        for (id object in objects) {
-            id tempObject = object;
-            [invocation setArgument:&tempObject atIndex:++i];
-        }
-    }
-    [invocation invoke];
-
-    if (methodSignature.methodReturnLength > 0) {
-        id value;
-        [invocation getReturnValue:&value];
-        return value;
-    }
-    return nil;
 }
 
 + (BOOL)isSupportedActionSignature:(NSString *)signature {
@@ -113,6 +91,7 @@
     NSAssert(NO, @"Must implement handleActionFromH5 method");
     return @{};
 }
+
 #pragma - doc
 /**
  TODO 可变参数如何传参？解决代码copy的问题

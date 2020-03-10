@@ -47,11 +47,11 @@ function _renderLogs(logs) {
                 type: "list",
                 apis: apis
             });
-        } else if (logVal.action.indexOf("apropos.") >= 0) {
+        } else if (logVal.action.indexOf("usage.") >= 0) {
             // 特殊处理 API 接口的显示
             var doc = logVal.param;
             addStore({
-                type: "apropos_item",
+                type: "usage_item",
                 doc: doc
             });
         } else if (logVal.action == 'eval') {
@@ -129,10 +129,10 @@ function _parseCommand(com) {
             com = "window.webViewHost.invoke('testcase')";
         } else if (com.indexOf(":list") >= 0) {
             com = "window.webViewHost.invoke('list')";
-        } else if (com.indexOf(":apropos") >= 0) {
-            var api = com.replace(':apropos','').trim();
+        } else if (com.indexOf(":usage") >= 0) {
+            var api = com.replace(':usage','').trim();
             if (api.length > 0) {
-                com = "window.webViewHost.invoke('apropos', {signature:'" + api + "'})";
+                com = "window.webViewHost.invoke('usage', {signature:'" + api + "'})";
             } else {
                 console.log("参数出错 " + com);
                 com = null;
