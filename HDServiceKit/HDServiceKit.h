@@ -12,7 +12,7 @@
 #import <UIKit/UIKit.h>
 
 /// 版本号
-static NSString * const HDServiceKit_VERSION = @"0.3.8";
+static NSString * const HDServiceKit_VERSION = @"0.3.9";
 
 #if __has_include("HDWHViewControllerPreRender.h")
 #import "HDWHViewControllerPreRender.h"
@@ -146,8 +146,16 @@ static NSString * const HDServiceKit_VERSION = @"0.3.8";
 #import "HDWHURLChecker.h"
 #endif
 
+#if __has_include("HDWebViewHostAuxiliaryEntryWindow.h")
+#import "HDWebViewHostAuxiliaryEntryWindow.h"
+#endif
+
 #if __has_include("HDWHDebugServerManager.h")
 #import "HDWHDebugServerManager.h"
+#endif
+
+#if __has_include("HDWebViewHostAuxiliaryMainWindow.h")
+#import "HDWebViewHostAuxiliaryMainWindow.h"
 #endif
 
 #if __has_include("HDWHDebugViewController.h")

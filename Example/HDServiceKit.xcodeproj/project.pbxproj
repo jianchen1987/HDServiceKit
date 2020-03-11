@@ -13,7 +13,6 @@
 		6003F598195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F596195388D20070C39A /* InfoPlist.strings */; };
 		6003F59A195388D20070C39A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F599195388D20070C39A /* main.m */; };
 		6003F59E195388D20070C39A /* HDAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F59D195388D20070C39A /* HDAppDelegate.m */; };
-		6003F5A7195388D20070C39A /* HDViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5A6195388D20070C39A /* HDViewController.m */; };
 		6003F5A9195388D20070C39A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5A8195388D20070C39A /* Images.xcassets */; };
 		6003F5B0195388D20070C39A /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F5AF195388D20070C39A /* XCTest.framework */; };
 		6003F5B1195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
@@ -23,6 +22,10 @@
 		71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */; };
 		7E9B124B206E35723EB3BA44 /* Pods_HDServiceKit_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20BD82A8F3CFCDAE0E80D2B8 /* Pods_HDServiceKit_Tests.framework */; };
 		956762ED2417850C00374171 /* HDCallBackExample.m in Sources */ = {isa = PBXBuildFile; fileRef = 956762EC2417850C00374171 /* HDCallBackExample.m */; };
+		95676309241881BD00374171 /* HDBaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 956762FE241881BD00374171 /* HDBaseViewController.m */; };
+		9567630B241881BD00374171 /* HDViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 95676304241881BD00374171 /* HDViewController.m */; };
+		9567630C241881BD00374171 /* ExampleItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 95676307241881BD00374171 /* ExampleItem.m */; };
+		956763102418827100374171 /* HDH5ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9567630F2418827100374171 /* HDH5ViewController.m */; };
 		F10A14B383EBDDDE371FB108 /* Pods_HDServiceKit_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8BF9A6FFAAB58CBA3D4B355 /* Pods_HDServiceKit_Example.framework */; };
 /* End PBXBuildFile section */
 
@@ -50,8 +53,6 @@
 		6003F59B195388D20070C39A /* HDServiceKit-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HDServiceKit-Prefix.pch"; sourceTree = "<group>"; };
 		6003F59C195388D20070C39A /* HDAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HDAppDelegate.h; sourceTree = "<group>"; };
 		6003F59D195388D20070C39A /* HDAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HDAppDelegate.m; sourceTree = "<group>"; };
-		6003F5A5195388D20070C39A /* HDViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HDViewController.h; sourceTree = "<group>"; };
-		6003F5A6195388D20070C39A /* HDViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HDViewController.m; sourceTree = "<group>"; };
 		6003F5A8195388D20070C39A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		6003F5AE195388D20070C39A /* HDServiceKit_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HDServiceKit_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F5AF195388D20070C39A /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -64,6 +65,14 @@
 		8C8A0C567C061D2929A977B0 /* Pods-HDServiceKit_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HDServiceKit_Example.debug.xcconfig"; path = "Target Support Files/Pods-HDServiceKit_Example/Pods-HDServiceKit_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		956762EB2417850C00374171 /* HDCallBackExample.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HDCallBackExample.h; sourceTree = "<group>"; };
 		956762EC2417850C00374171 /* HDCallBackExample.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HDCallBackExample.m; sourceTree = "<group>"; };
+		956762FE241881BD00374171 /* HDBaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HDBaseViewController.m; sourceTree = "<group>"; };
+		95676302241881BD00374171 /* HDBaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HDBaseViewController.h; sourceTree = "<group>"; };
+		95676303241881BD00374171 /* HDViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HDViewController.h; sourceTree = "<group>"; };
+		95676304241881BD00374171 /* HDViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HDViewController.m; sourceTree = "<group>"; };
+		95676306241881BD00374171 /* ExampleItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExampleItem.h; sourceTree = "<group>"; };
+		95676307241881BD00374171 /* ExampleItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExampleItem.m; sourceTree = "<group>"; };
+		9567630E2418827100374171 /* HDH5ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HDH5ViewController.h; sourceTree = "<group>"; };
+		9567630F2418827100374171 /* HDH5ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HDH5ViewController.m; sourceTree = "<group>"; };
 		959AEAEA2413F99100D3E3AE /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
 		A8DE880A4F8F41BE837802F6 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		CAD66B6F8B2A50BCA944DB23 /* Pods-HDServiceKit_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HDServiceKit_Example.release.xcconfig"; path = "Target Support Files/Pods-HDServiceKit_Example/Pods-HDServiceKit_Example.release.xcconfig"; sourceTree = "<group>"; };
@@ -146,10 +155,9 @@
 		6003F593195388D20070C39A /* Example for HDServiceKit */ = {
 			isa = PBXGroup;
 			children = (
+				956762FB241881BD00374171 /* Classes */,
 				6003F59C195388D20070C39A /* HDAppDelegate.h */,
 				6003F59D195388D20070C39A /* HDAppDelegate.m */,
-				6003F5A5195388D20070C39A /* HDViewController.h */,
-				6003F5A6195388D20070C39A /* HDViewController.m */,
 				71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
@@ -198,6 +206,61 @@
 				A8DE880A4F8F41BE837802F6 /* LICENSE */,
 			);
 			name = "Podspec Metadata";
+			sourceTree = "<group>";
+		};
+		956762FB241881BD00374171 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				956762FC241881BD00374171 /* Controller */,
+				95676305241881BD00374171 /* Model */,
+				95676308241881BD00374171 /* View */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		956762FC241881BD00374171 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				956762FD241881BD00374171 /* Demo */,
+				95676303241881BD00374171 /* HDViewController.h */,
+				95676304241881BD00374171 /* HDViewController.m */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		956762FD241881BD00374171 /* Demo */ = {
+			isa = PBXGroup;
+			children = (
+				9567630D2418825900374171 /* H5 */,
+				956762FE241881BD00374171 /* HDBaseViewController.m */,
+				95676302241881BD00374171 /* HDBaseViewController.h */,
+			);
+			path = Demo;
+			sourceTree = "<group>";
+		};
+		95676305241881BD00374171 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				95676306241881BD00374171 /* ExampleItem.h */,
+				95676307241881BD00374171 /* ExampleItem.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		95676308241881BD00374171 /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		9567630D2418825900374171 /* H5 */ = {
+			isa = PBXGroup;
+			children = (
+				9567630E2418827100374171 /* HDH5ViewController.h */,
+				9567630F2418827100374171 /* HDH5ViewController.m */,
+			);
+			path = H5;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -396,9 +459,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				6003F59E195388D20070C39A /* HDAppDelegate.m in Sources */,
-				6003F5A7195388D20070C39A /* HDViewController.m in Sources */,
+				9567630C241881BD00374171 /* ExampleItem.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
+				95676309241881BD00374171 /* HDBaseViewController.m in Sources */,
+				9567630B241881BD00374171 /* HDViewController.m in Sources */,
 				956762ED2417850C00374171 /* HDCallBackExample.m in Sources */,
+				956763102418827100374171 /* HDH5ViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -535,7 +601,7 @@
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "HDServiceKit/HDServiceKit-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
-				MARKETING_VERSION = 0.3.8;
+				MARKETING_VERSION = 0.3.9;
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -557,7 +623,7 @@
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "HDServiceKit/HDServiceKit-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
-				MARKETING_VERSION = 0.3.8;
+				MARKETING_VERSION = 0.3.9;
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
