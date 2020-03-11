@@ -9,6 +9,7 @@
 #import "HDViewController.h"
 #import "ExampleItem.h"
 #import <HDUIKit/HDUIKit.h>
+#import <objc/runtime.h>
 
 @interface HDViewController () <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, strong) NSMutableArray<ExampleItem *> *dataSource;  ///< 数据源
@@ -26,16 +27,16 @@
 }
 
 - (void)initDataSource {
-    [self.dataSource addObject:[ExampleItem itemWithDesc:@"Crash 保护" destVcName:@"HDViewController"]];
-    [self.dataSource addObject:[ExampleItem itemWithDesc:@"文件操作" destVcName:@"HDViewController"]];
-    [self.dataSource addObject:[ExampleItem itemWithDesc:@"键值存储（包括归档、内存、keychain、user defaults）" destVcName:@"HDViewController"]];
-    [self.dataSource addObject:[ExampleItem itemWithDesc:@"定位服务" destVcName:@"HDViewController"]];
+    [self.dataSource addObject:[ExampleItem itemWithDesc:@"Crash 保护" destVcName:@"HDCrashProtectViewController"]];
+    [self.dataSource addObject:[ExampleItem itemWithDesc:@"文件操作" destVcName:@"HDFileOperViewController"]];
+    [self.dataSource addObject:[ExampleItem itemWithDesc:@"线程安全键值存储方案（包括归档、内存、keychain、user defaults）" destVcName:@"HDKVDBViewController"]];
+    [self.dataSource addObject:[ExampleItem itemWithDesc:@"定位服务" destVcName:@"HDLocationViewController"]];
     [self.dataSource addObject:[ExampleItem itemWithDesc:@"H5 容器" destVcName:@"HDH5ViewController"]];
 }
 
 - (void)setupUI {
 
-    self.hd_navigationItem.title = @"ViPay 组件";
+    self.hd_navigationItem.title = @"混沌服务";
     self.view.backgroundColor = UIColor.whiteColor;
 
     UITableView *tableView = [[UITableView alloc] initWithFrame:(CGRect){0, CGRectGetMaxY(self.hd_navigationBar.frame), CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame) - CGRectGetMaxY(self.hd_navigationBar.frame)}];
@@ -73,15 +74,24 @@
     [tableView deselectRowAtIndexPath:indexPath animated:true];
 
     ExampleItem *item = self.dataSource[indexPath.row];
-    HDLog(@"打开：%@", item.destVcName);
 
-    Class cls = NSClassFromString(item.destVcName);
-    if (cls) {
-        UIViewController *vc = [[cls alloc] init];
-        [self.navigationController pushViewController:vc animated:true];
+    UIViewController *vc;
+    const char *className = [item.destVcName cStringUsingEncoding:NSASCIIStringEncoding];
+    Class cls = objc_getClass(className);
+    if (!cls) {
+        // 创建一个类
+        Class superClass = [HDBaseViewController class];
+        cls = objc_allocateClassPair(superClass, className, 0);
+        // 注册你创建的这个类
+        objc_registerClassPair(cls);
+        vc = [[cls alloc] init];
     } else {
-        HDLog(@"类不存在");
+        vc = [[cls alloc] init];
     }
+    vc.hd_navigationItem.title = item.desc;
+
+    [self.navigationController pushViewController:vc animated:true];
+    HDLog(@"打开：%@", item.destVcName);
 }
 
 #pragma mark - lazy load
