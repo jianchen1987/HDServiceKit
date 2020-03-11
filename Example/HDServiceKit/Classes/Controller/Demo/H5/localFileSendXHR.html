@@ -14,12 +14,12 @@
     </style>
 </head>
 <body>
-    <p>获取美团首页，关键字 58 的搜索结果</p>
+    <p> 获取github 关键字 nodejs 的搜索结果</p>
     <textarea id="output">loading</textarea>
     <script type="text/javascript">
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'http://i.meituan.com/s/suggest.json?keyword=58');
-        xhr.onload = function(){
+        xhr.open('GET', 'https://github.com/search?q=nodejs');
+        xhr.onload = function() {
             if (xhr.responseText){
                 output.value = xhr.responseText;
             } else {

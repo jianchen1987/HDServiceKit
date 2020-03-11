@@ -62,7 +62,7 @@
                                        @{ @"name": @"加载本地页面，可向服务器发 ajax 请求",
                                           @"fileName": @"localFileSendXHR.html",
                                           @"desc": @"本地文件服务器发送请求",
-                                          @"domain": @"https://www.chaosource.com" },
+                                          @"domain": @"https://github.com" },
                                        nil];
     self.dataSource = dataSource;
 }
