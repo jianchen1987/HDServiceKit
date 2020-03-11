@@ -26,6 +26,10 @@
 		9567630B241881BD00374171 /* HDViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 95676304241881BD00374171 /* HDViewController.m */; };
 		9567630C241881BD00374171 /* ExampleItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 95676307241881BD00374171 /* ExampleItem.m */; };
 		956763102418827100374171 /* HDH5ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9567630F2418827100374171 /* HDH5ViewController.m */; };
+		956763142418873F00374171 /* H5DescTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 956763132418873E00374171 /* H5DescTableViewCell.m */; };
+		956763172418874700374171 /* LoadJDWebViewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 956763152418874700374171 /* LoadJDWebViewViewController.m */; };
+		95676321241887FA00374171 /* localFileSendXHR.html in Resources */ = {isa = PBXBuildFile; fileRef = 9567631B241887FA00374171 /* localFileSendXHR.html */; };
+		956763272418880E00374171 /* LocalDir in Resources */ = {isa = PBXBuildFile; fileRef = 956763262418880E00374171 /* LocalDir */; };
 		F10A14B383EBDDDE371FB108 /* Pods_HDServiceKit_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8BF9A6FFAAB58CBA3D4B355 /* Pods_HDServiceKit_Example.framework */; };
 /* End PBXBuildFile section */
 
@@ -73,6 +77,12 @@
 		95676307241881BD00374171 /* ExampleItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExampleItem.m; sourceTree = "<group>"; };
 		9567630E2418827100374171 /* HDH5ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HDH5ViewController.h; sourceTree = "<group>"; };
 		9567630F2418827100374171 /* HDH5ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HDH5ViewController.m; sourceTree = "<group>"; };
+		956763122418873E00374171 /* H5DescTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = H5DescTableViewCell.h; sourceTree = "<group>"; };
+		956763132418873E00374171 /* H5DescTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = H5DescTableViewCell.m; sourceTree = "<group>"; };
+		956763152418874700374171 /* LoadJDWebViewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoadJDWebViewViewController.m; sourceTree = "<group>"; };
+		956763162418874700374171 /* LoadJDWebViewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadJDWebViewViewController.h; sourceTree = "<group>"; };
+		9567631B241887FA00374171 /* localFileSendXHR.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = localFileSendXHR.html; sourceTree = "<group>"; };
+		956763262418880E00374171 /* LocalDir */ = {isa = PBXFileReference; lastKnownFileType = folder; path = LocalDir; sourceTree = "<group>"; };
 		959AEAEA2413F99100D3E3AE /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
 		A8DE880A4F8F41BE837802F6 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		CAD66B6F8B2A50BCA944DB23 /* Pods-HDServiceKit_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HDServiceKit_Example.release.xcconfig"; path = "Target Support Files/Pods-HDServiceKit_Example/Pods-HDServiceKit_Example.release.xcconfig"; sourceTree = "<group>"; };
@@ -257,6 +267,12 @@
 		9567630D2418825900374171 /* H5 */ = {
 			isa = PBXGroup;
 			children = (
+				956763262418880E00374171 /* LocalDir */,
+				9567631B241887FA00374171 /* localFileSendXHR.html */,
+				956763162418874700374171 /* LoadJDWebViewViewController.h */,
+				956763152418874700374171 /* LoadJDWebViewViewController.m */,
+				956763122418873E00374171 /* H5DescTableViewCell.h */,
+				956763132418873E00374171 /* H5DescTableViewCell.m */,
 				9567630E2418827100374171 /* HDH5ViewController.h */,
 				9567630F2418827100374171 /* HDH5ViewController.m */,
 			);
@@ -351,6 +367,8 @@
 				71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
+				95676321241887FA00374171 /* localFileSendXHR.html in Resources */,
+				956763272418880E00374171 /* LocalDir in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -458,11 +476,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				956763142418873F00374171 /* H5DescTableViewCell.m in Sources */,
 				6003F59E195388D20070C39A /* HDAppDelegate.m in Sources */,
 				9567630C241881BD00374171 /* ExampleItem.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				95676309241881BD00374171 /* HDBaseViewController.m in Sources */,
 				9567630B241881BD00374171 /* HDViewController.m in Sources */,
+				956763172418874700374171 /* LoadJDWebViewViewController.m in Sources */,
 				956762ED2417850C00374171 /* HDCallBackExample.m in Sources */,
 				956763102418827100374171 /* HDH5ViewController.m in Sources */,
 			);
@@ -601,7 +621,7 @@
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "HDServiceKit/HDServiceKit-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
-				MARKETING_VERSION = 0.3.9;
+				MARKETING_VERSION = 0.4.0;
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -623,7 +643,7 @@
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "HDServiceKit/HDServiceKit-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
-				MARKETING_VERSION = 0.3.9;
+				MARKETING_VERSION = 0.4.0;
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";

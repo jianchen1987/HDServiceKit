@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width">
+	<link rel="stylesheet" type="text/css" href="./index.css"/>
+	<title>本地页面</title>
+	<script type="text/javascript" src="./index.js"></script>
+</head>
+<body style="background-color:#f3f3f3;text-align:center;">
+<div style="margin-top:10px;text-font:17px;color:#999999;">
+	<fieldset>
+		<legend>测试webview浏览器</legend>
+		<ol>
+			<li>
+				<input type="text" id="url" style="width:100%;" name="url" value="http://html5test.com" />
+				<br/>
+				<input type="button" id="testURL" name="go" value="打开">
+				<span>使用webview页面，加载以上链接</span>
+			</li>
+            <li>
+                <a href="http://m.taobao.com">打开第三方页面</a>
+                <span>打开和APP不在同一主站的url，如其它公司的页面、做展示的，不需要h5接口的url等。</span>
+            </li>
+		</ol>
+	</fieldset>
+	<fieldset>
+		<legend>导航栏相关</legend>
+		<ol>
+            <li>
+                <a href="javascript:void(0);" onclick="window.webViewHost.invoke('setNavTitle',{'text': '新的标题'});">设置中间的标题</a>
+                <span>标题变化</span>
+            </li>
+            <li>
+                <a href="javascript:void(0);" onclick="window.webViewHost.invoke('setNavRight',{'text': '分享'});">设置右侧的按钮</a>
+                <span>导航栏右侧标题变化</span>
+            </li>
+		</ol>
+	</fieldset>
+</div>
+<script type="text/javascript">
+        (function() {
+            if (window.webViewHost) {
+                var testURL = document.getElementById('testURL');
+                var url = document.getElementById('url');
+                testURL.onclick = function() {
+                     window.location.href = url.value;
+                }
+
+                window.webViewHost.on('onready', function() {
+                      console.log('dom ready');
+                });
+            } else {
+                alert('webViewHost 对象不存在');
+            }
+
+            var currentBounce = true;
+            window.toggleBounce = function() {
+                currentBounce = !currentBounce;
+                window.webViewHost.invoke('pageBounceEnabled', {
+                    'enabled': currentBounce
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

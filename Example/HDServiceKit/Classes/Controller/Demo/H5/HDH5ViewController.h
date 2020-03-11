@@ -7,11 +7,10 @@
 //
 
 #import "HDBaseViewController.h"
-#import <HDServiceKit/HDWebViewHostViewController.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface HDH5ViewController : HDWebViewHostViewController
+@interface HDH5ViewController : HDBaseViewController
 
 @end
 

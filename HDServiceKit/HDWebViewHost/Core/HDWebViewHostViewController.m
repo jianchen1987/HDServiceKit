@@ -27,7 +27,7 @@
 
 @property (nonatomic, strong) WKWebView *webView;
 
-@property (nonatomic, strong) HDWHSchemeTaskDelegate *taskDelegate;
+@property (nonatomic, strong) HDWHSchemeTaskDelegate *taskDelegate API_AVAILABLE(ios(11));
 
 @end
 
@@ -142,6 +142,7 @@ BOOL kGCDWebServer_logging_enabled = false;
 #pragma mark - public
 //https://stackoverflow.com/questions/49826107/wkwebview-custom-url-scheme-doesnt-work-with-https-mixed-content-blocked
 - (void)loadLocalFile:(NSURL *)url domain:(NSString *)domain {
+    self.url = domain;
     NSError *err;
     NSStringEncoding encoding = NSUTF8StringEncoding;
     NSString *content = [NSString stringWithContentsOfURL:url usedEncoding:&encoding error:&err];
@@ -160,6 +161,7 @@ BOOL kGCDWebServer_logging_enabled = false;
         HDWHLog(@"文件参数错误");
         return;
     }
+    self.url = domain;
     NSString *htmlContent = nil;
     [HDWHRequestMediate interMediateFile:fileName inDirectory:directory domain:domain output:&htmlContent];
 
