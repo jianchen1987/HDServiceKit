@@ -44,7 +44,7 @@ Core
 ├── HDWebViewHostViewController+Timing.m
 ├── HDWebViewHostViewController+Utils.h    其他扩展函数
 ├── HDWebViewHostViewController+Utils.m
-├── HDWebViewHostViewController.h
+├── HDWebViewHostViewController.h    核心渲染
 ├── HDWebViewHostViewController.m
 ├── HMTLParser    加载本地 html 解析器
 │   ├── HTMLNode.h
