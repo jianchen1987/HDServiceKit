@@ -53,12 +53,12 @@ static NSString *kLastWeinreScript = nil;
     [scripts addObject:script];
 
     // 性能测试
-    NSURL *profile = [[bundle bundleURL] URLByAppendingPathComponent:@"src/profile/profiler.js"];
+    NSURL *profile = [[bundle bundleURL] URLByAppendingPathComponent:@"profile/profiler.js"];
     NSString *profileTxt = [NSString stringWithContentsOfURL:profile encoding:NSUTF8StringEncoding error:nil];
     script = [HDWebViewHostCustomJavscript customJavscriptWithScript:profileTxt injectionTime:WKUserScriptInjectionTimeAtDocumentEnd key:@"profile.js"];
     [scripts addObject:script];
 
-    NSURL *timing = [[bundle bundleURL] URLByAppendingPathComponent:@"src/profile/pageTiming.js"];
+    NSURL *timing = [[bundle bundleURL] URLByAppendingPathComponent:@"profile/pageTiming.js"];
     NSString *timingTxt = [NSString stringWithContentsOfURL:timing encoding:NSUTF8StringEncoding error:nil];
     script = [HDWebViewHostCustomJavscript customJavscriptWithScript:timingTxt injectionTime:WKUserScriptInjectionTimeAtDocumentEnd key:@"timing.js"];
     [scripts addObject:script];
@@ -205,7 +205,7 @@ static NSString *kLastWeinreScript = nil;
 - (BOOL)generatorHtml {
 
     NSBundle *bundle = [NSBundle hd_WebViewHostRemoteDebugResourcesBundle];
-    NSURL *url = [bundle URLForResource:@"src/testcase" withExtension:@"tmpl"];
+    NSURL *url = [bundle URLForResource:@"testcase" withExtension:@"tmpl"];
     // 获取模板
     NSError *err = nil;
     NSString *template = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&err];

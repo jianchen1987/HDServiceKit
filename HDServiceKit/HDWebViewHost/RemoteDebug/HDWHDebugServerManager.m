@@ -143,7 +143,7 @@ static off_t _log_offset = 0;
             dataType = @"data";
         }
 
-        NSString *path = [bundle pathForResource:[NSString stringWithFormat:@"src/%@", filePath] ofType:nil];
+        NSString *path = [bundle pathForResource:filePath ofType:nil];
         NSData *contentData = [NSData dataWithContentsOfFile:path];
         if (contentData.length > 0) {
             return [GCDWebServerDataResponse responseWithData:contentData contentType:contentType];

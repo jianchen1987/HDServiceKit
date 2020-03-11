@@ -120,7 +120,7 @@ static CGFloat _kEntryViewSize = 58;
 static UIImage *_logoImage = nil;
 - (UIImage *)logoImage {
     if (!_logoImage) {
-        NSURL *imageURL = [[NSBundle hd_WebViewHostRemoteDebugResourcesBundle] URLForResource:@"src/logo" withExtension:@"png"];
+        NSURL *imageURL = [[NSBundle hd_WebViewHostRemoteDebugResourcesBundle] URLForResource:@"logo" withExtension:@"png"];
         _logoImage = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:imageURL]];
     }
     return _logoImage;
