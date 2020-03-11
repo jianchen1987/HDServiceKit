@@ -14,21 +14,14 @@ NS_ASSUME_NONNULL_BEGIN
 @class HDWHDebugViewController;
 
 @protocol HDWHDebugViewDelegate <NSObject>
-
-- (void)onCloseWindow:(HDWHDebugViewController *)viewController;
-
 - (void)fetchData:(HDWHDebugViewController *)viewController completion:(void (^)(NSArray<NSString *> *))completion;
-
 @end
 
 @interface HDWHDebugViewController : UIViewController
 
-@property (nonatomic, weak) id<HDWHDebugViewDelegate> debugViewDelegate;
+@property (nonatomic, weak) id<HDWHDebugViewDelegate>  debugViewDelegate;
 
 - (void)showNewLine:(NSArray<NSString *> *)line;
-
-- (void)onWindowHide;
-- (void)onWindowShow;
 
 @end
 

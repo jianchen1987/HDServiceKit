@@ -20,12 +20,11 @@
     [super viewDidLoad];
 
     self.view.backgroundColor = UIColor.whiteColor;
-    
-    
+
     [HDWHResponseManager.defaultManager addCustomResponse:HDCallBackExample.class];
 
     [HDWHDebugServerManager.sharedInstance showDebugWindow];
-    [HDWHDebugServerManager.sharedInstance startWithPort:12333 bonjourName:@"12333.local"];
+    [HDWHDebugServerManager.sharedInstance start];
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {

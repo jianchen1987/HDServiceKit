@@ -12,14 +12,10 @@
 #import "HDWebViewHostEnum.h"
 
 @interface HDWHDebugViewController () <UITableViewDelegate, UITableViewDataSource>
-
 @property (nonatomic, strong) UITableView *tableView;
-
 @property (nonatomic, strong) UIButton *export;
 @property (nonatomic, strong) UIButton *refresh;
-
 @property (nonatomic, strong) NSArray<NSString *> *dataSource;
-
 @end
 
 CGFloat kDebugHeadeHeight = 46.f;
@@ -52,23 +48,11 @@ CGFloat kDebugHeadeHeight = 46.f;
     // 刷新日志按钮在左边
     UIBarButtonItem *refreshBar = [[UIBarButtonItem alloc] initWithTitle:@"刷新" style:UIBarButtonItemStylePlain target:self action:@selector(refresh:)];
     self.navigationItem.rightBarButtonItems = @[exportBar, refreshBar];
+    
+    [self refresh:nil];
 }
 
 #pragma mark -
-
-- (void)onWindowHide {
-    self.navigationController.navigationBarHidden = YES;
-    self.view.hidden = YES;
-}
-
-- (void)onWindowShow {
-    self.navigationController.navigationBarHidden = NO;
-    self.view.hidden = NO;
-    if (self.dataSource.count == 0) {
-        [self refresh:nil];
-    }
-}
-
 - (void)showNewLine:(NSArray<NSString *> *)line {
     self.dataSource = [self.dataSource arrayByAddingObjectsFromArray:line];
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -77,13 +61,10 @@ CGFloat kDebugHeadeHeight = 46.f;
 }
 #pragma mark - event
 - (void)close:(UIButton *)button {
-    if ([self.debugViewDelegate respondsToSelector:@selector(onCloseWindow:)]) {
-        [self.debugViewDelegate onCloseWindow:self];
-    }
+    self.view.window.hidden = true;
 }
 
 - (void)export:(UIButton *)button {
-    HDWHLog(@"Export access file");
     NSString *logFile = [[DocumentsPath stringByAppendingPathComponent:kWebViewHostDBDir] stringByAppendingPathComponent:GCDWebServer_accessLogFileName];
     if ([HDFileUtil isFileExistedFilePath:logFile]) {
         NSURL *logoURL = [NSURL fileURLWithPath:logFile];
@@ -107,7 +88,6 @@ CGFloat kDebugHeadeHeight = 46.f;
 }
 
 #pragma mark - tableView Delegate
-
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
@@ -147,7 +127,7 @@ CGFloat kDebugHeadeHeight = 46.f;
     return YES;
 }
 
-//每个cell都会点击出现Menu菜单
+// 每个cell都会点击出现Menu菜单
 - (BOOL)tableView:(UITableView *)tableView canPerformAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender {
     if (action == @selector(copy:)) {
         return YES;

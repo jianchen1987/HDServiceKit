@@ -13,9 +13,9 @@
 
 static NSString *const kWebViewHostURLScheme = @"webviewhost";
 static NSString *const kWebViewHostURLProtocal = @"webviewhost://";
-static NSString *const kWebViewHostURLImageHost = @"image.webviewhost.hite.me";
-static NSString *const kWebViewHostURLScriptHost = @"js.webviewhost.hite.me";
-static NSString *const kWebViewHostURLStyleHost = @"css.webviewhost.hite.me";
+static NSString *const kWebViewHostURLImageHost = @"image.webviewhost.chaos.cn";
+static NSString *const kWebViewHostURLScriptHost = @"js.webviewhost.chaos.cn";
+static NSString *const kWebViewHostURLStyleHost = @"css.webviewhost.chaos.cn";
 
 #define HDWebViewHostURLScriptServer [kWebViewHostURLProtocal stringByAppendingString:kWebViewHostURLScriptHost]
 #define HDWebViewHostURLStyleServer [kWebViewHostURLProtocal stringByAppendingString:kWebViewHostURLStyleHost]

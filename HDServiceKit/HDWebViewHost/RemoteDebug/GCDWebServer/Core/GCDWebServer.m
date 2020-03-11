@@ -109,7 +109,7 @@ void GCDWebServerLogMessage(GCDWebServerLoggingLevel level, NSString *format, ..
         if (kGCDWebServer_logging_enabled && _logFile_io && level > kGCDWebServerLoggingLevel_Debug) {
             long timeout = dispatch_semaphore_wait(_sync_log_semaphore, DISPATCH_TIME_FOREVER);
             if (timeout == 0) {
-                dispatch_queue_t dq = dispatch_queue_create("me.hite.app.webviewhost.log", DISPATCH_QUEUE_SERIAL);
+                dispatch_queue_t dq = dispatch_queue_create("cn.chaos.app.webviewhost.log", DISPATCH_QUEUE_SERIAL);
                 NSString *content = [NSString stringWithFormat:@"[%s] %s\n", levelNames[level], [message UTF8String]];
 
                 NSData *data = [content dataUsingEncoding:NSUTF8StringEncoding];

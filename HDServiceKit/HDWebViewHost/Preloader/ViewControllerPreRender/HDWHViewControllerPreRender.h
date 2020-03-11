@@ -5,7 +5,6 @@
 //  Created by VanJay on 03/06/2020.
 //  Copyright © 2019 chaos network technology. All rights reserved.
 //
-// 本类来自 https://github.com/hite/ViewControllerPreRender
 
 #import "HDWebViewHostViewController.h"
 #import <Foundation/Foundation.h>

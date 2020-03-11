@@ -103,7 +103,7 @@ function _renderLogs(logs) {
 window.kLogIndex = 1;
 function loop() {
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "/react_log.do", true);
+    xhr.open("POST", "/access_log.do", true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.responseType = "json";
     xhr.onload = function () {

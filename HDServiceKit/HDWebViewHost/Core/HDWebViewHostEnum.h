@@ -16,14 +16,15 @@
 #define HDWHLog(...) ;
 #endif
 
-// 获取设备的物理高度
+/// 获取设备的物理高度
 #define HDWH_SCREEN_HEIGHT [UIScreen mainScreen].bounds.size.height
-// 获取设备的物理宽度
+/// 获取设备的物理宽度
 #define HDWH_SCREEN_WIDTH [UIScreen mainScreen].bounds.size.width
 #define HDWH_IS_SCREEN_HEIGHT_X (HDWH_SCREEN_HEIGHT == 812.0f || HDWH_SCREEN_HEIGHT == 896.0f)
-
-#define HDWH_PURE_NAVBAR_HEIGHT 44                                                                                             // 单纯的导航的高度
-#define HDWH_NAVIGATION_BAR_HEIGHT (HDWH_PURE_NAVBAR_HEIGHT + [[UIApplication sharedApplication] statusBarFrame].size.height)  //顶部（导航+状态栏）的高度
+/// 单纯的导航的高度
+#define HDWH_PURE_NAVBAR_HEIGHT 44
+/// 顶部（导航+状态栏）的高度
+#define HDWH_NAVIGATION_BAR_HEIGHT (HDWH_PURE_NAVBAR_HEIGHT + [[UIApplication sharedApplication] statusBarFrame].size.height)
 
 #define HDWHColorFromRGB(rgbValue) [UIColor                     \
     colorWithRed:((float)((rgbValue & 0xFF0000) >> 16)) / 255.0 \
