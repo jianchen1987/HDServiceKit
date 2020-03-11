@@ -6,7 +6,7 @@
 //  Copyright © 2020 wangwanjie. All rights reserved.
 //
 
-#import <HDServiceKit/HDServiceKit.h>
+#import <HDServiceKit/HDWebViewHostResponse.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
