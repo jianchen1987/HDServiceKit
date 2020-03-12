@@ -2,33 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-import argparse
-import xml.etree.cElementTree as ET
 
-HeaderFileName = 'HDServiceKit'
-KitDirName = 'HDServiceKit'
-HeaderFileFullName = HeaderFileName + '.h'
-version = ''
-
-# 自动获取版本号
-def autoFetchVersionNumber():
-    internal_version = ''
-    # 从 Info.plist 中读取 HDServiceKit 的版本号，将其定义为一个 static const 常量以便代码里获取
-    infoFilePath = str(os.getenv('SRCROOT')) + \
-        '/%s/%s-Info.plist' % (HeaderFileName, HeaderFileName)
-    infoTree = ET.parse(infoFilePath)
-    infoDictList = list(infoTree.find('dict'))
-    # 从 info.plist 获取版本号
-    for index in range(len(infoDictList)):
-        element = infoDictList[index]
-        if element.text == 'CFBundleShortVersionString':
-            internal_version = infoDictList[index + 1].text
-            break
-
-    # Xcode 11
-    if internal_version.startswith('$'):
-        internal_version = str(os.getenv('MARKETING_VERSION'))
-    return internal_version
 
 # 判断是否存在 podspec 文件
 def isExistPodspec():
@@ -37,22 +11,55 @@ def isExistPodspec():
     for fileName in allFiles:
         if '.podspec' in fileName:
             isExist = True
+            # 记得跳出循环
+            break
         else:
             isExist = False
     return isExist
 
+# 自动获取 podspec 文件
+def getPodspecFile():
+    listFile = os.listdir(os.getcwd())
+    # 文件后缀名，自动查找
+    file_extension = "podspec"
+    for fileName in listFile:
+        if fileName.endswith(file_extension):
+            return fileName
 
-if isExistPodspec():
-    # 这种情况是手动触发
-    ROOT_DIR_PATH = os.getcwd() + '/' + KitDirName
-else:
-    # 这种情况是在 Example 内 Xcode build phases 自动触发
-    ROOT_DIR_PATH = os.getcwd() + '/../' + KitDirName
+    os.system("say 未找到" + file_extension + "文件")
+    return "not found"
 
-# 切换工作目录
-os.chdir(ROOT_DIR_PATH)
-ROOT_DIR_PATH = os.getcwd()
+# 自动获取版本号
+def getPodspecVersion(podspecFileName):
+    podspec_path = os.getcwd() + '/' + podspecFileName
+    versionLine = ''
+    for line in open(podspec_path):
+        if 's.version' in line:
+            versionLine = line
+            break
 
+    version = ''
+    splitStr = versionLine.split("\"")
+    if len(splitStr) > 1:
+        version = splitStr[1]
+    return version
+
+if not isExistPodspec():
+    # xcode build 触发
+    # 回到上级目录
+    os.chdir(os.path.abspath(os.path.dirname(os.getcwd())))
+
+# podspec 文件
+podspecFileName = getPodspecFile()
+
+# 库名称
+podName = podspecFileName.split(".")[0]
+# 根目录
+ROOT_DIR_PATH = os.getcwd() + '/' + podName
+# 版本
+version = getPodspecVersion(podspecFileName)
+# 头文件名称
+HeaderFileFullName = podName + '.h'
 
 # 递归收集所有文件
 def fileListForDir(dir):
@@ -74,12 +81,7 @@ def fileListForDir(dir):
     return fileList
 
 
-def main(args=None):
-    if args and args.version:
-        version = args.version
-    else:
-        version = autoFetchVersionNumber()
-
+def main():
     print('开始生成头文件')
     print('根目录：' + ROOT_DIR_PATH)
     print('版本号：' + version)
@@ -100,7 +102,7 @@ def main(args=None):
 /// 版本号
 static NSString * const %s_VERSION = @"%s";
 
-''' % (HeaderFileName, HeaderFileName, HeaderFileName, HeaderFileName, HeaderFileName, version)
+''' % (podName, podName, podName, podName, podName, version)
 
     # 文件名列表
     fileList = fileListForDir(ROOT_DIR_PATH)
@@ -112,7 +114,7 @@ static NSString * const %s_VERSION = @"%s";
 ''' % (filename, filename)
 
     # 拼接尾部
-    fileContent += '#endif /* %s_h */' % (HeaderFileName)
+    fileContent += '#endif /* %s_h */' % (podName)
 
     # 写入文件
     with open(ROOT_DIR_PATH + '/' + HeaderFileFullName, 'w') as file:
@@ -121,8 +123,4 @@ static NSString * const %s_VERSION = @"%s";
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='HDServiceKit 头文件生成脚本')
-    parser.add_argument('-v', '--version', type=str,
-                        help='当前版本号，如非 xcodebuild 触发必须传递', required=False)
-    args = parser.parse_args()
-    main(args)
+    main()

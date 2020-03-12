@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# 更新头文件
+python3 ./HeaderFileGenerator.py
+
 directory="$(pwd)"
 # 文件后缀名，自动查找
 file_extension="podspec"
