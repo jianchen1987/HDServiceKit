@@ -35,12 +35,20 @@
 
     [self initDataSource];
 
+    kFakeCookieWebPageURLWithQueryString = @"";
     kWebViewProgressTintColorRGB = 0xdcb000;
     kGCDWebServer_logging_enabled = YES;
     [[HDWHDebugServerManager sharedInstance] showDebugWindow];
     [[HDWHDebugServerManager sharedInstance] start];
     // 添加新的 Response，提供新的接口能力
     [[HDWHResponseManager defaultManager] addCustomResponse:HDCallBackExample.class];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    [[HDWHDebugServerManager sharedInstance] hideDebugWindow];
+    [[HDWHDebugServerManager sharedInstance] stop];
 }
 
 - (void)initDataSource {

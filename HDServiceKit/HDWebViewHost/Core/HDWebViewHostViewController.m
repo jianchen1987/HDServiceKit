@@ -163,7 +163,7 @@ BOOL kGCDWebServer_logging_enabled = false;
     }
     self.url = domain;
     NSString *htmlContent = nil;
-    [HDWHRequestMediate interMediateFile:fileName inDirectory:directory domain:domain output:&htmlContent];
+   [HDWHRequestMediate interMediateFile:fileName inDirectory:directory domain:domain output:&htmlContent];
 
     if (htmlContent.length > 0 && domain.length > 0) {
         [self mark:kWebViewHostTimingLoadRequest];

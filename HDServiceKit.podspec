@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "HDServiceKit"
-  s.version          = "0.4.4"
+  s.version          = "0.4.5"
   s.summary          = "混沌 iOS 服务"
   s.description      = <<-DESC
                        HDServiceKit 是一系列服务以及能力，用于快速在其他项目使用或者第三方接入
@@ -64,10 +64,10 @@ Pod::Spec.new do |s|
     end
 
     ss.subspec 'RemoteDebug' do |ss|
-      ss.source_files = 'HDServiceKit/HDWebViewHost/RemoteDebug', 'HDServiceKit/HDWebViewHost/RemoteDebug/GCDWebServer/**/*'
+      ss.source_files = 'HDServiceKit/HDWebViewHost/RemoteDebug'
       ss.resource_bundles = {'HDWebViewHostRemoteDebugResources' => ['HDServiceKit/HDWebViewHost/RemoteDebug/src/*']}
       ss.dependency  'HDServiceKit/HDWebViewHost/Core'
-      ss.dependency  'HDServiceKit/HDPodAsset'
+      ss.dependency  'GCDWebServer', '~> 3.0'
     end
 
     ss.subspec 'Preloader' do |ss|

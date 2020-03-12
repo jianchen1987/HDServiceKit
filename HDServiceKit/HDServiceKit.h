@@ -12,7 +12,7 @@
 #import <UIKit/UIKit.h>
 
 /// 版本号
-static NSString * const HDServiceKit_VERSION = @"0.4.4";
+static NSString * const HDServiceKit_VERSION = @"0.4.5";
 
 #if __has_include("HDWHViewControllerPreRender.h")
 #import "HDWHViewControllerPreRender.h"
@@ -160,66 +160,6 @@ static NSString * const HDServiceKit_VERSION = @"0.4.4";
 
 #if __has_include("HDWHDebugViewController.h")
 #import "HDWHDebugViewController.h"
-#endif
-
-#if __has_include("GCDWebServerFunctions.h")
-#import "GCDWebServerFunctions.h"
-#endif
-
-#if __has_include("GCDWebServerPrivate.h")
-#import "GCDWebServerPrivate.h"
-#endif
-
-#if __has_include("GCDWebServerConnection.h")
-#import "GCDWebServerConnection.h"
-#endif
-
-#if __has_include("GCDWebServer.h")
-#import "GCDWebServer.h"
-#endif
-
-#if __has_include("GCDWebServerHTTPStatusCodes.h")
-#import "GCDWebServerHTTPStatusCodes.h"
-#endif
-
-#if __has_include("GCDWebServerResponse.h")
-#import "GCDWebServerResponse.h"
-#endif
-
-#if __has_include("GCDWebServerRequest.h")
-#import "GCDWebServerRequest.h"
-#endif
-
-#if __has_include("GCDWebServerFileResponse.h")
-#import "GCDWebServerFileResponse.h"
-#endif
-
-#if __has_include("GCDWebServerStreamedResponse.h")
-#import "GCDWebServerStreamedResponse.h"
-#endif
-
-#if __has_include("GCDWebServerDataResponse.h")
-#import "GCDWebServerDataResponse.h"
-#endif
-
-#if __has_include("GCDWebServerErrorResponse.h")
-#import "GCDWebServerErrorResponse.h"
-#endif
-
-#if __has_include("GCDWebServerDataRequest.h")
-#import "GCDWebServerDataRequest.h"
-#endif
-
-#if __has_include("GCDWebServerMultiPartFormRequest.h")
-#import "GCDWebServerMultiPartFormRequest.h"
-#endif
-
-#if __has_include("GCDWebServerFileRequest.h")
-#import "GCDWebServerFileRequest.h"
-#endif
-
-#if __has_include("GCDWebServerURLEncodedFormRequest.h")
-#import "GCDWebServerURLEncodedFormRequest.h"
 #endif
 
 #if __has_include("HDPodAsset.h")

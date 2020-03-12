@@ -26,6 +26,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 展示入口
 - (void)showDebugWindow;
+
+/// 关闭入口
+- (void)hideDebugWindow;
 @end
 
 NS_ASSUME_NONNULL_END

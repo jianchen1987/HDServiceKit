@@ -103,6 +103,10 @@ static off_t _log_offset = 0;
     [_toolWindow makeKeyAndVisible];
 }
 
+- (void)hideDebugWindow {
+    _toolWindow.hidden = true;
+}
+
 - (void)start {
     [self startWithPort:8081 bonjourName:@"chaos-mac.local"];
 }
@@ -113,9 +117,11 @@ static off_t _log_offset = 0;
 
 - (void)startWithPort:(NSUInteger)port bonjourName:(NSString *)name {
     // Create server
-    _webServer = [[GCDWebServer alloc] initWithLogServer:kGCDWebServer_logging_enabled];
-    // kGCDWebServerLoggingLevel_Info
-    [GCDWebServer setLogLevel:2];
+    _webServer = [[GCDWebServer alloc] init];
+    
+    if (kGCDWebServer_logging_enabled) {
+        [GCDWebServer setLogLevel:2];
+    }
 
     HDWHLog(@"Document = %@", [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject]);
 
@@ -227,8 +233,6 @@ static off_t _log_offset = 0;
                                                            O_RDWR,                // Open for reading
                                                            0,                     // No extra flags
                                                            dq, ^(int error) {
-                                                               // Cleanup code for normal channel operation.
-                                                               // Assumes that dispatch_io_close was called elsewhere.
                                                                HDWHLog(@"I am ok ");
                                                            });
             } else {

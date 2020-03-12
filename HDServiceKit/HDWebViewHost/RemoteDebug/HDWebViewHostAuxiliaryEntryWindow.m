@@ -31,7 +31,7 @@
 @implementation HDWebViewHostAuxiliaryEntryWindow
 static CGFloat _kEntryViewSize = 58;
 - (instancetype)init {
-    self = [super initWithFrame:CGRectMake(0, HDWH_SCREEN_WIDTH / 4, _kEntryViewSize, _kEntryViewSize)];
+    self = [super initWithFrame:CGRectMake(HDWH_SCREEN_WIDTH - _kEntryViewSize - 20, HDWH_SCREEN_WIDTH / 4, _kEntryViewSize, _kEntryViewSize)];
     if (self) {
         self.backgroundColor = [UIColor clearColor];
         self.windowLevel = UIWindowLevelStatusBar + 100.f;
@@ -114,7 +114,6 @@ static CGFloat _kEntryViewSize = 58;
     }
     panView.center = CGPointMake(newX, newY);
 }
-
 
 #pragma mark - getters and setters
 static UIImage *_logoImage = nil;
