@@ -64,7 +64,7 @@ Pod::Spec.new do |s|
     end
 
     ss.subspec 'RemoteDebug' do |ss|
-      ss.source_files = 'HDServiceKit/HDWebViewHost/RemoteDebug'# , 'HDServiceKit/HDWebViewHost/RemoteDebug/GCDWebServer/**/*'
+      ss.source_files = 'HDServiceKit/HDWebViewHost/RemoteDebug'
       ss.resource_bundles = {'HDWebViewHostRemoteDebugResources' => ['HDServiceKit/HDWebViewHost/RemoteDebug/src/*']}
       ss.dependency  'HDServiceKit/HDWebViewHost/Core'
       ss.dependency  'GCDWebServer', '~> 3.0'
