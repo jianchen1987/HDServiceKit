@@ -26,7 +26,7 @@ static NSString *GCDWebServer_accessLogFileName = @"access_log.txt";
 
 @property (nonatomic, weak) id<HDWHDebugViewDelegate>  debugViewDelegate;
 
-- (void)showNewLine:(NSArray<NSString *> *)line;
+- (void)showLogWithDataSource:(NSArray<NSString *> *)dataSource;
 
 @end
 

@@ -21,11 +21,9 @@
 @interface HDWHDebugServerManager () <HDWHDebugViewDelegate>
 @property (nonatomic, strong) HDWebViewHostAuxiliaryEntryWindow *toolWindow;  ///< 工具窗口
 @property (nonatomic, strong) dispatch_queue_t logQueue;
-@property (nonatomic, assign) BOOL isSyncing;
 @end
 
-static dispatch_io_t _logFile_io;
-static off_t _log_offset = 0;
+BOOL GCDWebServer_logging_enabled = NO;
 
 @implementation HDWHDebugServerManager {
     GCDWebServer *_webServer;
@@ -118,170 +116,144 @@ static off_t _log_offset = 0;
 - (void)startWithPort:(NSUInteger)port bonjourName:(NSString *)name {
     // Create server
     _webServer = [[GCDWebServer alloc] init];
-    
+
     if (kGCDWebServer_logging_enabled) {
         [GCDWebServer setLogLevel:2];
-    }
 
-    HDWHLog(@"Document = %@", [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject]);
+        // 创建日志文件，如果有旧的则删掉旧日志文件
+        NSString *logFile = [[DocumentsPath stringByAppendingPathComponent:kWebViewHostDBDir] stringByAppendingPathComponent:GCDWebServer_accessLogFileName];
 
-    GCDWebServerProcessBlock getProcessBlock = ^GCDWebServerResponse *(GCDWebServerRequest *request) {
-        NSBundle *bundle = [NSBundle hd_WebViewHostRemoteDebugResourcesBundle];
-        NSString *filePath = request.URL.path;
-
-        if ([filePath isEqualToString:@"/"]) {
-            filePath = @"server.html";
+        BOOL isSuccess = true;
+        if ([HDFileUtil isFileExistedFilePath:logFile]) {
+            isSuccess = [HDFileUtil removeFileOrDirectory:logFile];
+        }
+        if (isSuccess) {
+            [HDFileUtil createFileAtPath:logFile];
         }
 
-        NSString *dataType = @"text";
-        NSString *contentType = @"text/plain";
-        if ([filePath hasSuffix:@".html"]) {
-            contentType = @"text/html; charset=utf-8";
-        } else if ([filePath hasSuffix:@".js"]) {
-            contentType = @"application/javascript";
-        } else if ([filePath hasSuffix:@".css"]) {
-            contentType = @"text/css";
-        } else if ([filePath hasSuffix:@".png"] || [filePath hasSuffix:@".ico"]) {
-            contentType = @"image/png";
-            dataType = @"data";
-        } else if ([filePath hasSuffix:@".jpg"] || [filePath hasSuffix:@".jpeg"]) {
-            contentType = @"image/jpeg";
-            dataType = @"data";
-        }
+        [GCDWebServer setBuiltInLogger:^(int level, NSString *_Nonnull message) {
+            HDWHLog(@"%@", message);
 
-        NSString *path = [bundle pathForResource:filePath ofType:nil];
-        NSData *contentData = [NSData dataWithContentsOfFile:path];
-        if (contentData.length > 0) {
-            return [GCDWebServerDataResponse responseWithData:contentData contentType:contentType];
-        }
-        return [GCDWebServerDataResponse responseWithHTML:@"<html><body><p>Error </p></body></html>"];
-    };
-
-    // Add a handler to respond to GET requests on any URL
-    typeof(self) __weak weakSelf = self;
-    [_webServer addDefaultHandlerForMethod:@"GET"
-                              requestClass:[GCDWebServerRequest class]
-                              processBlock:getProcessBlock];
-
-    GCDWebServerProcessBlock postProcessBlock = ^GCDWebServerResponse *(GCDWebServerURLEncodedFormRequest *request) {
-        NSURL *url = request.URL;
-        NSDictionary __block *result = @{};
-        typeof(weakSelf) __strong strongSelf = weakSelf;
-        if ([url.path hasPrefix:@"/access_log.do"]) {
-            dispatch_sync(strongSelf->_logQueue, ^{
-                NSMutableArray *logStrs = [NSMutableArray arrayWithCapacity:10];
-                [strongSelf->_eventLogs enumerateObjectsUsingBlock:^(id _Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
-                    NSError *error;
-                    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:obj options:NSJSONWritingPrettyPrinted error:&error];
-
-                    if (!jsonData) {
-                        HDWHLog(@"%s: error: %@", __func__, error.localizedDescription);
-                    } else {
-                        [logStrs addObject:[[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding]];
-                    }
-                }];
-                result = @{ @"count": @(strongSelf->_eventLogs.count),
-                            @"logs": logStrs };
-
-                [strongSelf->_eventLogs removeAllObjects];
-            });
-        } else if ([url.path hasPrefix:@"/command.do"]) {
-            NSString *action = [request.arguments objectForKey:kWHActionKey];
-            NSString *param = [request.arguments objectForKey:kWHParamKey] ?: @"";
-            NSString *callbackKey = [request.arguments objectForKey:kWHCallbackKey] ?: @"";
-
-            NSDictionary *contentJSON = nil;
-            NSError *contentParseError;
-            if (param) {
-                param = [self stringDecodeURIComponent:param];
-                contentJSON = [NSJSONSerialization JSONObjectWithData:[param dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&contentParseError];
+            if (level > 0) {
+                static const char *levelNames[] = {"DEBUG", "VERBOSE", "INFO", "WARNING", "ERROR"};
+                NSString *content = [NSString stringWithFormat:@"[%s] %s\n", levelNames[level], [message UTF8String]];
+                NSData *data = [content dataUsingEncoding:NSUTF8StringEncoding];
+                [HDFileUtil appendData:data withPath:logFile];
             }
-            if (action.length > 0) {
-                if ([NSThread isMainThread]) {
-                    [strongSelf debugCommand:action param:contentJSON callbackKey:callbackKey];
-                } else {
-                    HDWHLog(@"switch to main thread");
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [strongSelf debugCommand:action param:contentJSON callbackKey:callbackKey];
-                    });
+        }];
+        GCDWebServerProcessBlock getProcessBlock = ^GCDWebServerResponse *(GCDWebServerRequest *request) {
+            NSBundle *bundle = [NSBundle hd_WebViewHostRemoteDebugResourcesBundle];
+            NSString *filePath = request.URL.path;
+
+            if ([filePath isEqualToString:@"/"]) {
+                filePath = @"server.html";
+            }
+
+            NSString *dataType = @"text";
+            NSString *contentType = @"text/plain";
+            if ([filePath hasSuffix:@".html"]) {
+                contentType = @"text/html; charset=utf-8";
+            } else if ([filePath hasSuffix:@".js"]) {
+                contentType = @"application/javascript";
+            } else if ([filePath hasSuffix:@".css"]) {
+                contentType = @"text/css";
+            } else if ([filePath hasSuffix:@".png"] || [filePath hasSuffix:@".ico"]) {
+                contentType = @"image/png";
+                dataType = @"data";
+            } else if ([filePath hasSuffix:@".jpg"] || [filePath hasSuffix:@".jpeg"]) {
+                contentType = @"image/jpeg";
+                dataType = @"data";
+            }
+
+            NSString *path = [bundle pathForResource:filePath ofType:nil];
+            NSData *contentData = [NSData dataWithContentsOfFile:path];
+            if (contentData.length > 0) {
+                return [GCDWebServerDataResponse responseWithData:contentData contentType:contentType];
+            }
+            return [GCDWebServerDataResponse responseWithHTML:@"<html><body><p>Error </p></body></html>"];
+        };
+
+        // Add a handler to respond to GET requests on any URL
+        typeof(self) __weak weakSelf = self;
+        [_webServer addDefaultHandlerForMethod:@"GET"
+                                  requestClass:[GCDWebServerRequest class]
+                                  processBlock:getProcessBlock];
+
+        GCDWebServerProcessBlock postProcessBlock = ^GCDWebServerResponse *(GCDWebServerURLEncodedFormRequest *request) {
+            NSURL *url = request.URL;
+            NSDictionary __block *result = @{};
+            typeof(weakSelf) __strong strongSelf = weakSelf;
+            if ([url.path hasPrefix:@"/access_log.do"]) {
+                dispatch_sync(strongSelf->_logQueue, ^{
+                    NSMutableArray *logStrs = [NSMutableArray arrayWithCapacity:10];
+                    [strongSelf->_eventLogs enumerateObjectsUsingBlock:^(id _Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
+                        NSError *error;
+                        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:obj options:NSJSONWritingPrettyPrinted error:&error];
+
+                        if (!jsonData) {
+                            HDWHLog(@"%s: error: %@", __func__, error.localizedDescription);
+                        } else {
+                            [logStrs addObject:[[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding]];
+                        }
+                    }];
+                    result = @{ @"count": @(strongSelf->_eventLogs.count),
+                                @"logs": logStrs };
+
+                    [strongSelf->_eventLogs removeAllObjects];
+                });
+            } else if ([url.path hasPrefix:@"/command.do"]) {
+                NSString *action = [request.arguments objectForKey:kWHActionKey];
+                NSString *param = [request.arguments objectForKey:kWHParamKey] ?: @"";
+                NSString *callbackKey = [request.arguments objectForKey:kWHCallbackKey] ?: @"";
+
+                NSDictionary *contentJSON = nil;
+                NSError *contentParseError;
+                if (param) {
+                    param = [self stringDecodeURIComponent:param];
+                    contentJSON = [NSJSONSerialization JSONObjectWithData:[param dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&contentParseError];
                 }
-            } else {
-                HDWHLog(@"command.do arguments error");
+                if (action.length > 0) {
+                    if ([NSThread isMainThread]) {
+                        [strongSelf debugCommand:action param:contentJSON callbackKey:callbackKey];
+                    } else {
+                        HDWHLog(@"switch to main thread");
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            [strongSelf debugCommand:action param:contentJSON callbackKey:callbackKey];
+                        });
+                    }
+                } else {
+                    HDWHLog(@"command.do arguments error");
+                }
             }
-        }
-        return [GCDWebServerDataResponse responseWithJSONObject:@{ @"code": @"OK",
-                                                                   @"data": result }];
-    };
+            return [GCDWebServerDataResponse responseWithJSONObject:@{ @"code": @"OK",
+                                                                       @"data": result }];
+        };
 
-    [_webServer addDefaultHandlerForMethod:@"POST"
-                              requestClass:[GCDWebServerURLEncodedFormRequest class]
-                              processBlock:postProcessBlock];
-    [_webServer startWithPort:port bonjourName:name];
-    NSURL *_Nullable serverURL = _webServer.serverURL;
-    HDWHLog(@"Visit %@ in your web browser", serverURL);
-
-    if (kGCDWebServer_logging_enabled) {
-        if (_logFile_io == nil) {
-
-            NSString *logFile = [[DocumentsPath stringByAppendingPathComponent:kWebViewHostDBDir] stringByAppendingPathComponent:GCDWebServer_accessLogFileName];
-            if ([HDFileUtil isFileExistedFilePath:logFile]) {
-                // 同时设置读取流对象
-                dispatch_queue_t dq = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-
-                _logFile_io = dispatch_io_create_with_path(DISPATCH_IO_RANDOM,
-                                                           [logFile UTF8String],  // Convert to C-string
-                                                           O_RDWR,                // Open for reading
-                                                           0,                     // No extra flags
-                                                           dq, ^(int error) {
-                                                               HDWHLog(@"I am ok ");
-                                                           });
-            } else {
-                HDWHLog(@"日志文件不存在");
-            }
-        }
+        [_webServer addDefaultHandlerForMethod:@"POST"
+                                  requestClass:[GCDWebServerURLEncodedFormRequest class]
+                                  processBlock:postProcessBlock];
+        [_webServer startWithPort:port bonjourName:name];
+        NSURL *_Nullable serverURL = _webServer.serverURL;
+        HDWHLog(@"Visit %@ in your web browser", serverURL);
     }
 }
 
 - (void)fetchData:(void (^)(NSArray<NSString *> *))completion {
-    if (_logFile_io) {
-        if (self.isSyncing) {
-            return;
-        }
-        self.isSyncing = YES;
 
-        dispatch_queue_t dq = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-        dispatch_io_read(_logFile_io, _log_offset, SIZE_T_MAX, dq, ^(bool done, dispatch_data_t _Nullable data, int error) {
-            if (error == 0) {
-                // convert
-                const void *buffer = NULL;
-                size_t size = 0;
-                dispatch_data_t new_data_file = dispatch_data_create_map(data, &buffer, &size);
-                if (new_data_file && size == 0) { /* to avoid warning really - since dispatch_data_create_map demands we care about the return arg */
-                    self.isSyncing = NO;
-                    return;
-                }
-                _log_offset += size;
+    NSString *logFile = [[DocumentsPath stringByAppendingPathComponent:kWebViewHostDBDir] stringByAppendingPathComponent:GCDWebServer_accessLogFileName];
+    NSData *data = [HDFileUtil readFileData:logFile];
 
-                NSData *nsdata = [[NSData alloc] initWithBytes:buffer length:size];
-                NSString *line = [[NSString alloc] initWithData:nsdata encoding:NSUTF8StringEncoding];
+    NSString *line = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 
-                if (completion && line.length > 0) {
-                    NSArray<NSString *> *lines = [line componentsSeparatedByString:@"\n"];
-                    NSMutableArray *newLines = [NSMutableArray arrayWithCapacity:10];
-                    [lines enumerateObjectsUsingBlock:^(NSString *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
-                        if (obj.length > 0) {
-                            [newLines addObject:obj];
-                        }
-                    }];
-                    completion(newLines);
-                }
-                // clean up
-                // free(buffer);
-            } else if (error != 0) {
-                HDWHLog(@"出错了");
+    if (completion && line.length > 0) {
+        NSArray<NSString *> *lines = [line componentsSeparatedByString:@"\n"];
+        NSMutableArray *newLines = [NSMutableArray arrayWithCapacity:10];
+        [lines enumerateObjectsUsingBlock:^(NSString *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
+            if (obj.length > 0) {
+                [newLines addObject:obj];
             }
-            self.isSyncing = NO;
-        });
+        }];
+        completion(newLines);
     }
 }
 
@@ -309,7 +281,6 @@ static off_t _log_offset = 0;
 
 - (NSString *)stringDecodeURIComponent:(NSString *)encoded {
     NSString *decoded = [encoded stringByRemovingPercentEncoding];
-    // HDWHLog(@"decodedString %@", decoded);
     return decoded;
 }
 @end

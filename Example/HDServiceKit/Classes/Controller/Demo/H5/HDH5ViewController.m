@@ -47,8 +47,10 @@
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     
-    [[HDWHDebugServerManager sharedInstance] hideDebugWindow];
-    [[HDWHDebugServerManager sharedInstance] stop];
+    if (![self.navigationController.viewControllers.lastObject isKindOfClass:HDWebViewHostViewController.class]) {
+        [[HDWHDebugServerManager sharedInstance] hideDebugWindow];
+        [[HDWHDebugServerManager sharedInstance] stop];
+    }
 }
 
 - (void)initDataSource {

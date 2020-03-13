@@ -53,8 +53,8 @@ CGFloat kDebugHeadeHeight = 46.f;
 }
 
 #pragma mark -
-- (void)showNewLine:(NSArray<NSString *> *)line {
-    self.dataSource = [self.dataSource arrayByAddingObjectsFromArray:line];
+- (void)showLogWithDataSource:(NSArray<NSString *> *)dataSource {
+    self.dataSource = dataSource;
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.tableView reloadData];
     });
@@ -82,7 +82,7 @@ CGFloat kDebugHeadeHeight = 46.f;
     if ([self.debugViewDelegate respondsToSelector:@selector(fetchData:completion:)]) {
         [self.debugViewDelegate fetchData:self
                                completion:^(NSArray<NSString *> *_Nonnull lines) {
-                                   [self showNewLine:lines];
+                                   [self showLogWithDataSource:lines];
                                }];
     }
 }
