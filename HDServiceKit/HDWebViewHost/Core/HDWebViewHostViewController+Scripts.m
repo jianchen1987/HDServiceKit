@@ -1,6 +1,6 @@
 //
-//  HDWebviewHostViewController+Scripts.m
-//  HDWebviewHost
+//  HDServiceKitViewController+Scripts.m
+//  HDServiceKit
 //
 //  Created by VanJay on 03/06/2020.
 //  Copyright © 2019 chaos network technology. All rights reserved.
@@ -58,8 +58,8 @@
     [self __execScript:callbackKey funcName:@"__callback" param:paramDict];
 }
 
-- (void)fire:(NSString *)actionName param:(NSDictionary *)paramDict {
-    [self __execScript:actionName funcName:@"__fire" param:paramDict];
+- (void)fire:(NSString *)eventName param:(NSDictionary *)paramDict {
+    [self __execScript:eventName funcName:@"__fire" param:paramDict];
 }
 
 - (void)__execScript:(NSString *)actionName funcName:(NSString *)funcName param:(NSDictionary *)paramDict {

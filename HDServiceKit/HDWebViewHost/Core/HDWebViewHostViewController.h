@@ -1,6 +1,6 @@
 //
-//  HDWebviewHostViewController.h
-//  HDWebviewHost
+//  HDServiceKitViewController.h
+//  HDServiceKit
 //
 //  Created by VanJay on 03/06/2020.
 //  Copyright © 2015 smilly.co All rights reserved.
@@ -25,7 +25,6 @@ static NSString *kWebViewHostInvokeResponseEvent = @"kWebViewHostInvokeResponseE
 - (void)onResponseEventOccurred:(NSString *)eventName response:(id<HDWebViewHostProtocol>)response;
 
 @end
-
 
 @interface HDWebViewHostViewController : HDCommonViewController <WKNavigationDelegate>
 

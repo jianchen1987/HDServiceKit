@@ -39,6 +39,15 @@
             </li>
 		</ol>
 	</fieldset>
+    <fieldset>
+        <legend>debug 功能</legend>
+        <ol>
+            <li>
+                <a href="javascript:void(0);" onclick="window.webViewHost.invoke('console.log',{'text': '这是日志内容'});">输出一段日志内容。web 端和原生均能输出</a>
+                <span>输出日志</span>
+            </li>
+        </ol>
+    </fieldset>
 </div>
 <script type="text/javascript">
         (function() {

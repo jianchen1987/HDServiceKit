@@ -12,6 +12,7 @@
 @implementation HDAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     HDViewController *vc = [HDViewController new];
     UINavigationController *navc = [UINavigationController rootVC:vc];

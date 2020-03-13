@@ -100,7 +100,7 @@ def main():
 #import <UIKit/UIKit.h>
 
 /// 版本号
-static NSString * const %s_VERSION = @"%s";
+static NSString *const %s_VERSION = @"%s";
 
 ''' % (podName, podName, podName, podName, podName, version)
 

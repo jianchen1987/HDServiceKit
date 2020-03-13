@@ -1,6 +1,6 @@
 //
-//  HDWebviewHostViewController+Dispatch.h
-//  HDWebviewHost
+//  HDServiceKitViewController+Dispatch.h
+//  HDServiceKit
 //
 //  Created by VanJay on 03/06/2020.
 //  Copyright © 2019 chaos network technology. All rights reserved.
@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param paramDict 参数
 /// @param callbackKey 回调 key
 /// @return 是否已经被处理
-- (BOOL)callNative:(NSString *)action parameter:(NSDictionary *)paramDict callbackKey:(NSString * _Nullable)callbackKey;
+- (BOOL)callNative:(NSString *)action parameter:(NSDictionary *)paramDict callbackKey:(NSString *_Nullable)callbackKey;
 
 #pragma mark - like private
 

@@ -30,6 +30,7 @@ CGFloat kDebugHeadeHeight = 46.f;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
     self.title = @"控制台";
     self.view.backgroundColor = [UIColor clearColor];
     [self.view addSubview:self.tableView];
@@ -48,7 +49,7 @@ CGFloat kDebugHeadeHeight = 46.f;
     // 刷新日志按钮在左边
     UIBarButtonItem *refreshBar = [[UIBarButtonItem alloc] initWithTitle:@"刷新" style:UIBarButtonItemStylePlain target:self action:@selector(refresh:)];
     self.navigationItem.rightBarButtonItems = @[exportBar, refreshBar];
-    
+
     [self refresh:nil];
 }
 
@@ -67,9 +68,8 @@ CGFloat kDebugHeadeHeight = 46.f;
 - (void)export:(UIButton *)button {
     NSString *logFile = [[DocumentsPath stringByAppendingPathComponent:kWebViewHostDBDir] stringByAppendingPathComponent:GCDWebServer_accessLogFileName];
     if ([HDFileUtil isFileExistedFilePath:logFile]) {
-        NSURL *logoURL = [NSURL fileURLWithPath:logFile];
-
-        UIActivityViewController *activity = [[UIActivityViewController alloc] initWithActivityItems:@[logoURL] applicationActivities:nil];
+        NSURL *url = [NSURL fileURLWithPath:logFile];
+        UIActivityViewController *activity = [[UIActivityViewController alloc] initWithActivityItems:@[url] applicationActivities:nil];
         UIPopoverPresentationController *popover = activity.popoverPresentationController;
         if (popover) {
             popover.permittedArrowDirections = UIPopoverArrowDirectionUp;

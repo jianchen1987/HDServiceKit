@@ -15,7 +15,7 @@
         };
     }(window);
     
-    var safeCopy = function(_origin){
+    var hd_safeCopy = function(_origin){
         if (!_origin) return;
         var r = {};
         for (var key in _origin) {
@@ -34,7 +34,7 @@
         return r;
     };
 
-    var serialize = function(obj){
+    var hd_serialize = function(obj){
         var r = null;
         switch(wh_typeof(obj)){
             case 'null':
@@ -50,7 +50,7 @@
             break;
             case 'location':
             case 'window':
-                r = safeCopy(obj);
+                r = hd_safeCopy(obj);
             break;
             case 'regexp':
                 r = Object.toString.call(obj);
@@ -76,7 +76,7 @@
     window.wh_eval = function (r) {
         var err = null;
 
-        r = serialize(r);
+        r = hd_serialize(r);
         if (err == null && r == null){
             return {};
         } else if (err == null && r != null){

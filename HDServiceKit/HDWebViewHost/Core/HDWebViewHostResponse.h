@@ -1,6 +1,6 @@
 //
 //  HDWebViewHostResponse.h
-//  HDWebviewHost
+//  HDServiceKit
 //
 //  Created by VanJay on 03/06/2020.
 //  Copyright © 2019 chaos network technology. All rights reserved.
@@ -11,9 +11,9 @@
 #import <Foundation/Foundation.h>
 
 /// 开
-static NSString * const kHDWHResponseMethodOn = @"1";
+static NSString *const kHDWHResponseMethodOn = @"1";
 /// 关
-static NSString * const kHDWHResponseMethodOff = @"0";
+static NSString *const kHDWHResponseMethodOff = @"0";
 
 @interface HDWebViewHostResponse : NSObject <HDWebViewHostProtocol>
 

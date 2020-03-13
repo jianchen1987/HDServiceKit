@@ -1,6 +1,6 @@
 //
-//  HDWebviewHostViewController+Utils.h
-//  HDWebviewHost
+//  HDServiceKitViewController+Utils.h
+//  HDServiceKit
 //
 //  Created by VanJay on 03/06/2020.
 //  Copyright © 2019 chaos network technology. All rights reserved.
@@ -37,7 +37,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// 是否 itunes 相关请求
 /// @param url 地址
 - (BOOL)isItmsAppsRequest:(NSString *)url;
-
 
 @end
 

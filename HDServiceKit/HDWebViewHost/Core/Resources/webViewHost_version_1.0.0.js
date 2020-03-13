@@ -33,9 +33,9 @@
         },
         // 发送指令
         postMessage: function (fullParam) {
-            return global.kWHScriptHandlerName &&
+            global.kWHScriptHandlerName &&
                 this.isFunction(global.kWHScriptHandlerName.postMessage) &&
-                global.kWHScriptHandlerName.postMessage(fullParam);
+                global.kWHScriptHandlerName.postMessage(JSON.stringify(fullParam));
         },
         // 原生回调
         __callback: function (_callbackKey, _param) {

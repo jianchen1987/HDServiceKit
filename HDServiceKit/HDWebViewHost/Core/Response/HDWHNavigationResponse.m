@@ -1,6 +1,6 @@
 //
 //  HDWHNavigationResponse.m
-//  HDWebviewHost
+//  HDServiceKit
 //
 //  Created by VanJay on 03/06/2020.
 //  Copyright © 2019 chaos network technology. All rights reserved.
@@ -35,7 +35,7 @@ wh_doc_end;
         if (@available(iOS 10.0, *)) {
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlTxt] options:@{} completionHandler:nil];
         } else {
-            [[UIApplication sharedApplication]  openURL:[NSURL URLWithString:urlTxt]];
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlTxt]];
         }
     } else {
         SFSafariViewController *safari = [[SFSafariViewController alloc] initWithURL:[NSURL URLWithString:urlTxt]];

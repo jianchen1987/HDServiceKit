@@ -1,6 +1,6 @@
 //
 //  HDPodAsset.h
-//  HDWebviewHost
+//  HDServiceKit
 //
 //  Created by VanJay on 03/06/2020.
 //  Copyright © 2019 chaos network technology. All rights reserved.
@@ -16,4 +16,3 @@
 + (NSBundle *)bundleForPod:(NSString *)podName;
 + (NSArray *)assetsInPod:(NSString *)podName;
 @end
-

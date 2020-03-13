@@ -41,6 +41,8 @@ NSString *const NSSafeNotification = @"_NSSafeNotification_";
     }                                                         \
     NSAssert(condition, @"%@", __VA_ARGS__);
 
+#define _SFLog(...) SFLog(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
+
 void SFLog(const char *file, const char *func, int line, NSString *fmt, ...) {
     va_list args;
     va_start(args, fmt);
@@ -1241,7 +1243,12 @@ void SFLog(const char *file, const char *func, int line, NSString *fmt, ...) {
     if (obj && key) {
         [self hookSetObject:obj forKey:key];
     } else {
-        SFAssert(NO, @"NSCache invalid args hookSetObject:[%@] forKey:[%@]", obj, key);
+        @try {
+            [self hookSetObject:obj forKey:key];
+        } @catch (NSException *exception) {
+            _SFLog(@"%@ -- %@", NSStringFromSelector(_cmd), exception.reason);
+        } @finally {
+        }
     }
 }
 
@@ -1249,7 +1256,13 @@ void SFLog(const char *file, const char *func, int line, NSString *fmt, ...) {
     if (obj && key) {
         [self hookSetObject:obj forKey:key cost:g];
     } else {
-        SFAssert(NO, @"NSCache invalid args hookSetObject:[%@] forKey:[%@] cost:[%@]", obj, key, @(g));
+        @try {
+            [self hookSetObject:obj forKey:key cost:g];
+        } @catch (NSException *exception) {
+            _SFLog(@"%@ -- %@", NSStringFromSelector(_cmd), exception.reason);
+        } @finally {
+        }
     }
 }
+
 @end

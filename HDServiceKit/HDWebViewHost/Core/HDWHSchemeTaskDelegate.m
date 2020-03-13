@@ -1,6 +1,6 @@
 //
 //  HDWHSchemeTaskResponse.m
-//  HDWebviewHost
+//  HDServiceKit
 //
 //  Created by VanJay on 03/06/2020.
 //  Copyright © 2019 chaos network technology. All rights reserved.
@@ -32,8 +32,7 @@
     HDWHLog(@"HDWHSchemeTaskDelegate dealloc");
 }
 
-- (void)addHandler:(HDWHURLSchemeTaskHandler)handler forDomain:(NSString * /* js */)domain
-{
+- (void)addHandler:(HDWHURLSchemeTaskHandler)handler forDomain:(NSString * /* js */)domain {
     if (domain.length == 0 || handler == nil) {
         HDWHLog(@"domain or handle is null");
         return;

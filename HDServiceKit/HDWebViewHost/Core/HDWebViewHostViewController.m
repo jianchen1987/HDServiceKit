@@ -1,6 +1,6 @@
 //
-//  HDWebviewHostViewController.m
-//  HDWebviewHost
+//  HDServiceKitViewController.m
+//  HDServiceKit
 //
 //  Created by VanJay on 03/06/2020.
 //  Copyright © 2015 smilly.co All rights reserved.
@@ -122,7 +122,7 @@ BOOL kGCDWebServer_logging_enabled = false;
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    
+
     [[HDWHWebViewScrollPositionManager sharedInstance] clearAllCache];
 }
 
@@ -163,7 +163,7 @@ BOOL kGCDWebServer_logging_enabled = false;
     }
     self.url = domain;
     NSString *htmlContent = nil;
-   [HDWHRequestMediate interMediateFile:fileName inDirectory:directory domain:domain output:&htmlContent];
+    [HDWHRequestMediate interMediateFile:fileName inDirectory:directory domain:domain output:&htmlContent];
 
     if (htmlContent.length > 0 && domain.length > 0) {
         [self mark:kWebViewHostTimingLoadRequest];
@@ -314,7 +314,7 @@ BOOL kGCDWebServer_logging_enabled = false;
     [inserted enumerateKeysAndObjectsUsingBlock:^(NSString *keyStr, id obj, BOOL *stop) {
         [self insertData:obj intoPageWithVarName:keyStr];
     }];
-    
+
     [self fire:@"onready" param:@{}];
     [self dealWithViewHistory];
 }
@@ -337,8 +337,15 @@ BOOL kGCDWebServer_logging_enabled = false;
         if (![[HDWHURLChecker sharedManager] checkURL:actualUrl forAuthorizationType:HDWHAuthorizationTypeWebViewHost]) {
             HDWHLog(@"invalid url visited : %@", self.url);
         } else {
-            NSDictionary *contentJSON = message.body;
-            [self dispatchParsingParameter:contentJSON];
+            id body = message.body;
+            if ([body isKindOfClass:NSString.class]) {
+                NSData *jsonData = [body dataUsingEncoding:NSUTF8StringEncoding];
+                NSError *err;
+                body = [NSJSONSerialization JSONObjectWithData:jsonData
+                                                       options:NSJSONReadingMutableContainers
+                                                         error:&err];
+            }
+            [self dispatchParsingParameter:body];
         }
     } else {
 #ifdef DEBUG

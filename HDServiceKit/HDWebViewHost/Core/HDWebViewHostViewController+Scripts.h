@@ -1,6 +1,6 @@
 //
-//  HDWebviewHostViewController+Scripts.h
-//  HDWebviewHost
+//  HDServiceKitViewController+Scripts.h
+//  HDServiceKit
 //
 //  Created by VanJay on 03/06/2020.
 //  Copyright © 2019 chaos network technology. All rights reserved.
@@ -29,11 +29,11 @@ NS_ASSUME_NONNULL_BEGIN
  * <B> 调用 callback 的函数，这个函数是 js 端调用方法时，注册在 js 端的 block。
  * 这里传入的第一个参数是 和这个 js 端 block 相关联的 key。js 根据这个 key 找到这个 block 并且执行 </B>
  */
-- (void)fireCallback:(NSString *)actionName param:(NSDictionary *)paramDict;
+- (void)fireCallback:(NSString *)callbackKey param:(NSDictionary *)paramDict;
 /**
  *  对应，监听了事件的接口的调用
  */
-- (void)fire:(NSString *)actionName param:(NSDictionary *)paramDict;
+- (void)fire:(NSString *)eventName param:(NSDictionary *)paramDict;
 
 /**
  无返回值的执行 js 代码

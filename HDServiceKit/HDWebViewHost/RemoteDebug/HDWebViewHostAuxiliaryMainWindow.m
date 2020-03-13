@@ -10,7 +10,6 @@
 
 @implementation HDWebViewHostAuxiliaryMainWindow
 
-
 + (instancetype)shared {
     static dispatch_once_t once;
     static HDWebViewHostAuxiliaryMainWindow *instance;
@@ -38,7 +37,7 @@
 - (void)show {
     HDWHDebugViewController *vc = [[HDWHDebugViewController alloc] init];
     [self setRootVc:vc];
-    
+
     vc.debugViewDelegate = HDWHDebugServerManager.sharedInstance;
     self.hidden = NO;
 }

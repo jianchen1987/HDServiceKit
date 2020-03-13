@@ -1,6 +1,6 @@
 //
 //  HDWHDebugResponse.m
-//  HDWebviewHost
+//  HDServiceKit
 //
 //  Created by VanJay on 03/06/2020.
 //  Copyright © 2019 chaos network technology. All rights reserved.
@@ -45,7 +45,7 @@ static NSString *kLastWeinreScript = nil;
     [scripts addObject:script];
 
     // 重写 console.log 方法
-    script = [HDWebViewHostCustomJavscript customJavscriptWithScript:@"window.__wh_consolelog = console.log; console.log = function(_msg){window.__wh_consolelog(_msg);webViewHost.invoke('console.log', {'text':_msg})}" injectionTime:WKUserScriptInjectionTimeAtDocumentStart key:@"console.log.js"];
+    script = [HDWebViewHostCustomJavscript customJavscriptWithScript:@"window.__wh_consolelog = console.log; console.log = function(_msg){window.__wh_consolelog(_msg);window.webViewHost.invoke('console.log', {'text': _msg});}" injectionTime:WKUserScriptInjectionTimeAtDocumentEnd key:@"console.log.js"];
     [scripts addObject:script];
 
     // 记录 readystatechange 的时间
@@ -110,7 +110,7 @@ static NSString *kLastWeinreScript = nil;
             } else {
                 err = [NSString stringWithFormat:@"The method (%@) doesn't exsit!", signature];
             }
-            [self fire:funcName param:@{ @"error": err }];
+            [self fire:funcName param:@{@"error": err}];
         }
     } else if ([@"testcase" isEqualToString:action]) {
         // 检查是否有文件生成，如果没有则遍历
@@ -148,13 +148,14 @@ static NSString *kLastWeinreScript = nil;
                     [cookieStorage deleteCookie:cookie completionHandler:nil];
                 }];
 
-                [self.webViewHost fire:@"clearCookieDone" param:@{ @"count": @(cookies.count) }];
+                [self.webViewHost fire:@"clearCookieDone" param:@{@"count": @(cookies.count)}];
             }];
         } else {
             // Fallback on earlier versions
         }
     } else if ([@"console.log" isEqualToString:action]) {
         // 正常的日志输出时，不需要做特殊处理。
+        HDWHLog(@"console.log: %@", paramDict);
         // 因为在 invoke 的时候，已经向 debugger Server 发送过日志数据，已经打印过了
     } else {
         return NO;
@@ -174,7 +175,7 @@ static NSString *kLastWeinreScript = nil;
 
     [HDWebViewHostViewController prepareJavaScript:[NSURL URLWithString:kLastWeinreScript] when:WKUserScriptInjectionTimeAtDocumentEnd key:@"weinre.js"];
 
-    [self.webViewHost fire:@"weinre.enable" param:@{ @"jsURL": kLastWeinreScript }];
+    [self.webViewHost fire:@"weinre.enable" param:@{@"jsURL": kLastWeinreScript}];
 }
 
 - (void)disableWeinreSupport {

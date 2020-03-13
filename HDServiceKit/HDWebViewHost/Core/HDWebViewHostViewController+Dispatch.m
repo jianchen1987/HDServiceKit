@@ -1,6 +1,6 @@
 //
-//  HDWebviewHostViewController+Dispatch.m
-//  HDWebviewHost
+//  HDServiceKitViewController+Dispatch.m
+//  HDServiceKit
 //
 //  Created by VanJay on 03/06/2020.
 //  Copyright © 2019 chaos network technology. All rights reserved.
@@ -10,6 +10,7 @@
 #import "HDWebViewHostViewController+Dispatch.h"
 #import "HDWebViewHostViewController+Scripts.h"
 #import "HDWebViewHostViewController+Utils.h"
+#import "HDWebViewHostViewController+Callback.h"
 
 @implementation HDWebViewHostViewController (Dispatch)
 
@@ -18,7 +19,7 @@
     // 增加对异常参数的catch
     @try {
         NSDictionary *paramDict = [contentJSON objectForKey:kWHParamKey];
-        NSString *callbackKey = [contentJSON objectForKey:@"callbackKey"];
+        NSString *callbackKey = [contentJSON objectForKey:kWHCallbackKey];
         [self callNative:[contentJSON objectForKey:kWHActionKey] parameter:paramDict callbackKey:callbackKey];
 
         [[NSNotificationCenter defaultCenter] postNotificationName:kWebViewHostInvokeRequestEvent object:contentJSON];
@@ -43,13 +44,16 @@
         NSString *errMsg = [NSString stringWithFormat:@"action (%@) not supported yet.", action];
         HDWHLog(@"%@", errMsg);
         
+        [self fireCallback:key actionName:action code:@"-1" type:HDWHCallbackTypeFail params:nil];
+
         // 通知 web 事件不支持
         [self fire:@"notSupportedCommand"
              param:@{
                  @"error": errMsg
              }];
 #ifdef DEBUG
-        [self callNative:@"toast" parameter:@{@"text": errMsg}];
+        [self callNative:@"toast"
+               parameter:@{@"text": errMsg}];
 #endif
         return NO;
     } else {

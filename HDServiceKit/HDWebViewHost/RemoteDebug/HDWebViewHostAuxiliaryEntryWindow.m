@@ -6,9 +6,9 @@
 //
 
 #import "HDWebViewHostAuxiliaryEntryWindow.h"
+#import "HDWebViewHostAuxiliaryMainWindow.h"
 #import "HDWebViewHostEnum.h"
 #import "NSBundle+HDWebViewHost.h"
-#import "HDWebViewHostAuxiliaryMainWindow.h"
 
 @implementation HDWebViewHostAuxillaryToolStatusBarVC
 

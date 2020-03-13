@@ -9,9 +9,6 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-
-
-
 NS_ASSUME_NONNULL_BEGIN
 
 static NSString *GCDWebServer_accessLogFileName = @"access_log.txt";
@@ -24,7 +21,7 @@ static NSString *GCDWebServer_accessLogFileName = @"access_log.txt";
 
 @interface HDWHDebugViewController : UIViewController
 
-@property (nonatomic, weak) id<HDWHDebugViewDelegate>  debugViewDelegate;
+@property (nonatomic, weak) id<HDWHDebugViewDelegate> debugViewDelegate;
 
 - (void)showLogWithDataSource:(NSArray<NSString *> *)dataSource;
 

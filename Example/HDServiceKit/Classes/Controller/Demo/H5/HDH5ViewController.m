@@ -46,7 +46,7 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    
+
     if (![self.navigationController.viewControllers.lastObject isKindOfClass:HDWebViewHostViewController.class]) {
         [[HDWHDebugServerManager sharedInstance] hideDebugWindow];
         [[HDWHDebugServerManager sharedInstance] stop];
@@ -73,6 +73,10 @@
                                           @"fileName": @"localFileSendXHR.html",
                                           @"desc": @"本地文件服务器发送请求",
                                           @"domain": @"https://github.com" },
+                                       @{ @"name": @"加载内网H5测试页面",
+                                          @"url": @"http://172.16.19.163:8080/test-page/index.html",
+                                          @"desc": @"测试"
+                                       },
                                        nil];
     self.dataSource = dataSource;
 }

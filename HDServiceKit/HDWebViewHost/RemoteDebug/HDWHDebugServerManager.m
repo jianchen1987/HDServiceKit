@@ -13,10 +13,10 @@
 #import "HDFileUtil.h"
 #import "HDWHDebugResponse.h"
 #import "HDWHDebugViewController.h"
+#import "HDWebViewHostAuxiliaryEntryWindow.h"
 #import "HDWebViewHostViewController+Dispatch.h"
 #import "HDWebViewHostViewController.h"
 #import "NSBundle+HDWebViewHost.h"
-#import "HDWebViewHostAuxiliaryEntryWindow.h"
 
 @interface HDWHDebugServerManager () <HDWHDebugViewDelegate>
 @property (nonatomic, strong) HDWebViewHostAuxiliaryEntryWindow *toolWindow;  ///< 工具窗口
@@ -54,15 +54,15 @@ BOOL GCDWebServer_logging_enabled = NO;
 
 - (void)requestEventOccur:(NSNotification *)notification {
     dispatch_async(_logQueue, ^{
-        [self->_eventLogs addObject:@{ @"type": @".invoke",
-                                       @"value": notification.object }];
+        [self->_eventLogs addObject:@{@"type": @".invoke",
+                                      @"value": notification.object}];
     });
 }
 
 - (void)responseEventOccur:(NSNotification *)notification {
     dispatch_async(_logQueue, ^{
-        [self->_eventLogs addObject:@{ @"type": @".on",
-                                       @"value": notification.object }];
+        [self->_eventLogs addObject:@{@"type": @".on",
+                                      @"value": notification.object}];
     });
 }
 
@@ -196,8 +196,8 @@ BOOL GCDWebServer_logging_enabled = NO;
                             [logStrs addObject:[[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding]];
                         }
                     }];
-                    result = @{ @"count": @(strongSelf->_eventLogs.count),
-                                @"logs": logStrs };
+                    result = @{@"count": @(strongSelf->_eventLogs.count),
+                               @"logs": logStrs};
 
                     [strongSelf->_eventLogs removeAllObjects];
                 });
@@ -225,8 +225,8 @@ BOOL GCDWebServer_logging_enabled = NO;
                     HDWHLog(@"command.do arguments error");
                 }
             }
-            return [GCDWebServerDataResponse responseWithJSONObject:@{ @"code": @"OK",
-                                                                       @"data": result }];
+            return [GCDWebServerDataResponse responseWithJSONObject:@{@"code": @"OK",
+                                                                      @"data": result}];
         };
 
         [_webServer addDefaultHandlerForMethod:@"POST"
@@ -267,9 +267,9 @@ BOOL GCDWebServer_logging_enabled = NO;
 
 - (UIViewController *)getVisibleViewControllerFrom:(UIViewController *)vc {
     if ([vc isKindOfClass:[UINavigationController class]]) {
-        return [self getVisibleViewControllerFrom:[((UINavigationController *)vc)visibleViewController]];
+        return [self getVisibleViewControllerFrom:[((UINavigationController *)vc) visibleViewController]];
     } else if ([vc isKindOfClass:[UITabBarController class]]) {
-        return [self getVisibleViewControllerFrom:[((UITabBarController *)vc)selectedViewController]];
+        return [self getVisibleViewControllerFrom:[((UITabBarController *)vc) selectedViewController]];
     } else {
         if (vc.presentedViewController) {
             return [self getVisibleViewControllerFrom:vc.presentedViewController];
