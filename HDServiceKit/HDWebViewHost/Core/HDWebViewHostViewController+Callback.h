@@ -6,7 +6,7 @@
 //  Copyright © 2019 chaos network technology. All rights reserved.
 //
 
-#import <HDServiceKit/HDServiceKit.h>
+#import "HDWebViewHostViewController.h"
 
 typedef NS_ENUM(NSUInteger, HDWHCallbackType) {
     HDWHCallbackTypeSuccess = 0,  ///< 成功

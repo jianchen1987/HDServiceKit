@@ -44,8 +44,8 @@
     [[HDWHResponseManager defaultManager] addCustomResponse:HDCallBackExample.class];
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
 
     if (![self.navigationController.viewControllers.lastObject isKindOfClass:HDWebViewHostViewController.class]) {
         [[HDWHDebugServerManager sharedInstance] hideDebugWindow];
