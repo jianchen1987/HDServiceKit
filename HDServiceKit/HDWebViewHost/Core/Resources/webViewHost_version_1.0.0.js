@@ -1,13 +1,7 @@
 !function (global) {
-    // 浏览器信息
-    var __userAgent = global.navigator && global.navigator.userAgent || '';
     global.webViewHost = {
         // 当前版本号
         version: '1.0.0',
-        // iOS 端
-        isIOS: __userAgent.indexOf('iPhone') !== -1 || __userAgent.indexOf('Mac') !== -1,
-        // 安卓端
-        isAndroid: __userAgent.indexOf('Android') !== -1 || __userAgent.indexOf('Linux') !== -1,
         // 回调池
         callbackPool: {},
         // 回调 ID
