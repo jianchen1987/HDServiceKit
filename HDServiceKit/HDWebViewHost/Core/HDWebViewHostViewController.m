@@ -3,9 +3,8 @@
 //  HDServiceKit
 //
 //  Created by VanJay on 03/06/2020.
-//  Copyright © 2015 smilly.co All rights reserved.
+//  Copyright © 2019 chaos network technology. All rights reserved.
 //
-//  需要h5和native 相互调用接口 页面使用此viewcontroller。
 
 #import "HDWebViewHostViewController.h"
 #import "HDReachability.h"
@@ -24,11 +23,8 @@
 #import "HDWebViewHostViewController+Utils.h"
 
 @interface HDWebViewHostViewController () <UIScrollViewDelegate, WKUIDelegate, WKScriptMessageHandler>
-
 @property (nonatomic, strong) WKWebView *webView;
-
 @property (nonatomic, strong) HDWHSchemeTaskDelegate *taskDelegate API_AVAILABLE(ios(11));
-
 @end
 
 // 是否将客户端的 cookie 同步到 WKWebview 的 cookie 当中
@@ -55,14 +51,9 @@ BOOL kGCDWebServer_logging_enabled = false;
 - (instancetype)init {
     self = [super init];
     if (self) {
-        // 注意：此时还没有 navigationController。
-        if (@available(iOS 11.0, *)) {
-            self.taskDelegate = [HDWHSchemeTaskDelegate new];
-        } else {
-            // Fallback on earlier versions
-        }
         [self.view addSubview:self.webView];
         self.webView.translatesAutoresizingMaskIntoConstraints = NO;
+        
         [NSLayoutConstraint activateConstraints:@[
             [self.webView.leftAnchor constraintEqualToAnchor:self.view.leftAnchor],
             [self.webView.topAnchor constraintEqualToAnchor:self.hd_navigationBar.bottomAnchor],
@@ -71,6 +62,13 @@ BOOL kGCDWebServer_logging_enabled = false;
         ]];
     }
     return self;
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    self.view.backgroundColor = [UIColor whiteColor];
+    [self setupProgressor];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -100,26 +98,6 @@ BOOL kGCDWebServer_logging_enabled = false;
     [self fire:@"pagehide" param:@{ @"url": urlStr ?: @"null" }];
 }
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    self.view.backgroundColor = [UIColor whiteColor];
-    [self setupProgressor];
-}
-
-- (void)setUrl:(NSString *)url {
-    _url = url;
-    if (kFakeCookieWebPageURLWithQueryString.length > 0 && [HDWebViewHostCookie loginCookieHasBeenSynced] == NO) {  // 此时需要同步 Cookie，走同步 Cookie 的流程
-        NSURL *cookieURL = [NSURL URLWithString:kFakeCookieWebPageURLWithQueryString];
-        NSMutableURLRequest *mutableRequest = [NSMutableURLRequest requestWithURL:cookieURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:120];
-        WKWebView *cookieWebview = [self getCookieWebview];
-        [self.view addSubview:cookieWebview];
-        [self mark:kWebViewHostTimingLoadRequest];
-        [cookieWebview loadRequest:mutableRequest];
-    } else {
-        [self loadWebPageWithURL];
-    }
-}
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 
@@ -142,7 +120,7 @@ BOOL kGCDWebServer_logging_enabled = false;
 #pragma mark - public
 //https://stackoverflow.com/questions/49826107/wkwebview-custom-url-scheme-doesnt-work-with-https-mixed-content-blocked
 - (void)loadLocalFile:(NSURL *)url domain:(NSString *)domain {
-    self.url = domain;
+    _url = domain;
     NSError *err;
     NSStringEncoding encoding = NSUTF8StringEncoding;
     NSString *content = [NSString stringWithContentsOfURL:url usedEncoding:&encoding error:&err];
@@ -161,7 +139,7 @@ BOOL kGCDWebServer_logging_enabled = false;
         HDWHLog(@"文件参数错误");
         return;
     }
-    self.url = domain;
+    _url = domain;
     NSString *htmlContent = nil;
     [HDWHRequestMediate interMediateFile:fileName inDirectory:directory domain:domain output:&htmlContent];
 
@@ -174,6 +152,26 @@ BOOL kGCDWebServer_logging_enabled = false;
     }
 }
 
+#pragma mark - private methods
+/// 修复打开链接Cookie丢失问题
+/// @param request 请求
+- (NSURLRequest *)fixedRequest:(NSURLRequest *)request {
+    NSMutableURLRequest *fixedRequest;
+    if ([request isKindOfClass:[NSMutableURLRequest class]]) {
+        fixedRequest = (NSMutableURLRequest *)request;
+    } else {
+        fixedRequest = request.mutableCopy;
+    }
+    // 防止Cookie丢失
+    NSDictionary *dict = [NSHTTPCookie requestHeaderFieldsWithCookies:[NSHTTPCookieStorage sharedHTTPCookieStorage].cookies];
+    if (dict.count) {
+        NSMutableDictionary *mDict = request.allHTTPHeaderFields.mutableCopy;
+        [mDict setValuesForKeysWithDictionary:dict];
+        fixedRequest.allHTTPHeaderFields = mDict;
+    }
+    return fixedRequest;
+}
+
 #pragma mark - UI相关
 - (void)loadWebPageWithURL {
     NSURL *url = [NSURL URLWithString:self.url];
@@ -182,7 +180,7 @@ BOOL kGCDWebServer_logging_enabled = false;
         [self showTextTip:@"地址为空"];
         return;
     }
-    // 检查网络是否联网；
+    // 检查网络是否联网
     HDReachability *reachability = [HDReachability reachabilityForInternetConnection];
     if ([reachability isReachable]) {
         NSMutableURLRequest *mutableRequest = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:120];
@@ -198,8 +196,9 @@ BOOL kGCDWebServer_logging_enabled = false;
     createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration
                forNavigationAction:(WKNavigationAction *)navigationAction
                     windowFeatures:(WKWindowFeatures *)windowFeatures {
+    // 不打开新窗口
     if (!navigationAction.targetFrame.isMainFrame) {
-        [webView loadRequest:navigationAction.request];
+        [self.webView loadRequest:[self fixedRequest:navigationAction.request]];
     }
     HDWHLog(@"%@", NSStringFromSelector(_cmd));
     return nil;
@@ -214,6 +213,25 @@ BOOL kGCDWebServer_logging_enabled = false;
                                                            completionHandler();
                                                        }])];
     [self presentViewController:alertController animated:YES completion:nil];
+}
+
+- (void)webView:(WKWebView *)webView runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL))completionHandler {
+    // js 里面的alert实现，如果不实现，网页的alert函数无效
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:message message:nil preferredStyle:UIAlertControllerStyleAlert];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"取消"
+                                                        style:UIAlertActionStyleCancel
+                                                      handler:^(UIAlertAction *action) {
+                                                          completionHandler(NO);
+                                                      }]];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"确定"
+                                                        style:UIAlertActionStyleDefault
+                                                      handler:^(UIAlertAction *action) {
+                                                          completionHandler(YES);
+                                                      }]];
+    [self presentViewController:alertController
+                       animated:YES
+                     completion:^{
+                     }];
 }
 
 #pragma mark - WKNavigationDelegate
@@ -252,6 +270,11 @@ BOOL kGCDWebServer_logging_enabled = false;
         }
         policy = WKNavigationActionPolicyCancel;
     }
+    
+    // 解决Cookie丢失问题
+    NSURLRequest *originalRequest = navigationAction.request;
+    [self fixedRequest:originalRequest];
+    
     decisionHandler(policy);
     if (self.disabledProgressor) {
         self.progressorView.hidden = YES;
@@ -298,7 +321,7 @@ BOOL kGCDWebServer_logging_enabled = false;
         [self loadWebPageWithURL];
         return;
     }
-    //如果是全新加载页面，而不是从历史里弹出的情况下，需要渲染导航
+    // 如果是全新加载页面，而不是从历史里弹出的情况下，需要渲染导航
     if (![self.webView canGoForward] && self.rightActionBarTitle.length > 0) {
         [self callNative:@"setNavRight"
                parameter:@{
@@ -309,7 +332,8 @@ BOOL kGCDWebServer_logging_enabled = false;
            parameter:@{
                @"text": self.webView.title ?: self.pageTitle
            }];
-    // 设置发现的后台接口；
+    
+    // 设置发现的后台接口
     NSDictionary *inserted = [self supportMethodListAndAppInfo];
     [inserted enumerateKeysAndObjectsUsingBlock:^(NSString *keyStr, id obj, BOOL *stop) {
         [self insertData:obj intoPageWithVarName:keyStr];
@@ -355,9 +379,24 @@ BOOL kGCDWebServer_logging_enabled = false;
     }
 }
 
-#pragma mark - getter
+#pragma mark - setters
+- (void)setUrl:(NSString *)url {
+    _url = url;
 
-- (WKWebView *)getCookieWebview {
+    if (kFakeCookieWebPageURLWithQueryString.length > 0 && [HDWebViewHostCookie loginCookieHasBeenSynced] == NO) {  // 此时需要同步 Cookie，走同步 Cookie 的流程
+        NSURL *cookieURL = [NSURL URLWithString:kFakeCookieWebPageURLWithQueryString];
+        NSMutableURLRequest *mutableRequest = [NSMutableURLRequest requestWithURL:cookieURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:120];
+        WKWebView *cookieWebview = [self cookieWebview];
+        [self.view addSubview:cookieWebview];
+        [self mark:kWebViewHostTimingLoadRequest];
+        [cookieWebview loadRequest:mutableRequest];
+    } else {
+        [self loadWebPageWithURL];
+    }
+}
+
+#pragma mark - getter
+- (WKWebView *)cookieWebview {
     if (![kFakeCookieWebPageURLWithQueryString containsString:@"?"]) {
         NSAssert(NO, @"请配置 kFakeCookieWebPageURLString 参数，如在调用 HDWebViewHostViewController 的 .m 文件里定义，NSString *_Nonnull kFakeCookieWebPageURLWithQueryString = @\"https://www.chaosource.com?028-983cnhd8-2\"");
         return nil;
@@ -392,22 +431,20 @@ BOOL kGCDWebServer_logging_enabled = false;
         webViewConfig.allowsInlineMediaPlayback = YES;
         webViewConfig.processPool = [HDWebViewHostCookie sharedPoolManager];
         if (@available(iOS 11.0, *)) {
+             self.taskDelegate = [HDWHSchemeTaskDelegate new];
             [webViewConfig setURLSchemeHandler:self.taskDelegate forURLScheme:kWebViewHostURLScheme];
-        } else {
-            // Fallback on earlier versions
         }
         [self injectScriptsToUserContent:userContentController];
         [self measure:kWebViewHostTimingAddUserScript to:kWebViewHostTimingWebViewInit];
-
         WKWebView *webview = [[WKWebView alloc] initWithFrame:CGRectZero configuration:webViewConfig];
         if (@available(iOS 11.0, *)) {
             webview.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
-        } else {
-            // Fallback on earlier versions
         }
         webview.navigationDelegate = self;
         webview.UIDelegate = self;
         webview.scrollView.delegate = self;
+        webview.allowsBackForwardNavigationGestures = true;
+        webview.allowsLinkPreview = true;
 
         _webView = webview;
     }

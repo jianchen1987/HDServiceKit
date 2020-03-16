@@ -23,7 +23,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    UITableView *tableView = [[UITableView alloc] initWithFrame:(CGRect){0, CGRectGetMaxY(self.hd_navigationBar.frame), CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame) - CGRectGetMaxY(self.hd_navigationBar.frame)}];
+    UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectZero];
     [self.view addSubview:tableView];
 
     tableView.dataSource = self;
@@ -35,7 +35,6 @@
 
     [self initDataSource];
 
-    kFakeCookieWebPageURLWithQueryString = @"";
     kWebViewProgressTintColorRGB = 0xdcb000;
     kGCDWebServer_logging_enabled = YES;
     [[HDWHDebugServerManager sharedInstance] showDebugWindow];
@@ -51,6 +50,12 @@
         [[HDWHDebugServerManager sharedInstance] hideDebugWindow];
         [[HDWHDebugServerManager sharedInstance] stop];
     }
+}
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    
+    self.tableView.frame = (CGRect){0, CGRectGetMaxY(self.hd_navigationBar.frame), CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame) - CGRectGetMaxY(self.hd_navigationBar.frame)};
 }
 
 - (void)initDataSource {
