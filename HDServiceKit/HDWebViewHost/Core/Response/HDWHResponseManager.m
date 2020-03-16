@@ -41,7 +41,9 @@
         NSArray<NSString *> *responseClassNames = @[
             @"HDWHNavigationResponse",
             @"HDWHNavigationBarResponse",
-            @"HDWHBuiltInResponse",
+            @"HDWHHudActionResponse",
+            @"HDWHWebViewConfigResponse",
+            @"HDWHSystemCapabilityResponse",
 #ifdef HDWH_DEBUG
             @"HDWHDebugResponse",
 #endif

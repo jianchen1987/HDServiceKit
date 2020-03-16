@@ -71,8 +71,8 @@ Core
 ├── Response    为 h5 提供的业务相关的实现
 │   ├── HDWHAppLoggerResponse.h
 │   ├── HDWHAppLoggerResponse.m
-│   ├── HDWHBuiltInResponse.h
-│   ├── HDWHBuiltInResponse.m
+│   ├── HDWHHudActionResponse.h
+│   ├── HDWHHudActionResponse.m
 │   ├── HDWHDebugResponse.h
 │   ├── HDWHDebugResponse.m
 │   ├── HDWHNavigationBarResponse.h

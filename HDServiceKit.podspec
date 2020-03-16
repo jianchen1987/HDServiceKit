@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "HDServiceKit"
-  s.version          = "0.5.0"
+  s.version          = "0.5.2"
   s.summary          = "混沌 iOS 服务"
   s.description      = <<-DESC
                        HDServiceKit 是一系列服务以及能力，用于快速在其他项目使用或者第三方接入
@@ -49,6 +49,17 @@ Pod::Spec.new do |s|
     ss.source_files = 'HDServiceKit/HDPodAsset'
   end
 
+  s.subspec 'SystemCapability' do |ss|
+    ss.source_files = 'HDServiceKit/SystemCapability'
+  end
+
+  s.subspec 'HDDeviceInfo' do |ss|
+    ss.source_files = 'HDServiceKit/HDDeviceInfo'
+    ss.dependency 'UICKeyChainStore', '~> 2.1.2'
+    ss.dependency 'HDServiceKit/HDReachability'
+    ss.frameworks = 'CoreTelephony', 'AdSupport'
+  end
+
   s.subspec 'HDWebViewHost' do |ss|
     ss.dependency 'HDServiceKit/FileOperation'
 
@@ -61,6 +72,8 @@ Pod::Spec.new do |s|
       ss.dependency  'HDUIKit/MainFrame'
       ss.dependency  'HDServiceKit/HDReachability'
       ss.dependency 'HDUIKit/Components/HDTips'
+      ss.dependency  'HDServiceKit/SystemCapability'
+      ss.dependency  'HDServiceKit/HDDeviceInfo'
     end
 
     ss.subspec 'RemoteDebug' do |ss|

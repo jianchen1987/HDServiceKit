@@ -53,7 +53,7 @@ BOOL kGCDWebServer_logging_enabled = false;
     if (self) {
         [self.view addSubview:self.webView];
         self.webView.translatesAutoresizingMaskIntoConstraints = NO;
-        
+
         [NSLayoutConstraint activateConstraints:@[
             [self.webView.leftAnchor constraintEqualToAnchor:self.view.leftAnchor],
             [self.webView.topAnchor constraintEqualToAnchor:self.hd_navigationBar.bottomAnchor],
@@ -66,7 +66,7 @@ BOOL kGCDWebServer_logging_enabled = false;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+
     self.view.backgroundColor = [UIColor whiteColor];
     [self setupProgressor];
 }
@@ -82,7 +82,7 @@ BOOL kGCDWebServer_logging_enabled = false;
         urlStr = self.url;
     }
 
-    [self fire:@"pageshow" param:@{ @"url": urlStr ?: @"null" }];
+    [self fire:@"pageshow" param:@{@"url": urlStr ?: @"null"}];
     // 检查是否有上次遗留下来的进度条,避免 webview 在 tabbar 第一屏时出现进度条残留
     if (self.webView.estimatedProgress >= 1.f) {
         [self stopProgressor];
@@ -95,7 +95,7 @@ BOOL kGCDWebServer_logging_enabled = false;
     if (urlStr.length == 0) {
         urlStr = self.url;
     }
-    [self fire:@"pagehide" param:@{ @"url": urlStr ?: @"null" }];
+    [self fire:@"pagehide" param:@{@"url": urlStr ?: @"null"}];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -270,11 +270,11 @@ BOOL kGCDWebServer_logging_enabled = false;
         }
         policy = WKNavigationActionPolicyCancel;
     }
-    
+
     // 解决Cookie丢失问题
     NSURLRequest *originalRequest = navigationAction.request;
     [self fixedRequest:originalRequest];
-    
+
     decisionHandler(policy);
     if (self.disabledProgressor) {
         self.progressorView.hidden = YES;
@@ -332,14 +332,14 @@ BOOL kGCDWebServer_logging_enabled = false;
            parameter:@{
                @"text": self.webView.title ?: self.pageTitle
            }];
-    
+
     // 设置发现的后台接口
     NSDictionary *inserted = [self supportMethodListAndAppInfo];
     [inserted enumerateKeysAndObjectsUsingBlock:^(NSString *keyStr, id obj, BOOL *stop) {
         [self insertData:obj intoPageWithVarName:keyStr];
     }];
 
-    [self fire:@"onready" param:@{}];
+    [self fire:@"ready" param:@{}];
     [self dealWithViewHistory];
 }
 
@@ -431,7 +431,7 @@ BOOL kGCDWebServer_logging_enabled = false;
         webViewConfig.allowsInlineMediaPlayback = YES;
         webViewConfig.processPool = [HDWebViewHostCookie sharedPoolManager];
         if (@available(iOS 11.0, *)) {
-             self.taskDelegate = [HDWHSchemeTaskDelegate new];
+            self.taskDelegate = [HDWHSchemeTaskDelegate new];
             [webViewConfig setURLSchemeHandler:self.taskDelegate forURLScheme:kWebViewHostURLScheme];
         }
         [self injectScriptsToUserContent:userContentController];
@@ -445,7 +445,7 @@ BOOL kGCDWebServer_logging_enabled = false;
         webview.scrollView.delegate = self;
         webview.allowsBackForwardNavigationGestures = true;
         webview.allowsLinkPreview = true;
-
+        
         _webView = webview;
     }
     return _webView;
@@ -457,4 +457,7 @@ BOOL kGCDWebServer_logging_enabled = false;
     return self.navBarStyle;
 }
 
+- (HDViewControllerNavigationBarStyle)hd_preferredNavigationBarStyle {
+    return HDViewControllerNavigationBarStyleWhite;
+}
 @end

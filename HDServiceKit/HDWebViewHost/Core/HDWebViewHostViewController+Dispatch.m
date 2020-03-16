@@ -7,10 +7,10 @@
 //
 
 #import "HDWHResponseManager.h"
+#import "HDWebViewHostViewController+Callback.h"
 #import "HDWebViewHostViewController+Dispatch.h"
 #import "HDWebViewHostViewController+Scripts.h"
 #import "HDWebViewHostViewController+Utils.h"
-#import "HDWebViewHostViewController+Callback.h"
 
 @implementation HDWebViewHostViewController (Dispatch)
 
@@ -38,18 +38,19 @@
 
 - (BOOL)callNative:(NSString *)action parameter:(NSDictionary *)paramDict callbackKey:(NSString *)key {
     HDWHResponseManager *rm = [HDWHResponseManager defaultManager];
-    NSString *actionSig = [rm actionSignature:action withParam:paramDict.allKeys.count > 0 withCallback:key.length > 0];
+    NSString *actionSig = [rm actionSignature:action withParam:paramDict withCallback:key.length > 0];
     id<HDWebViewHostProtocol> response = [rm responseForActionSignature:actionSig withWebViewHost:self];
     if (response == nil || ![response handleAction:action withParam:paramDict callbackKey:key]) {
         NSString *errMsg = [NSString stringWithFormat:@"action (%@) not supported yet.", action];
         HDWHLog(@"%@", errMsg);
-        
+
         [self fireCallback:key actionName:action code:@"-1" type:HDWHCallbackTypeFail params:nil];
 
         // 通知 web 事件不支持
-        [self fire:@"notSupportedCommand"
+        [self fire:@"notSupported"
              param:@{
-                 @"error": errMsg
+                 @"error": errMsg,
+                 @"action": action
              }];
 #ifdef DEBUG
         [self callNative:@"toast"

@@ -123,7 +123,7 @@
         }
         
         // 一开始就设置右侧导航文案，为 UI 自动化加一个把手
-        window.webViewHost.on('onready', function () {
+        window.webViewHost.on('ready', function () {
             window.webViewHost.invoke("setNavRight", {"{\"text\": \"测试下一步接口\"}"})
         });
         

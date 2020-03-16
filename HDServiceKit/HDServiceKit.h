@@ -12,7 +12,7 @@
 #import <UIKit/UIKit.h>
 
 /// 版本号
-static NSString *const HDServiceKit_VERSION = @"0.5.0";
+static NSString *const HDServiceKit_VERSION = @"0.5.2";
 
 #if __has_include("HDWHViewControllerPreRender.h")
 #import "HDWHViewControllerPreRender.h"
@@ -98,16 +98,24 @@ static NSString *const HDServiceKit_VERSION = @"0.5.0";
 #import "HDWHNavigationResponse.h"
 #endif
 
+#if __has_include("HDWHHudActionResponse.h")
+#import "HDWHHudActionResponse.h"
+#endif
+
 #if __has_include("HDWHDebugResponse.h")
 #import "HDWHDebugResponse.h"
+#endif
+
+#if __has_include("HDWHWebViewConfigResponse.h")
+#import "HDWHWebViewConfigResponse.h"
 #endif
 
 #if __has_include("HDWHNavigationBarResponse.h")
 #import "HDWHNavigationBarResponse.h"
 #endif
 
-#if __has_include("HDWHBuiltInResponse.h")
-#import "HDWHBuiltInResponse.h"
+#if __has_include("HDWHSystemCapabilityResponse.h")
+#import "HDWHSystemCapabilityResponse.h"
 #endif
 
 #if __has_include("HDWHResponseManager.h")
@@ -170,6 +178,10 @@ static NSString *const HDServiceKit_VERSION = @"0.5.0";
 #import "HDPodAsset.h"
 #endif
 
+#if __has_include("HDSystemCapabilityUtil.h")
+#import "HDSystemCapabilityUtil.h"
+#endif
+
 #if __has_include("HDFileUtil.h")
 #import "HDFileUtil.h"
 #endif
@@ -216,6 +228,10 @@ static NSString *const HDServiceKit_VERSION = @"0.5.0";
 
 #if __has_include("HDReachability.h")
 #import "HDReachability.h"
+#endif
+
+#if __has_include("HDDeviceInfo.h")
+#import "HDDeviceInfo.h"
 #endif
 
 #if __has_include("NSObjectSafe.h")

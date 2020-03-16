@@ -219,7 +219,9 @@ static NSString *kLastWeinreScript = nil;
         NSMutableArray *docsHtml = [NSMutableArray arrayWithCapacity:4];
         for (Class clazz in allClazz) {
             // debug 的 responseClass 跳过
-            if ([clazz isKindOfClass:HDWHDebugResponse.class]) continue;
+            if ([NSStringFromClass(clazz) isEqualToString:@"HDWHDebugResponse"]) {
+                continue;
+            }
             NSDictionary *supportFunc = [clazz supportActionList];
             NSMutableString *html = [NSMutableString stringWithFormat:@"<fieldset><legend>%@</legend><ol>", NSStringFromClass(clazz)];
 

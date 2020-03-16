@@ -15,7 +15,8 @@
 + (NSDictionary<NSString *, NSString *> *)supportActionList {
     return @{
         @"startNewPage_": kHDWHResponseMethodOn,
-        @"openExternalUrl_": kHDWHResponseMethodOn
+        @"openExternalUrl_": kHDWHResponseMethodOn,
+        @"closeWindow": kHDWHResponseMethodOn
     };
 }
 
@@ -103,6 +104,20 @@ wh_doc_end;
         }
     } else {
         [self.navigationController pushViewController:freshOne animated:YES];
+    }
+}
+
+// clang-format off
+wh_doc_begin(closeWindow, "关闭当前窗口，会判断当前窗口的呈现方式")
+wh_doc_code(window.webViewHost.invoke("closeWindow"))
+wh_doc_code_expect("关闭当前窗口，回到上级页面")
+wh_doc_end;
+// clang-format on
+- (void)closeWindow {
+    if (self.webViewHost.presentingViewController) {
+        [self.webViewHost dismissViewControllerAnimated:YES completion:nil];
+    } else {
+        [self.navigationController popViewControllerAnimated:YES];
     }
 }
 @end

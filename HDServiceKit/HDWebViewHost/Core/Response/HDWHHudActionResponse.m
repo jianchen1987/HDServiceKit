@@ -6,18 +6,17 @@
 //  Copyright © 2019 chaos network technology. All rights reserved.
 //
 
-#import "HDWHBuiltInResponse.h"
+#import "HDWHHudActionResponse.h"
 #import "HDWebViewHostViewController.h"
 #import <HDUIKit/HDTips.h>
 
-@implementation HDWHBuiltInResponse
+@implementation HDWHHudActionResponse
 
 + (NSDictionary<NSString *, NSString *> *)supportActionList {
     return @{
         @"toast_": kHDWHResponseMethodOn,
         @"showLoading_": kHDWHResponseMethodOn,
-        @"hideLoading": kHDWHResponseMethodOn,
-        @"enablePageBounce_": kHDWHResponseMethodOn
+        @"hideLoading": kHDWHResponseMethodOn
     };
 }
 
@@ -67,17 +66,4 @@ wh_doc_end;
     HDTips *tip = [HDTips showWithText:text inView:self.webViewHost.webView hideAfterDelay:delay];
     tip.toastPosition = HDToastViewPositionBottom;
 }
-
-// clang-format off
-wh_doc_begin(enablePageBounce_, "容许触发 webview 下拉弹回的动画，传入 false 表示不容许；这个效果是 iOS 独有的")
-wh_doc_param(enabled, "布尔值， true 表示开启，false 表示关闭")
-wh_doc_code(window.webViewHost.invoke("enablePageBounce",{"enabled":false}))
-wh_doc_code_expect("本测试页面在滑动到底部或顶部时，没有 bounce 效果，在执行之前，尝试滑动底部，会出现 bounce 效果。")
-wh_doc_end;
-// clang-format on
-- (void)enablePageBounce:(NSDictionary *)paramDict {
-    BOOL bounce = [[paramDict objectForKey:@"enabled"] boolValue];
-    self.webView.scrollView.bounces = bounce;
-}
-
 @end

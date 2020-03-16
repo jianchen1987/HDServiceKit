@@ -24,6 +24,7 @@ FOUNDATION_EXPORT const unsigned char HDWebViewHostVersionString[];
 #import "HDWebViewHostViewController+Dispatch.h"
 #import "HDWebViewHostViewController+Extend.h"
 #import "HDWebViewHostViewController+Scripts.h"
+#import "HDWebViewHostViewController+Callback.h"
 #import "HDWebViewHostViewController.h"
 
 #if __has_include("HDWHDebugServerManager.h")

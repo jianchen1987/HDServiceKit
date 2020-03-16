@@ -55,7 +55,7 @@
         return false;
     }
     SEL sel = nil;
-    if (!paramDict || paramDict.allKeys.count == 0) {
+    if (!paramDict) {
         if (!callbackKey || callbackKey.length == 0) {
             sel = NSSelectorFromString([NSString stringWithFormat:@"%@", action]);
         } else {

@@ -18,7 +18,7 @@
 
 // clang-format off
 wh_doc_begin(log_, "在 xcode 控制台输出日志")
-wh_doc_param(logData, "日志字段，通常是json 对象")
+wh_doc_param(logData, "日志字段，通常是 json 对象")
 wh_doc_code(window.webViewHost.invoke("log", {"text": "Error"}))
 wh_doc_code_expect("会在 xcode 控制台输出日志信息，输出 text: Error, 日志包含了 [HDWebViewHost] 前缀")
 wh_doc_end;

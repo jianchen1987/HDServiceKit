@@ -8,6 +8,6 @@
 
 #import "HDWebViewHostResponse.h"
 
-@interface HDWHBuiltInResponse : HDWebViewHostResponse
+@interface HDWHHudActionResponse : HDWebViewHostResponse
 
 @end
