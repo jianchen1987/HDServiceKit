@@ -10,7 +10,7 @@
 #import "HDWebViewHostViewController+Scripts.h"
 
 @implementation HDWebViewHostViewController (Callback)
-- (void)fireCallback:(NSString *)callbackKey actionName:(NSString *)actionName code:(NSString *)code type:(HDWHCallbackType)type params:(NSDictionary *)params {
+- (void)fireCallback:(NSString *)callbackKey actionName:(NSString *)actionName code:(HDWHRespCode)code type:(HDWHCallbackType)type params:(NSDictionary *)params {
     NSString *status;
     switch (type) {
         case HDWHCallbackTypeSuccess:
@@ -25,7 +25,7 @@
             break;
     }
     NSMutableDictionary *finalParams = [NSMutableDictionary dictionaryWithCapacity:3];
-    finalParams[@"code"] = code;
+    finalParams[@"code"] = @(code);
     if (status.length > 0) {
         finalParams[@"msg"] = [NSString stringWithFormat:@"%@::%@", actionName, status];
     } else {

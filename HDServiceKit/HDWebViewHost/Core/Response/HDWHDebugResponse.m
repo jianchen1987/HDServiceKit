@@ -1,3 +1,5 @@
+
+
 //
 //  HDWHDebugResponse.m
 //  HDServiceKit
@@ -46,7 +48,7 @@ static NSString *kLastWeinreScript = nil;
 
     // 重写 console.log 方法
     script = [HDWebViewHostCustomJavscript customJavscriptWithScript:@"window.__wh_consolelog = console.log; console.log = function(_msg){window.__wh_consolelog(_msg);window.webViewHost.invoke('console.log', {'text': _msg});}" injectionTime:WKUserScriptInjectionTimeAtDocumentEnd key:@"console.log.js"];
-    [scripts addObject:script];
+    // [scripts addObject:script];
 
     // 记录 readystatechange 的时间
     script = [HDWebViewHostCustomJavscript customJavscriptWithScript:@"document.addEventListener('readystatechange', function (event) {window['readystate_' + document.readyState] = (new Date()).getTime();});" injectionTime:WKUserScriptInjectionTimeAtDocumentStart key:@"readystatechange.js"];
@@ -110,7 +112,7 @@ static NSString *kLastWeinreScript = nil;
             } else {
                 err = [NSString stringWithFormat:@"The method (%@) doesn't exsit!", signature];
             }
-            [self fire:funcName param:@{@"error": err}];
+            [self fire:funcName param:@{ @"error": err }];
         }
     } else if ([@"testcase" isEqualToString:action]) {
         // 检查是否有文件生成，如果没有则遍历
@@ -118,7 +120,7 @@ static NSString *kLastWeinreScript = nil;
         if (![HDFileUtil isFileExistedFilePath:file]) {
             [self generatorHtml];
         }
-        [self.webViewHost loadLocalFile:[NSURL fileURLWithPath:file] domain:@"https://www.chaosource.com"];
+        [self.webViewHost loadLocalFile:[NSURL fileURLWithPath:file] domain:kHDWHTestcaseDomain];
         // 支持 或者关闭 weinre 远程调试
     } else if ([@"weinre" isEqualToString:action]) {
         // $ weinre --boundHost 10.242.24.59 --httpPort 9090
@@ -145,13 +147,25 @@ static NSString *kLastWeinreScript = nil;
             WKHTTPCookieStore *_Nonnull cookieStorage = [WKWebsiteDataStore defaultDataStore].httpCookieStore;
             [cookieStorage getAllCookies:^(NSArray<NSHTTPCookie *> *_Nonnull cookies) {
                 [cookies enumerateObjectsUsingBlock:^(NSHTTPCookie *_Nonnull cookie, NSUInteger idx, BOOL *_Nonnull stop) {
-                    [cookieStorage deleteCookie:cookie completionHandler:nil];
+                    [cookieStorage deleteCookie:cookie completionHandler:^{
+                        HDWHLog(@"Cookie %@ for %@ deleted successfully", cookie.name, cookie.domain);
+                    }];
                 }];
-
-                [self.webViewHost fire:@"clearCookieDone" param:@{@"count": @(cookies.count)}];
+                [self.webViewHost fire:@"clearCookieDone" param:@{ @"count": @(cookies.count) }];
             }];
         } else {
-            // Fallback on earlier versions
+            WKWebsiteDataStore *dateStore = [WKWebsiteDataStore defaultDataStore];
+            [dateStore fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes]
+                             completionHandler:^(NSArray<WKWebsiteDataRecord *> *__nonnull records) {
+                                 for (WKWebsiteDataRecord *record in records) {
+                                     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:record.dataTypes
+                                                                               forDataRecords:@[record]
+                                                                            completionHandler:^{
+                                                                                HDWHLog(@"Cookie for %@ deleted successfully", record.displayName);
+                                                                            }];
+                                 }
+                                 [self.webViewHost fire:@"clearCookieDone" param:@{ @"count": @(records.count) }];
+                             }];
         }
     } else if ([@"console.log" isEqualToString:action]) {
         // 正常的日志输出时，不需要做特殊处理。
@@ -161,7 +175,6 @@ static NSString *kLastWeinreScript = nil;
         return NO;
     }
     return YES;
-
 #else
     return NO;
 #endif
@@ -175,7 +188,7 @@ static NSString *kLastWeinreScript = nil;
 
     [HDWebViewHostViewController prepareJavaScript:[NSURL URLWithString:kLastWeinreScript] when:WKUserScriptInjectionTimeAtDocumentEnd key:@"weinre.js"];
 
-    [self.webViewHost fire:@"weinre.enable" param:@{@"jsURL": kLastWeinreScript}];
+    [self.webViewHost fire:@"weinre.enable" param:@{ @"jsURL": kLastWeinreScript }];
 }
 
 - (void)disableWeinreSupport {
@@ -293,5 +306,5 @@ static NSString *kLastWeinreScript = nil;
         return YES;
     }
     return NO;
-}
-@end
+    }
+    @end

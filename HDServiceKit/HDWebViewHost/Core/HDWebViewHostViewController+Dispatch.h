@@ -14,9 +14,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 核心的h5调用native接口的分发器
 /// @param action 方法名
+/// @return 是否已经被处理
+- (BOOL)callNative:(NSString *)action;
+
+/// 核心的h5调用native接口的分发器
+/// @param action 方法名
 /// @param paramDict 参数
 /// @return 是否已经被处理
-- (BOOL)callNative:(NSString *)action parameter:(NSDictionary *)paramDict;
+- (BOOL)callNative:(NSString *)action parameter:(NSDictionary *_Nullable)paramDict;
 
 /// 核心的h5调用native接口的分发器
 /// @param action 方法名

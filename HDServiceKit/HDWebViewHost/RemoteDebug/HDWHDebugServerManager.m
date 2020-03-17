@@ -203,8 +203,8 @@ BOOL GCDWebServer_logging_enabled = NO;
                 });
             } else if ([url.path hasPrefix:@"/command.do"]) {
                 NSString *action = [request.arguments objectForKey:kWHActionKey];
-                NSString *param = [request.arguments objectForKey:kWHParamKey] ?: @"";
-                NSString *callbackKey = [request.arguments objectForKey:kWHCallbackKey] ?: @"";
+                NSString *param = [request.arguments objectForKey:kWHParamKey];
+                NSString *callbackKey = [request.arguments objectForKey:kWHCallbackKey];
 
                 NSDictionary *contentJSON = nil;
                 NSError *contentParseError;

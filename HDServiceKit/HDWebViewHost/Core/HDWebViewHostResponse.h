@@ -9,6 +9,7 @@
 #import "HDWebViewHostEnum.h"
 #import "HDWebViewHostProtocol.h"
 #import <Foundation/Foundation.h>
+#import "HDWebViewHostResponseCode.h"
 
 /// 开
 static NSString *const kHDWHResponseMethodOn = @"1";

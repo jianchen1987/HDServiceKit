@@ -82,7 +82,7 @@ BOOL kGCDWebServer_logging_enabled = false;
         urlStr = self.url;
     }
 
-    [self fire:@"pageshow" param:@{@"url": urlStr ?: @"null"}];
+    [self fire:@"pageshow" param:@{ @"url": urlStr ?: @"null" }];
     // 检查是否有上次遗留下来的进度条,避免 webview 在 tabbar 第一屏时出现进度条残留
     if (self.webView.estimatedProgress >= 1.f) {
         [self stopProgressor];
@@ -95,7 +95,7 @@ BOOL kGCDWebServer_logging_enabled = false;
     if (urlStr.length == 0) {
         urlStr = self.url;
     }
-    [self fire:@"pagehide" param:@{@"url": urlStr ?: @"null"}];
+    [self fire:@"pagehide" param:@{ @"url": urlStr ?: @"null" }];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -369,7 +369,25 @@ BOOL kGCDWebServer_logging_enabled = false;
                                                        options:NSJSONReadingMutableContainers
                                                          error:&err];
             }
-            [self dispatchParsingParameter:body];
+            // 测试用例触发的就不要验签
+            if ([self.url isEqualToString:kHDWHTestcaseDomain]) {
+                [self dispatchParsingParameter:body];
+            } else {
+                // 验签
+                NSDictionary *paramDict = [body objectForKey:kWHParamKey];
+                NSString *callbackKey = [body objectForKey:kWHCallbackKey];
+
+                // 取出业务参数
+                NSMutableDictionary *neededBody = [NSMutableDictionary dictionaryWithCapacity:3];
+                neededBody[kWHActionKey] = [body objectForKey:kWHActionKey];
+                neededBody[kWHCallbackKey] = callbackKey;
+                NSDictionary *bussParams = [paramDict objectForKey:kWHBussParamKey];
+                // 如果有回调，必须有参数，传空字典
+                if ((callbackKey && callbackKey.length > 0) || bussParams.allKeys.count > 0) {
+                    neededBody[kWHParamKey] = bussParams;
+                }
+                [self dispatchParsingParameter:neededBody];
+            }
         }
     } else {
 #ifdef DEBUG

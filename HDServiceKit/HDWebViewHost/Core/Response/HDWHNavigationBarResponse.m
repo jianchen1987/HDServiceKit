@@ -7,14 +7,12 @@
 //
 
 #import "HDWHNavigationBarResponse.h"
-#import "HDWebViewHostViewController.h"
+#import "HDWebViewHostViewController+Dispatch.h"
 #import "NSBundle+HDWebViewHost.h"
 
 @interface HDWHNavigationBarResponse ()
-
-// 以下是 short hand，都是从 webViewHost 上的属性
+/// 以下是 short hand，都是从 webViewHost 上的属性
 @property (nonatomic, copy) NSString *rightActionBarTitle;
-
 @end
 
 @implementation HDWHNavigationBarResponse
@@ -22,7 +20,7 @@
 + (NSDictionary<NSString *, NSString *> *)supportActionList {
     return @{
         @"goBack": kHDWHResponseMethodOn,
-        @"setNavRight_": kHDWHResponseMethodOn,
+        @"setNavRightTitle_": kHDWHResponseMethodOn,
         @"setNavTitle_": kHDWHResponseMethodOn,
         @"showRightMenu": kHDWHResponseMethodOn,
         @"hideRightMenu": kHDWHResponseMethodOn
@@ -41,12 +39,8 @@ wh_doc_end;
         [self.webView goBack];
         [self initNavigationBarButtons];
     } else {
-        [self didTapClose:nil];
+        [self.webViewHost callNative:@"closeWindow"];
     }
-}
-
-- (void)didTapClose:(id)sender {
-    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)initNavigationBarButtons {
@@ -66,13 +60,13 @@ wh_doc_end;
 
 #pragma mark - nav
 // clang-format off
-wh_doc_begin(setNavRight_, "h5 页面的返回，如果可以返回到上一个 h5 页面则返回上一个 h5，否则退出 webview 页面")
-wh_doc_code(window.webViewHost.on('navigationBar.rightButton.onclick',function(p){alert('你点击了'+p.text+'按钮')});window.webViewHost.invoke("setNavRight",{"text":"发射"}))
+wh_doc_begin(setNavRightTitle_, "h5 页面的返回，如果可以返回到上一个 h5 页面则返回上一个 h5，否则退出 webview 页面")
+wh_doc_code(window.webViewHost.on('navigationBar.rightButton.onclick',function(p){alert('你点击了'+ p.text +'按钮')});window.webViewHost.invoke("setNavRightTitle",{"text":"发射"}))
 wh_doc_param(text, "字符串，右上角按钮的文案")
 wh_doc_code_expect("右上角出现一个’发射‘按钮，点击这个按钮，会触发 h5 对右上角按钮的监听。表现：弹出 alert，文案是’你点击了发射按钮‘。")
 wh_doc_end;
 // clang-format on
-- (void)setNavRight:(NSDictionary *)paramDict {
+- (void)setNavRightTitle:(NSDictionary *)paramDict {
     NSString *title = [paramDict objectForKey:@"text"];
     self.rightActionBarTitle = title;
     UIBarButtonItem *rightBarButton = nil;
@@ -90,9 +84,9 @@ wh_doc_end;
 
 // clang-format off
 wh_doc_begin(setNavTitle_, "设置 webview 页面中间的标题")
-wh_doc_code(window.webViewHost.invoke("setNavTitle",{"text": "酒泉卫星发射中心"}))
+wh_doc_code(window.webViewHost.invoke("setNavTitle",{"text": "315大促现场"}))
 wh_doc_param(text, "字符串，整个 ViewController 的标题")
-wh_doc_code_expect("标题栏中间出现设置的文案，’酒泉卫星发射中心‘")
+wh_doc_code_expect("标题栏中间出现设置的文案，’315大促现场‘")
 wh_doc_end;
 // clang-format on
 - (void)setNavTitle:(NSDictionary *)paramDict {

@@ -6,7 +6,7 @@
 //
 
 #import "HDWHWebViewConfigResponse.h"
-#import "HDWebViewHostViewController.h"
+#import "HDWebViewHostViewController+Callback.h"
 
 @implementation HDWHWebViewConfigResponse
 + (NSDictionary<NSString *, NSString *> *)supportActionList {
@@ -14,7 +14,9 @@
         @"enablePageBounce_": kHDWHResponseMethodOn,
         @"allowsBackForwardNavigationGestures_": kHDWHResponseMethodOn,
         @"allowsLinkPreview_": kHDWHResponseMethodOn,
-        @"interactivePopDisabled_": kHDWHResponseMethodOn
+        @"interactivePopDisabled_": kHDWHResponseMethodOn,
+        @"ready_$": kHDWHResponseMethodOn,
+        @"config_$": kHDWHResponseMethodOn
     };
 }
 
@@ -64,5 +66,23 @@ wh_doc_end;
 - (void)interactivePopDisabled:(NSDictionary *)paramDict {
     BOOL value = [[paramDict objectForKey:@"value"] boolValue];
     self.webViewHost.hd_interactivePopDisabled = value;
+}
+
+- (void)ready:(NSDictionary *)paramDict callback:(NSString *)callbackKey {
+    // 进行相应的判断
+    
+    // 触发回调
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.webViewHost fireCallback:callbackKey actionName:@"ready" code:HDWHRespCodeSuccess type:HDWHCallbackTypeSuccess params:nil];
+    });
+}
+
+- (void)config:(NSDictionary *)paramDict callback:(NSString *)callbackKey {
+    // 进行相应的判断
+    
+    // 触发回调
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.webViewHost fireCallback:callbackKey actionName:@"config" code:HDWHRespCodeSuccess type:HDWHCallbackTypeSuccess params:nil];
+    });
 }
 @end

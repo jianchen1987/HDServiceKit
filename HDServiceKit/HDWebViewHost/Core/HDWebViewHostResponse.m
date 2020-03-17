@@ -55,8 +55,8 @@
         return false;
     }
     SEL sel = nil;
-    if (!paramDict) {
-        if (!callbackKey || callbackKey.length == 0) {
+    if (!paramDict || paramDict.allKeys.count <= 0) {
+        if (!callbackKey || callbackKey.length <= 0) {
             sel = NSSelectorFromString([NSString stringWithFormat:@"%@", action]);
         } else {
             sel = NSSelectorFromString([NSString stringWithFormat:@"%@WithCallback:", action]);
@@ -73,7 +73,15 @@
         return NO;
     }
 
-    [self hd_performSelector:sel withObjects:[NSArray arrayWithObjects:paramDict, callbackKey, nil]];
+    NSMutableArray *objects = [NSMutableArray arrayWithCapacity:2];
+    if (paramDict && [paramDict isKindOfClass:NSDictionary.class] && paramDict.allKeys.count > 0) {
+        [objects addObject:paramDict];
+    }
+    if (callbackKey && [callbackKey isKindOfClass:NSString.class] && callbackKey.length > 0) {
+        [objects addObject:callbackKey];
+    }
+
+    [self hd_performSelector:sel withObjects:objects];
     return YES;
 }
 

@@ -22,7 +22,7 @@
         @"jumpToMapWithCoordinates_": kHDWHResponseMethodOn,
         @"graduallySetBrightness_": kHDWHResponseMethodOn,
         @"openAppSystemSettingPage": kHDWHResponseMethodOn,
-        @"getUserDevice_$": kHDWHResponseMethodOn
+        @"getUserDevice$": kHDWHResponseMethodOn
     };
 }
 
@@ -114,11 +114,11 @@ wh_doc_end;
     [HDSystemCapabilityUtil jumpToMapWithAddress:address
         successHandler:^{
             __strong __typeof(weakSelf) strongSelf = weakSelf;
-            [strongSelf.webViewHost fireCallback:callBackKey actionName:@"jumpToMapWithAddress" code:@"0" type:HDWHCallbackTypeSuccess params:nil];
+            [strongSelf.webViewHost fireCallback:callBackKey actionName:@"jumpToMapWithAddress" code:HDWHRespCodeSuccess type:HDWHCallbackTypeSuccess params:nil];
         }
         failHandler:^(NSString *_Nonnull errMsg) {
             __strong __typeof(weakSelf) strongSelf = weakSelf;
-            [strongSelf.webViewHost fireCallback:callBackKey actionName:@"jumpToMapWithAddress" code:@"-1" type:HDWHCallbackTypeFail params:@{ @"reason": errMsg }];
+            [strongSelf.webViewHost fireCallback:callBackKey actionName:@"jumpToMapWithAddress" code:HDWHRespCodeCommonFailed type:HDWHCallbackTypeFail params:@{ @"reason": errMsg }];
         }];
 }
 
@@ -161,14 +161,14 @@ wh_doc_end;
 }
 
 // clang-format off
-wh_doc_begin(getUserDevice_$, "获取用户当前设备硬件信息")
+wh_doc_begin(getUserDevice$, "获取用户当前设备硬件信息")
 wh_doc_code(window.webViewHost.invoke("getUserDevice", {}, function(params) {
     alert("getUserDevice:" + JSON.stringify(params));
 }))
 wh_doc_code_expect("获取到设备信息")
 wh_doc_end;
 // clang-format on
-- (void)getUserDevice:(NSDictionary *)paramDict callback:(NSString *)callBackKey   {
+- (void)getUserDeviceWithCallback:(NSString *)callBackKey   {
     
     NSMutableDictionary *params = [NSMutableDictionary dictionaryWithCapacity:6];
     params[@"deviceld"] = [HDDeviceInfo getUniqueId];
@@ -178,6 +178,6 @@ wh_doc_end;
     params[@"version"] = [HDDeviceInfo appVersion];
     params[@"networkType"] = [HDDeviceInfo getNetworkType];
     
-    [self.webViewHost fireCallback:callBackKey actionName:@"getUserDevice" code:@"0" type:HDWHCallbackTypeSuccess params:params];
+    [self.webViewHost fireCallback:callBackKey actionName:@"getUserDevice" code:HDWHRespCodeSuccess type:HDWHCallbackTypeSuccess params:params];
 }
 @end

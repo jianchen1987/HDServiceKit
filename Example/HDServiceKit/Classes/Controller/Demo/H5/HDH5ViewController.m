@@ -122,7 +122,7 @@
 #pragma clang diagnostic pop
             }
             LoadJDWebViewViewController *vc = [LoadJDWebViewViewController new];
-            [vc loadLocalFile:[NSURL fileURLWithPath:file] domain:@"https://www.chaosource.com"];
+            [vc loadLocalFile:[NSURL fileURLWithPath:file] domain:kHDWHTestcaseDomain];
             [self.navigationController pushViewController:vc animated:YES];
         } else {
             [preRender getWebViewController:LoadJDWebViewViewController.class

@@ -7,6 +7,7 @@
 //
 
 #import "HDWebViewHostViewController.h"
+#import "HDWebViewHostResponseCode.h"
 
 typedef NS_ENUM(NSUInteger, HDWHCallbackType) {
     HDWHCallbackTypeSuccess = 0,  ///< 成功
@@ -24,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param code 错误码
 /// @param type 类型
 /// @param params 参数
-- (void)fireCallback:(NSString *)callbackKey actionName:(NSString *)actionName code:(NSString *)code type:(HDWHCallbackType)type params:(NSDictionary *__nullable)params;
+- (void)fireCallback:(NSString *)callbackKey actionName:(NSString *)actionName code:(HDWHRespCode)code type:(HDWHCallbackType)type params:(NSDictionary *__nullable)params;
 @end
 
 NS_ASSUME_NONNULL_END
