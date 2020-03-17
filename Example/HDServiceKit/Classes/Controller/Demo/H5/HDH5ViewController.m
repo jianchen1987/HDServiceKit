@@ -83,7 +83,7 @@
                                           @"desc": @"本地文件服务器发送请求",
                                           @"domain": @"https://github.com" },
                                        @{ @"name": @"加载内网H5测试页面",
-                                          @"url": @"http://172.16.19.163:8080/test-page/index.html",
+                                          @"url": @"http://172.16.19.200:8080/test-page/index.html",
                                           @"desc": @"测试"
                                        },
                                        nil];

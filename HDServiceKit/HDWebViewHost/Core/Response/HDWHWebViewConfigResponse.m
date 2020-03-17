@@ -7,6 +7,7 @@
 
 #import "HDWHWebViewConfigResponse.h"
 #import "HDWebViewHostViewController+Callback.h"
+#import "HDWebViewHostViewController+Utils.h"
 
 @implementation HDWHWebViewConfigResponse
 + (NSDictionary<NSString *, NSString *> *)supportActionList {
@@ -16,7 +17,8 @@
         @"allowsLinkPreview_": kHDWHResponseMethodOn,
         @"interactivePopDisabled_": kHDWHResponseMethodOn,
         @"ready_$": kHDWHResponseMethodOn,
-        @"config_$": kHDWHResponseMethodOn
+        @"config_$": kHDWHResponseMethodOn,
+        @"checkJsApi_$": kHDWHResponseMethodOn
     };
 }
 
@@ -84,5 +86,40 @@ wh_doc_end;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self.webViewHost fireCallback:callbackKey actionName:@"config" code:HDWHRespCodeSuccess type:HDWHCallbackTypeSuccess params:nil];
     });
+}
+
+// clang-format off
+wh_doc_begin(checkJsApi_$, "检查 API 是否实现，以键值对的形式返回，可用的 api 值 1，不可用为 0")
+wh_doc_param(jsApiList, "要检查的方法列表")
+wh_doc_code(window.webViewHost.invoke("checkJsApi",{"jsApiList": ["config", "ready", "method1", "getUserDevice"]}, function(params) {
+    alert(JSON.stringify(params));
+}))
+wh_doc_code_expect("config、ready、getUserDevice为 1，method1 为 0")
+wh_doc_end;
+// clang-format on
+- (void)checkJsApi:(NSDictionary *)paramDict callback:(NSString *)callbackKey {
+    NSArray<NSString *> *list = [paramDict objectForKey:@"jsApiList"];
+    
+    NSDictionary *supportMethodListAndAppInfo = [self.webViewHost supportMethodListAndAppInfo];
+    NSDictionary *supportMethodList = [supportMethodListAndAppInfo objectForKey:kHDWHSupportMethodListKey];
+    
+    NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:list.count];
+    
+    NSMutableArray<NSString *> *supportMethodNameList = supportMethodList.allKeys.mutableCopy;
+    [supportMethodNameList enumerateObjectsUsingBlock:^(NSString *  _Nonnull key, NSUInteger idx, BOOL * _Nonnull stop) {
+        key = [key stringByReplacingOccurrencesOfString:@"_" withString:@""];
+        key = [key stringByReplacingOccurrencesOfString:@"$" withString:@""];
+        supportMethodNameList[idx] = key;
+    }];
+    
+    [list enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([supportMethodNameList containsObject:obj]) {
+            result[obj] = @(true);
+        } else {
+            result[obj] = @(false);
+        }
+    }];
+    
+    [self.webViewHost fireCallback:callbackKey actionName:@"checkJsApi" code:HDWHRespCodeSuccess type:HDWHCallbackTypeSuccess params:result];
 }
 @end

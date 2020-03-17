@@ -21,6 +21,7 @@
 #import "HDWebViewHostViewController+Scripts.h"
 #import "HDWebViewHostViewController+Timing.h"
 #import "HDWebViewHostViewController+Utils.h"
+#import "HDWHDebugResponse.h"
 
 @interface HDWebViewHostViewController () <UIScrollViewDelegate, WKUIDelegate, WKScriptMessageHandler>
 @property (nonatomic, strong) WKWebView *webView;
@@ -373,20 +374,27 @@ BOOL kGCDWebServer_logging_enabled = false;
             if ([self.url isEqualToString:kHDWHTestcaseDomain]) {
                 [self dispatchParsingParameter:body];
             } else {
-                // 验签
-                NSDictionary *paramDict = [body objectForKey:kWHParamKey];
-                NSString *callbackKey = [body objectForKey:kWHCallbackKey];
-
-                // 取出业务参数
-                NSMutableDictionary *neededBody = [NSMutableDictionary dictionaryWithCapacity:3];
-                neededBody[kWHActionKey] = [body objectForKey:kWHActionKey];
-                neededBody[kWHCallbackKey] = callbackKey;
-                NSDictionary *bussParams = [paramDict objectForKey:kWHBussParamKey];
-                // 如果有回调，必须有参数，传空字典
-                if ((callbackKey && callbackKey.length > 0) || bussParams.allKeys.count > 0) {
-                    neededBody[kWHParamKey] = bussParams;
+                BOOL isDebugAction = false;
+#ifdef HDWH_DEBUG
+                // debug 命令也不要验签
+                if ([HDWHDebugResponse isDebugAction:[body objectForKey:kWHActionKey]]) {
+                    isDebugAction = true;
+                    [self dispatchParsingParameter:body];
                 }
-                [self dispatchParsingParameter:neededBody];
+#endif
+                if (!isDebugAction) {
+                    // 验签
+                    NSDictionary *paramDict = [body objectForKey:kWHParamKey];
+                    NSString *callbackKey = [body objectForKey:kWHCallbackKey];
+
+                    // 取出业务参数
+                    NSMutableDictionary *neededBody = [NSMutableDictionary dictionaryWithCapacity:3];
+                    neededBody[kWHActionKey] = [body objectForKey:kWHActionKey];
+                    neededBody[kWHCallbackKey] = callbackKey;
+                    NSDictionary *bussParams = [paramDict objectForKey:kWHBussParamKey];
+                    neededBody[kWHParamKey] = bussParams;
+                    [self dispatchParsingParameter:neededBody];
+                }
             }
         }
     } else {

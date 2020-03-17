@@ -11,6 +11,9 @@
 #import "HDWebViewHostViewController+Dispatch.h"
 #import "HDWebViewHostViewController+Utils.h"
 
+NSString *const  kHDWHSupportMethodListKey = @"supportMethodList";
+NSString *const  kHDWHAppInfoKey = @"appInfo";
+
 @implementation HDWebViewHostViewController (Utils)
 
 #pragma mark - supportType
@@ -28,14 +31,14 @@
     }];
 
     NSMutableDictionary *lst = [NSMutableDictionary dictionaryWithCapacity:10];
-    [lst setObject:supportedFunctions forKey:@"supportFunctionType"];
+    [lst setObject:supportedFunctions forKey:kHDWHSupportMethodListKey];
 
     NSMutableDictionary *appInfo = [NSMutableDictionary dictionaryWithCapacity:5];
     if (HDWH_IS_SCREEN_HEIGHT_X) {
         [appInfo setObject:@"1" forKey:@"isIPhoneXSeries"];
     }
 
-    [lst setObject:appInfo forKey:@"appInfo"];
+    [lst setObject:appInfo forKey:kHDWHAppInfoKey];
     return lst;
 }
 

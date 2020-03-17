@@ -31,6 +31,21 @@ static NSString *kLastWeinreScript = nil;
     };
 }
 
++ (BOOL)isDebugAction:(NSString *)action {
+    NSArray *allKeys = [self supportActionList].allKeys;
+    __block BOOL exist = false;
+    [allKeys enumerateObjectsUsingBlock:^(NSString *  _Nonnull key, NSUInteger idx, BOOL * _Nonnull stop) {
+        key = [key stringByReplacingOccurrencesOfString:@"_" withString:@""];
+        key = [key stringByReplacingOccurrencesOfString:@"$" withString:@""];
+        
+        if ([key isEqualToString:action]) {
+            exist = true;
+            *stop = true;
+        }
+    }];
+    return exist;
+}
+
 + (void)setupDebugger {
 #ifdef HDWH_DEBUG
     NSBundle *bundle = [NSBundle hd_WebViewHostRemoteDebugResourcesBundle];
@@ -48,7 +63,7 @@ static NSString *kLastWeinreScript = nil;
 
     // 重写 console.log 方法
     script = [HDWebViewHostCustomJavscript customJavscriptWithScript:@"window.__wh_consolelog = console.log; console.log = function(_msg){window.__wh_consolelog(_msg);window.webViewHost.invoke('console.log', {'text': _msg});}" injectionTime:WKUserScriptInjectionTimeAtDocumentEnd key:@"console.log.js"];
-    // [scripts addObject:script];
+    [scripts addObject:script];
 
     // 记录 readystatechange 的时间
     script = [HDWebViewHostCustomJavscript customJavscriptWithScript:@"document.addEventListener('readystatechange', function (event) {window['readystate_' + document.readyState] = (new Date()).getTime();});" injectionTime:WKUserScriptInjectionTimeAtDocumentStart key:@"readystatechange.js"];
@@ -169,7 +184,7 @@ static NSString *kLastWeinreScript = nil;
         }
     } else if ([@"console.log" isEqualToString:action]) {
         // 正常的日志输出时，不需要做特殊处理。
-        HDWHLog(@"console.log: %@", paramDict);
+        HDWHLog(@"来自 console.log: %@", paramDict);
         // 因为在 invoke 的时候，已经向 debugger Server 发送过日志数据，已经打印过了
     } else {
         return NO;

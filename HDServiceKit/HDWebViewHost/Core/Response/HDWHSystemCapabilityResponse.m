@@ -22,7 +22,8 @@
         @"jumpToMapWithCoordinates_": kHDWHResponseMethodOn,
         @"graduallySetBrightness_": kHDWHResponseMethodOn,
         @"openAppSystemSettingPage": kHDWHResponseMethodOn,
-        @"getUserDevice$": kHDWHResponseMethodOn
+        @"getUserDevice$": kHDWHResponseMethodOn,
+        @"openLocation_": kHDWHResponseMethodOn
     };
 }
 
@@ -179,5 +180,24 @@ wh_doc_end;
     params[@"networkType"] = [HDDeviceInfo getNetworkType];
     
     [self.webViewHost fireCallback:callBackKey actionName:@"getUserDevice" code:HDWHRespCodeSuccess type:HDWHCallbackTypeSuccess params:params];
+}
+
+// clang-format off
+wh_doc_begin(openLocation_, "根据一个地址以及经纬度打开地图页面")
+wh_doc_param(longitude, "要跳转的地址的经度，字符串")
+wh_doc_param(latitude, "要跳转的地址的纬度，字符串")
+wh_doc_param(name, "位置名")
+wh_doc_param(address, "要跳转的地址名")
+wh_doc_param(scale, "地图缩放级别,整形值,范围从 1~28。默认为最大")
+wh_doc_param(infoUrl, "在查看位置界面底部显示的超链接,可点击跳转")
+wh_doc_code(window.webViewHost.invoke("openLocation",{"address": "江西省上饶市南昌市滕王阁", "name": "滕王阁", "longitude": "123.896787878", "latitude": "34.986778977"}))
+wh_doc_code_expect("调到系统地图滕王阁")
+wh_doc_end;
+// clang-format on
+- (void)openLocation:(NSDictionary *)paramDict {
+    double longitude = [[paramDict objectForKey:@"longitude"] doubleValue];
+    double latitude = [[paramDict objectForKey:@"latitude"] doubleValue];
+    NSString *address = [paramDict objectForKey:@"address"];
+    [HDSystemCapabilityUtil jumpToMapWithLongitude:longitude latitude:latitude locationName:address];
 }
 @end

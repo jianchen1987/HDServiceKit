@@ -11,9 +11,9 @@
 #define kCode(code) [NSString stringWithFormat:@"%zd", code]
 
 typedef NS_ENUM(NSInteger, HDWHRespCode) {
-    HDWHRespCodeSuccess = 0,
-    HDWHRespCodeCommonFailed = -1,
-    HDWHRespCodeIllegalArg = -2,
+    HDWHRespCodeSuccess = 0,        ///< 成功
+    HDWHRespCodeCommonFailed = -1,  ///< 通用失败
+    HDWHRespCodeIllegalArg = -2,    ///< 参数不合法
 };
 
 #endif /* HDWebViewHostResponseCode_h */

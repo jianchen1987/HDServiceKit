@@ -16,6 +16,11 @@ static NSString *kWebViewHostTestCaseFileName = @"testcase.html";
 
 + (void)setupDebugger;
 
+
+/// 检测命令是否是 debug 命令
+/// @param action 命令名
++ (BOOL)isDebugAction:(NSString *)action;
+
 @end
 
 NS_ASSUME_NONNULL_END
