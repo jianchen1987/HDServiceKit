@@ -147,13 +147,34 @@ wh_doc_end;
 // clang-format on
 - (void)scanQRCode:(NSDictionary *)paramDict callback:(NSString *)callBackKey {
     BOOL needResult = [[paramDict valueForKey:@"needResult"] boolValue];
-    NSArray *scanType = [paramDict objectForKey:@"scanType"];
+    NSArray<NSString *> *scanTypes = [paramDict objectForKey:@"scanType"];
 
-    HDWHLog(@"%zd ---  %@", needResult, scanType);
+    HDCodeScannerType scanType = HDCodeScannerTypeAll;
+    // 不传默认两种
+    if (!scanTypes && [scanTypes isKindOfClass:NSArray.class] && scanTypes.count < 2) {
+        if ([scanTypes containsObject:@"qrCode"]) {
+            scanType = HDCodeScannerTypeQRCode;
+        } else if ([scanTypes containsObject:@"barCode"]) {
+            scanType = HDCodeScannerTypeBarcode;
+        }
+    }
+
+    HDWHLog(@"%d ---  %@", needResult, scanTypes);
 
     dispatch_async(dispatch_get_main_queue(), ^{
         HDScanCodeViewController *scanCodeVC = [HDScanCodeViewController new];
+        scanCodeVC.scanType = scanType;
         [self.navigationController pushViewController:scanCodeVC animated:YES];
+
+        __weak __typeof(self) weakSelf = self;
+        scanCodeVC.resultBlock = ^(NSString *_Nullable scanString) {
+            __strong __typeof(weakSelf) strongSelf = weakSelf;
+            [strongSelf.webViewHost fireCallback:callBackKey actionName:@"scanQRCode" code:HDWHRespCodeSuccess type:HDWHCallbackTypeSuccess params:@{ @"resultStr": scanString }];
+        };
+        scanCodeVC.userCancelBlock = ^{
+            __strong __typeof(weakSelf) strongSelf = weakSelf;
+            [strongSelf.webViewHost fireCallback:callBackKey actionName:@"scanQRCode" code:HDWHRespCodeUserCancel type:HDWHCallbackTypeCancel params:nil];
+        };
     });
 }
 

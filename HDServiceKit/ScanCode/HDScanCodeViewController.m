@@ -6,14 +6,14 @@
 //
 
 #import "HDScanCodeViewController.h"
-#import "WSLScanView.h"
-#import "WSLNativeScanTool.h"
+#import "HDScanCodeView.h"
+#import "HDScanCodeManager.h"
 #import <HDUIKit/HDLog.h>
 #import "NSBundle+HDScanCode.h"
 
 @interface HDScanCodeViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
-@property (nonatomic, strong) WSLNativeScanTool *scanTool;
-@property (nonatomic, strong) WSLScanView *scanView;
+@property (nonatomic, strong) HDScanCodeManager *scanTool;
+@property (nonatomic, strong) HDScanCodeView *scanView;
 @end
 
 @implementation HDScanCodeViewController
@@ -21,24 +21,29 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    self.shouldExitAfterResultBlock = YES;
+    self.scanIntervalBetweenResult = 1;
+
     [self setup];
+}
+
+- (void)dealloc {
+    HDLog(@"HDScanCodeViewController - dealloc");
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [_scanView startScanAnimation];
-    [_scanTool sessionStartRunning];
-
-    self.hd_navBarAlpha = 0;
+    [self startSession];
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
 
-    [_scanView stopScanAnimation];
-    [_scanView finishedHandle];
-    [_scanView showFlashSwitch:NO];
-    [_scanTool sessionStopRunning];
+    [self stopSession];
+}
+
+- (HDViewControllerNavigationBarStyle)hd_preferredNavigationBarStyle {
+    return HDViewControllerNavigationBarStyleTransparent;
 }
 
 - (BOOL)hd_shouldHideNavigationBarBottomShadow {
@@ -47,7 +52,7 @@
 
 - (void)setup {
     UIButton *photoBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [photoBtn setTitle:@"相册" forState:UIControlStateNormal];
+    [photoBtn setImage:[UIImage imageNamed:@"photo_library" inBundle:[NSBundle hd_ScanCodeResources] compatibleWithTraitCollection:nil] forState:UIControlStateNormal];
     [photoBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [photoBtn addTarget:self action:@selector(photoButtonClickedHandler) forControlEvents:UIControlEventTouchUpInside];
     self.hd_navigationItem.title = @"扫一扫";
@@ -61,38 +66,44 @@
     __weak typeof(self) weakSelf = self;
 
     // 构建扫描样式视图
-    _scanView = [[WSLScanView alloc] initWithFrame:self.view.bounds];
-    const CGFloat scanAreaWidth2ScreenWidth = 0.7;
-    const CGFloat screenWidth = CGRectGetWidth(self.view.frame);
-    const CGFloat scanAreaWidth = scanAreaWidth2ScreenWidth * screenWidth;
-
-    _scanView.scanRetangleRect = CGRectMake((screenWidth - scanAreaWidth) * 0.5, (CGRectGetHeight(self.view.frame) - scanAreaWidth) * 0.5, scanAreaWidth, scanAreaWidth);
-    _scanView.colorAngle = [UIColor greenColor];
-    _scanView.photoframeAngleW = 20;
-    _scanView.photoframeAngleH = 20;
-    _scanView.photoframeLineW = 2;
+    _scanView = [[HDScanCodeView alloc] initWithFrame:self.view.bounds];
+    _scanView.colorAngle = [UIColor redColor];
+    _scanView.photoframeLineW = 3;
     _scanView.isNeedShowRetangle = YES;
     _scanView.colorRetangleLine = [UIColor whiteColor];
-    _scanView.notRecoginitonArea = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
+    _scanView.notRecoginitonAreaColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
     _scanView.animationImage = [UIImage imageNamed:@"scanLine" inBundle:[NSBundle hd_ScanCodeResources] compatibleWithTraitCollection:nil];
-    _scanView.myQRCodeBlock = ^{
+    _scanView.clickedMyQRCodeBlock = ^{
         HDLog(@"点击了我的二维码");
     };
-    _scanView.flashSwitchBlock = ^(BOOL open) {
+    _scanView.clickedFlashLightBlock = ^(BOOL open) {
         [weakSelf.scanTool openFlashSwitch:open];
     };
     [self.view addSubview:_scanView];
 
     // 初始化扫描工具
-    _scanTool = [[WSLNativeScanTool alloc] initWithPreview:preview andScanFrame:_scanView.scanRetangleRect];
-    _scanTool.scanFinishedBlock = ^(NSString *scanString) {
-        HDLog(@"扫描结果 %@", scanString);
-        [weakSelf.scanView handlingResultsOfScan];
+    _scanTool = [[HDScanCodeManager alloc] initWithPreview:preview andScanFrame:_scanView.scanRetangleRect];
+    _scanTool.scanType = self.scanType;
+    _scanTool.resultBlock = ^(NSString *scanString) {
+        HDLog(@"扫描结果：%@", scanString);
 
-        [weakSelf.scanTool sessionStopRunning];
-        [weakSelf.scanTool openFlashSwitch:NO];
+        // 防止连续扫描出结果
+        [weakSelf stopSession];
+
+        !weakSelf.resultBlock ?: weakSelf.resultBlock(scanString);
+        if (weakSelf.shouldExitAfterResultBlock) {
+            if (weakSelf.presentingViewController) {
+                [weakSelf dismissViewControllerAnimated:YES completion:nil];
+            } else {
+                [weakSelf.navigationController popViewControllerAnimated:YES];
+            }
+        } else {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(weakSelf.scanIntervalBetweenResult * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [weakSelf startSession];
+            });
+        }
     };
-    _scanTool.monitorLightBlock = ^(float brightness) {
+    _scanTool.ambientLightChangedBlock = ^(float brightness) {
         if (brightness < 0) {
             // 环境太暗，显示闪光灯开关按钮
             [weakSelf.scanView showFlashSwitch:YES];
@@ -108,6 +119,19 @@
     [_scanView startScanAnimation];
 }
 
+#pragma mark - private methods
+- (void)startSession {
+    [_scanView startScanAnimation];
+    [_scanTool sessionStartRunning];
+}
+
+- (void)stopSession {
+    [_scanView stopScanAnimation];
+    [_scanView finishedHandle];
+    [_scanView showFlashSwitch:NO];
+    [_scanTool sessionStopRunning];
+}
+
 #pragma mark - event response
 - (void)photoButtonClickedHandler {
     if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
@@ -120,6 +144,11 @@
     } else {
         NSLog(@"不支持访问相册");
     }
+}
+
+- (void)hd_backItemClick:(id)sender {
+    !self.userCancelBlock ?: self.userCancelBlock();
+    [super hd_backItemClick:sender];
 }
 
 #pragma mark UIImagePickerControllerDelegate

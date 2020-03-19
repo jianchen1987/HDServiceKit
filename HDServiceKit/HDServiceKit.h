@@ -12,7 +12,7 @@
 #import <UIKit/UIKit.h>
 
 /// 版本号
-static NSString *const HDServiceKit_VERSION = @"0.5.6";
+static NSString *const HDServiceKit_VERSION = @"0.6.0";
 
 #if __has_include("HDWHViewControllerPreRender.h")
 #import "HDWHViewControllerPreRender.h"
@@ -242,20 +242,24 @@ static NSString *const HDServiceKit_VERSION = @"0.5.6";
 #import "HDDeviceInfo.h"
 #endif
 
-#if __has_include("WSLNativeScanTool.h")
-#import "WSLNativeScanTool.h"
-#endif
-
 #if __has_include("HDScanCodeViewController.h")
 #import "HDScanCodeViewController.h"
+#endif
+
+#if __has_include("HDScanCodeView.h")
+#import "HDScanCodeView.h"
 #endif
 
 #if __has_include("NSBundle+HDScanCode.h")
 #import "NSBundle+HDScanCode.h"
 #endif
 
-#if __has_include("WSLScanView.h")
-#import "WSLScanView.h"
+#if __has_include("HDScanCodeDefines.h")
+#import "HDScanCodeDefines.h"
+#endif
+
+#if __has_include("HDScanCodeManager.h")
+#import "HDScanCodeManager.h"
 #endif
 
 #if __has_include("NSObjectSafe.h")

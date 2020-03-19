@@ -1,15 +1,14 @@
 //
-//  WSLNativeScanTool.m
-//  ScanQRcode
+//  HDScanCodeManager.m
+//  HDServiceKit
 //
-//  Created by 王双龙 on 2018/1/30.
-//  Copyright © 2018年 https://www.jianshu.com/u/e15d1f644bea All rights reserved.
+//  Created by VanJay on 2020/3/19.
 //
 
-#import "WSLNativeScanTool.h"
+#import "HDScanCodeManager.h"
 
-@interface WSLNativeScanTool () <AVCaptureMetadataOutputObjectsDelegate, AVCaptureVideoDataOutputSampleBufferDelegate>
-
+@interface HDScanCodeManager () <AVCaptureMetadataOutputObjectsDelegate, AVCaptureVideoDataOutputSampleBufferDelegate>
+/// 会话
 @property (nonatomic, strong) AVCaptureSession *session;
 
 /**
@@ -24,31 +23,27 @@
 
 @end
 
-@implementation WSLNativeScanTool
+@implementation HDScanCodeManager
 
 - (instancetype)initWithPreview:(UIView *)preview andScanFrame:(CGRect)scanFrame {
-
     if (self == [super init]) {
         self.preview = preview;
         self.scanFrame = scanFrame;
-        [self configuredScanTool];
+        [self configuredScanManager];
     }
     return self;
 }
 
-#pragma mark-- Help Methods
-
-//初始化采集配置信息
-- (void)configuredScanTool {
-
+#pragma mark - private methods
+// 初始化采集配置信息
+- (void)configuredScanManager {
     AVCaptureVideoPreviewLayer *layer = [AVCaptureVideoPreviewLayer layerWithSession:self.session];
     layer.videoGravity = AVLayerVideoGravityResizeAspectFill;
     layer.frame = self.preview.layer.bounds;
     [self.preview.layer insertSublayer:layer atIndex:0];
 }
 
-#pragma mark-- Event Handel
-
+#pragma mark - event response
 - (void)openFlashSwitch:(BOOL)open {
     if (self.flashOpen == open) {
         return;
@@ -57,7 +52,6 @@
     AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
 
     if ([device hasTorch] && [device hasFlash]) {
-
         [device lockForConfiguration:nil];
         if (self.flashOpen) {
             device.torchMode = AVCaptureTorchModeOn;
@@ -66,11 +60,11 @@
             device.torchMode = AVCaptureTorchModeOff;
             device.flashMode = AVCaptureFlashModeOff;
         }
-
         [device unlockForConfiguration];
     }
 }
 
+#pragma mark - public methods
 - (void)sessionStartRunning {
     [_session startRunning];
 }
@@ -87,32 +81,27 @@
     NSArray *features = [detector featuresInImage:[CIImage imageWithCGImage:imageCode.CGImage]];
     if (features.count >= 1) {
         CIQRCodeFeature *feature = [features firstObject];
-        if (self.scanFinishedBlock != nil) {
-            self.scanFinishedBlock(feature.messageString);
-        }
+        !self.resultBlock ?: self.resultBlock(feature.messageString);
     } else {
-        NSLog(@"无法识别图中二维码");
+        !self.resultBlock ?: self.resultBlock(nil);
     }
 }
 
-#pragma mark-- AVCaptureMetadataOutputObjectsDelegate
-//扫描完成后执行
+#pragma mark - AVCaptureMetadataOutputObjectsDelegate
+// 扫描完成后执行
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputMetadataObjects:(NSArray *)metadataObjects fromConnection:(AVCaptureConnection *)connection {
 
     if (metadataObjects.count > 0) {
         AVMetadataMachineReadableCodeObject *metadataObject = [metadataObjects firstObject];
         // 扫描完成后的字符
-        //        NSLog(@"扫描出 %@",metadataObject.stringValue);
-        if (self.scanFinishedBlock != nil) {
-            self.scanFinishedBlock(metadataObject.stringValue);
-        }
+        !self.resultBlock ?: self.resultBlock(metadataObject.stringValue);
     }
 }
 #pragma mark - AVCaptureVideoDataOutputSampleBufferDelegate的方法
-//扫描过程中执行，主要用来判断环境的黑暗程度
+// 扫描过程中执行，主要用来判断环境的黑暗程度
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection {
 
-    if (self.monitorLightBlock == nil) {
+    if (self.ambientLightChangedBlock == nil) {
         return;
     }
 
@@ -121,40 +110,26 @@
     CFRelease(metadataDict);
     NSDictionary *exifMetadata = [[metadata objectForKey:(NSString *)kCGImagePropertyExifDictionary] mutableCopy];
     float brightnessValue = [[exifMetadata objectForKey:(NSString *)kCGImagePropertyExifBrightnessValue] floatValue];
-
-    //    NSLog(@"环境光感 ： %f",brightnessValue);
-
-    // 根据brightnessValue的值来判断是否需要打开和关闭闪光灯
-    AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-    BOOL result = [device hasTorch];  // 判断设备是否有闪光灯
-    if ((brightnessValue < 0) && result) {
-        // 环境太暗，可以打开闪光灯了
-    } else if ((brightnessValue > 0) && result) {
-        // 环境亮度可以
-    }
-    if (self.monitorLightBlock != nil) {
-        self.monitorLightBlock(brightnessValue);
-    }
+    !self.ambientLightChangedBlock ?: self.ambientLightChangedBlock(brightnessValue);
 }
 
-#pragma mark - Getter
+#pragma mark - lazy load
 - (AVCaptureSession *)session {
-
-    if (_session == nil) {
-        //获取摄像设备
+    if (!_session) {
+        // 获取摄像设备
         AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-        //创建输入流
+        // 创建输入流
         AVCaptureDeviceInput *input = [AVCaptureDeviceInput deviceInputWithDevice:device error:nil];
         if (!input) {
             return nil;
         }
 
-        //创建二维码扫描输出流
+        // 创建二维码扫描输出流
         AVCaptureMetadataOutput *output = [[AVCaptureMetadataOutput alloc] init];
-        //设置代理 在主线程里刷新
+        // 设置代理 在主线程里刷新
         [output setMetadataObjectsDelegate:self queue:dispatch_get_main_queue()];
-        //设置采集扫描区域的比例 默认全屏是（0，0，1，1）
-        //rectOfInterest 填写的是一个比例，输出流视图preview.frame为 x , y, w, h, 要设置的矩形快的scanFrame 为 x1, y1, w1, h1. 那么rectOfInterest 应该设置为 CGRectMake(y1/y, x1/x, h1/h, w1/w)。
+        // 设置采集扫描区域的比例 默认全屏是（0，0，1，1）
+        // rectOfInterest 填写的是一个比例，输出流视图preview.frame为 x , y, w, h, 要设置的矩形快的scanFrame 为 x1, y1, w1, h1. 那么rectOfInterest 应该设置为 CGRectMake(y1/y, x1/x, h1/h, w1/w)。
         CGFloat x = CGRectGetMinX(self.scanFrame) / CGRectGetWidth(self.preview.frame);
         CGFloat y = CGRectGetMinY(self.scanFrame) / CGRectGetHeight(self.preview.frame);
         CGFloat width = CGRectGetWidth(self.scanFrame) / CGRectGetWidth(self.preview.frame);
@@ -166,23 +141,47 @@
         [lightOutput setSampleBufferDelegate:self queue:dispatch_get_main_queue()];
 
         _session = [[AVCaptureSession alloc] init];
-        //高质量采集率
+        // 高质量采集率
         [_session setSessionPreset:AVCaptureSessionPresetHigh];
         [_session addInput:input];
         [_session addOutput:output];
         [_session addOutput:lightOutput];
-        
-        //设置扫码支持的编码格式(这里设置条形码和二维码兼容)
-        output.metadataObjectTypes = @[AVMetadataObjectTypeQRCode,
-                                       AVMetadataObjectTypeEAN13Code,
-                                       AVMetadataObjectTypeEAN8Code,
-                                       AVMetadataObjectTypeCode128Code];
+
+        // 设置扫码支持的编码格式
+        switch (self.scanType) {
+            case HDCodeScannerTypeAll:
+                output.metadataObjectTypes = @[AVMetadataObjectTypeQRCode,
+                                               AVMetadataObjectTypeEAN13Code,
+                                               AVMetadataObjectTypeEAN8Code,
+                                               AVMetadataObjectTypeUPCECode,
+                                               AVMetadataObjectTypeCode39Code,
+                                               AVMetadataObjectTypeCode39Mod43Code,
+                                               AVMetadataObjectTypeCode93Code,
+                                               AVMetadataObjectTypeCode128Code,
+                                               AVMetadataObjectTypePDF417Code];
+                break;
+
+            case HDCodeScannerTypeQRCode:
+                output.metadataObjectTypes = @[AVMetadataObjectTypeQRCode];
+                break;
+
+            case HDCodeScannerTypeBarcode:
+                output.metadataObjectTypes = @[AVMetadataObjectTypeEAN13Code,
+                                               AVMetadataObjectTypeEAN8Code,
+                                               AVMetadataObjectTypeUPCECode,
+                                               AVMetadataObjectTypeCode39Code,
+                                               AVMetadataObjectTypeCode39Mod43Code,
+                                               AVMetadataObjectTypeCode93Code,
+                                               AVMetadataObjectTypeCode128Code,
+                                               AVMetadataObjectTypePDF417Code];
+                break;
+
+            default:
+                break;
+        }
     }
-    
     return _session;
 }
-
-
 @end
 
 

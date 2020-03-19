@@ -90,7 +90,6 @@
         vc = [[cls alloc] init];
     }
     vc.hd_navigationItem.title = item.desc;
-
     [self.navigationController pushViewController:vc animated:true];
     HDLog(@"打开：%@", item.destVcName);
 }
