@@ -6,10 +6,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "HDScanCodeDefines.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
-typedef void (^HDScanCodeClickedMyQRCodeBlock)(void);
 
 typedef void (^HDScanCodeClickedFlashLightBlock)(BOOL isOpen);
 

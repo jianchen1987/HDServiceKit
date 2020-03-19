@@ -14,10 +14,8 @@ typedef NS_ENUM(NSInteger, HDCodeScannerType) {
     HDCodeScannerTypeBarcode,
 };
 
-/**
- 扫描完成的回调
- @param scanString 扫描出的字符串
- */
 typedef void (^HDScanCodeResultBlock)(NSString *_Nullable scanString);
+
+typedef void (^HDScanCodeClickedMyQRCodeBlock)(void);
 
 #endif /* HDScanCodeDefines_h */

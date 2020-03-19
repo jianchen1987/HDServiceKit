@@ -74,7 +74,7 @@
     _scanView.notRecoginitonAreaColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
     _scanView.animationImage = [UIImage imageNamed:@"scanLine" inBundle:[NSBundle hd_ScanCodeResources] compatibleWithTraitCollection:nil];
     _scanView.clickedMyQRCodeBlock = ^{
-        HDLog(@"点击了我的二维码");
+        !weakSelf.clickedMyQRCodeBlock ?: weakSelf.clickedMyQRCodeBlock();
     };
     _scanView.clickedFlashLightBlock = ^(BOOL open) {
         [weakSelf.scanTool openFlashSwitch:open];
