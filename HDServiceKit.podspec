@@ -65,7 +65,7 @@ Pod::Spec.new do |s|
 
     ss.subspec 'Core' do |ss|
       ss.libraries = 'xml2', 'z'
-      ss.frameworks = 'SafariServices', 'WebKit', 'MobileCoreServices'
+      ss.frameworks = 'SafariServices', 'WebKit', 'MobileCoreServices', 'ContactsUI'
       ss.xcconfig = { "HEADER_SEARCH_PATHS" => ["$(SDKROOT)/usr/include/libxml2", "$(SDKROOT)/usr/include/libz"] }
       ss.source_files = 'HDServiceKit/HDWebViewHost/Core', 'HDServiceKit/HDWebViewHost/Core/**/*.{h,m}'
       ss.resource_bundles = {'HDWebViewHostCoreResources' => ['HDServiceKit/HDWebViewHost/Core/Resources/*.*']}
@@ -74,6 +74,7 @@ Pod::Spec.new do |s|
       ss.dependency 'HDUIKit/Components/HDTips'
       ss.dependency  'HDServiceKit/SystemCapability'
       ss.dependency  'HDServiceKit/HDDeviceInfo'
+      ss.dependency  'HDServiceKit/Location'
     end
 
     ss.subspec 'RemoteDebug' do |ss|
