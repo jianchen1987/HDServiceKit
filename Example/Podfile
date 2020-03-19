@@ -1,4 +1,4 @@
-source 'git@git.vipaylife.com:vipay/Chaos-specs.git'
+source 'ssh://git@code.kh-super.net:7999/mob/chaos-specs.git'
 source 'https://github.com/CocoaPods/Specs.git'
 
 # inhibit_all_warnings!

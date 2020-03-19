@@ -5,13 +5,13 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC
                        HDServiceKit 是一系列服务以及能力，用于快速在其他项目使用或者第三方接入
                        DESC
-  s.homepage         = "https://git.vipaylife.com/vipay/HDServiceKit"
+  s.homepage         = "https://code.kh-super.net/projects/MOB/repos/hdservicekit"
   s.license          = 'MIT'
   s.author           = {"VanJay" => "wangwanjie1993@gmail.com"}
-  s.source           = {:git => "git@git.vipaylife.com:vipay/HDServiceKit.git", :tag => s.version.to_s}
-  s.social_media_url = 'https://git.vipaylife.com/vipay/HDServiceKit'
+  s.source           = {:git => "ssh://git@code.kh-super.net:7999/mob/hdservicekit.git", :tag => s.version.to_s}
+  s.social_media_url = 'https://code.kh-super.net/projects/MOB/repos/hdservicekit'
   s.requires_arc     = true
-  s.documentation_url = 'https://git.vipaylife.com/vipay/HDServiceKit'
+  s.documentation_url = 'https://code.kh-super.net/projects/MOB/repos/hdservicekit'
   s.screenshot       = 'https://xxx.png'
 
   s.platform         = :ios, '9.0'
