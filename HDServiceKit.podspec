@@ -60,6 +60,12 @@ Pod::Spec.new do |s|
     ss.frameworks = 'CoreTelephony', 'AdSupport'
   end
 
+  s.subspec 'ScanCode' do |ss|
+    ss.source_files = 'HDServiceKit/ScanCode'
+    ss.dependency  'HDUIKit/MainFrame'
+    ss.resource_bundles = {'HDScanCodeResources' => ['HDServiceKit/ScanCode/Resources/*.*']}
+  end
+
   s.subspec 'HDWebViewHost' do |ss|
     ss.dependency 'HDServiceKit/FileOperation'
 
@@ -75,6 +81,7 @@ Pod::Spec.new do |s|
       ss.dependency  'HDServiceKit/SystemCapability'
       ss.dependency  'HDServiceKit/HDDeviceInfo'
       ss.dependency  'HDServiceKit/Location'
+      ss.dependency  'HDServiceKit/ScanCode'
     end
 
     ss.subspec 'RemoteDebug' do |ss|

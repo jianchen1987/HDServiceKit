@@ -242,6 +242,22 @@ static NSString *const HDServiceKit_VERSION = @"0.5.6";
 #import "HDDeviceInfo.h"
 #endif
 
+#if __has_include("WSLNativeScanTool.h")
+#import "WSLNativeScanTool.h"
+#endif
+
+#if __has_include("HDScanCodeViewController.h")
+#import "HDScanCodeViewController.h"
+#endif
+
+#if __has_include("NSBundle+HDScanCode.h")
+#import "NSBundle+HDScanCode.h"
+#endif
+
+#if __has_include("WSLScanView.h")
+#import "WSLScanView.h"
+#endif
+
 #if __has_include("NSObjectSafe.h")
 #import "NSObjectSafe.h"
 #endif

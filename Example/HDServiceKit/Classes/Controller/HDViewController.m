@@ -32,6 +32,7 @@
     [self.dataSource addObject:[ExampleItem itemWithDesc:@"线程安全键值存储方案（包括归档、内存、keychain、user defaults）" destVcName:@"HDKVDBViewController"]];
     [self.dataSource addObject:[ExampleItem itemWithDesc:@"定位服务" destVcName:@"HDLocationViewController"]];
     [self.dataSource addObject:[ExampleItem itemWithDesc:@"H5 容器" destVcName:@"HDH5ViewController"]];
+    [self.dataSource addObject:[ExampleItem itemWithDesc:@"扫一扫" destVcName:@"HDScanCodeViewController"]];
 }
 
 - (void)setupUI {

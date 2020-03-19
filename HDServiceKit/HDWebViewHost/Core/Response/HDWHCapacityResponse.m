@@ -9,6 +9,7 @@
 #import "HDWebViewHostViewController+Callback.h"
 #import <ContactsUI/ContactsUI.h>
 #import "HDLocationManager.h"
+#import "HDScanCodeViewController.h"
 
 @interface HDWHCapacityResponse () <CNContactPickerDelegate>
 @property (nonatomic, copy) void (^choosedContactHandler)(NSString *name, NSString *phoneNumber, HDWHRespCode code, HDWHCallbackType callbackType);
@@ -20,6 +21,7 @@
     return @{
         @"getContacts$": kHDWHResponseMethodOn,
         @"getLocation$": kHDWHResponseMethodOn,
+        @"scanQRCode_$": kHDWHResponseMethodOn,
     };
 }
 
@@ -133,6 +135,26 @@ wh_doc_end;
             };
         }
     }
+}
+
+// clang-format off
+wh_doc_begin(scanQRCode_$, "扫一扫")
+wh_doc_code(window.webViewHost.invoke("scanQRCode", {"needResult": 1, "scanType": ["qrCode","barCode"]}, function(params) {
+    alert("scanQRCode:" + JSON.stringify(params));
+}))
+wh_doc_code_expect("打开扫一扫界面")
+wh_doc_end;
+// clang-format on
+- (void)scanQRCode:(NSDictionary *)paramDict callback:(NSString *)callBackKey {
+    BOOL needResult = [[paramDict valueForKey:@"needResult"] boolValue];
+    NSArray *scanType = [paramDict objectForKey:@"scanType"];
+
+    HDWHLog(@"%zd ---  %@", needResult, scanType);
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        HDScanCodeViewController *scanCodeVC = [HDScanCodeViewController new];
+        [self.navigationController pushViewController:scanCodeVC animated:YES];
+    });
 }
 
 #pragma mark - private methods
