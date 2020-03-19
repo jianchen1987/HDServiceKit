@@ -44,6 +44,7 @@
             @"HDWHHudActionResponse",
             @"HDWHWebViewConfigResponse",
             @"HDWHSystemCapabilityResponse",
+            @"HDWHCapacityResponse",
 #ifdef HDWH_DEBUG
             @"HDWHDebugResponse",
 #endif

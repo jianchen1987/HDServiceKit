@@ -38,18 +38,22 @@
 }
 
 - (void)executeJavaScriptString:(NSString *)javaScriptString {
-    [self.webView evaluateJavaScript:javaScriptString completionHandler:nil];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.webView evaluateJavaScript:javaScriptString completionHandler:nil];
+    });
 }
 
 - (void)evalExpression:(NSString *)jsCode completion:(void (^)(id result, NSString *err))completion {
-    [self.webView evaluateJavaScript:[NSString stringWithFormat:@"window.wh_eval(%@)", jsCode]
-                   completionHandler:^(NSDictionary *data, NSError *_Nullable error) {
-                       if (completion) {
-                           completion([data objectForKey:@"result"], [data objectForKey:@"err"]);
-                       } else {
-                           HDWHLog(@"evalExpression result = %@", data);
-                       }
-                   }];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.webView evaluateJavaScript:[NSString stringWithFormat:@"window.wh_eval(%@)", jsCode]
+                       completionHandler:^(NSDictionary *data, NSError *_Nullable error) {
+                           if (completion) {
+                               completion([data objectForKey:@"result"], [data objectForKey:@"err"]);
+                           } else {
+                               HDWHLog(@"evalExpression result = %@", data);
+                           }
+                       }];
+    });
 }
 
 #pragma mark - public
