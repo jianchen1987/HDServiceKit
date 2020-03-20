@@ -7,7 +7,6 @@
 //
 
 #import "HDLocationManager.h"
-#import <HDUIKit/HDLog.h>
 
 NSString *const kNotificationNameLocationPermissionChanged = @"kNotificationNameLocationPermissionChanged";
 NSString *const kNotificationNameLocationChanged = @"kNotificationNameLocationChanged";
@@ -75,7 +74,7 @@ NSString *const kLocationPermissionChangedUserInfoKey = @"kLocationPermissionCha
 
 #pragma mark - CLLocationManagerDelegate
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
-    HDLog(@"HDLocationManager - 位置请求权限变更");
+    NSLog(@"HDLocationManager - 位置请求权限变更");
 
     if ([HDLocationUtils getCLAuthorizationStatus] == HDCLAuthorizationStatusAuthed) {
         [self.locationManager startUpdatingLocation];
@@ -88,7 +87,7 @@ NSString *const kLocationPermissionChangedUserInfoKey = @"kLocationPermissionCha
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations {
-    HDLog(@"HDLocationManager - 位置变化");
+    NSLog(@"HDLocationManager - 位置变化");
 
     if (!self.isCurrentCoordinate2DValid) {
         self.coordinate2D = locations.lastObject.coordinate;
@@ -107,7 +106,7 @@ NSString *const kLocationPermissionChangedUserInfoKey = @"kLocationPermissionCha
             CLLocationDistance distance = [HDLocationUtils distanceFromLocation:l1 toLocation:l2];
 
             if (distance > 50) {
-                HDLog(@"距离变化超过 %f 米，发出通知", distance);
+                NSLog(@"距离变化超过 %f 米，发出通知", distance);
                 self.coordinate2D = locations.lastObject.coordinate;
 
                 // 发送通知
