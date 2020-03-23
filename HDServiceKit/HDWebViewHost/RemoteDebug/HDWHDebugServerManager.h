@@ -6,10 +6,11 @@
 //  Copyright © 2019 chaos network technology. All rights reserved.
 //
 
+#import "HDWHDebugViewController.h"
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
-@interface HDWHDebugServerManager : NSObject
+@interface HDWHDebugServerManager : NSObject <HDWHDebugViewDelegate>
 
 + (instancetype)sharedInstance;
 
