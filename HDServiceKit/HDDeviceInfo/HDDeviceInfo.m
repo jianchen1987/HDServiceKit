@@ -6,26 +6,26 @@
 //
 
 #import "HDDeviceInfo.h"
-#import <UICKeyChainStore/UICKeyChainStore.h>
 #import "HDReachability.h"
-#import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
+#import <CoreTelephony/CTTelephonyNetworkInfo.h>
+#import <UICKeyChainStore/UICKeyChainStore.h>
 
-#include <sys/types.h>
-#include <sys/sysctl.h>
-#include <sys/utsname.h>
 #import <arpa/inet.h>
+#include <sys/sysctl.h>
+#include <sys/types.h>
+#include <sys/utsname.h>
 
 #import <ifaddrs.h>
-#import <sys/sockio.h>
 #import <sys/ioctl.h>
+#import <sys/sockio.h>
 
 #import <AdSupport/AdSupport.h>
 
 #import "sys/utsname.h"
-#include <sys/socket.h>
 #include <net/if.h>
 #include <net/if_dl.h>
+#include <sys/socket.h>
 #include <sys/types.h>
 
 #define IOS_CELLULAR @"pdp_ip0"

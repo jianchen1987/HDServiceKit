@@ -5,8 +5,8 @@
 //  Created by VanJay on 2020/3/19.
 //
 
-#import <HDUIKit/HDCommonViewController.h>
 #import "HDScanCodeDefines.h"
+#import <HDUIKit/HDCommonViewController.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) HDScanCodeClickedMyQRCodeBlock clickedMyQRCodeBlock;
 
 /// 用户点击了返回即取消的回调
-@property(nonatomic, copy) void (^userCancelBlock)(void);
+@property (nonatomic, copy) void (^userCancelBlock)(void);
 @end
 
 NS_ASSUME_NONNULL_END

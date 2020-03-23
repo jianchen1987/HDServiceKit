@@ -8,8 +8,8 @@
 @import UIKit;
 @import AVFoundation;
 
-#import <Foundation/Foundation.h>
 #import "HDScanCodeDefines.h"
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

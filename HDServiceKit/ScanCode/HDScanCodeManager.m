@@ -183,5 +183,3 @@
     return _session;
 }
 @end
-
-

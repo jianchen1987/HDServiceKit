@@ -31,7 +31,7 @@
 }
 
 #pragma mark - public
-- (BOOL)callNative:(NSString *)action  {
+- (BOOL)callNative:(NSString *)action {
     return [self callNative:action parameter:nil];
 }
 

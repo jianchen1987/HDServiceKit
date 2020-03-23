@@ -6,8 +6,8 @@
 //
 
 #import "HDWHSystemCapabilityResponse.h"
-#import "HDSystemCapabilityUtil.h"
 #import "HDDeviceInfo.h"
+#import "HDSystemCapabilityUtil.h"
 #import "HDWebViewHostViewController+Callback.h"
 
 @implementation HDWHSystemCapabilityResponse
@@ -119,7 +119,7 @@ wh_doc_end;
         }
         failHandler:^(NSString *_Nonnull errMsg) {
             __strong __typeof(weakSelf) strongSelf = weakSelf;
-            [strongSelf.webViewHost fireCallback:callBackKey actionName:@"jumpToMapWithAddress" code:HDWHRespCodeCommonFailed type:HDWHCallbackTypeFail params:@{ @"reason": errMsg }];
+            [strongSelf.webViewHost fireCallback:callBackKey actionName:@"jumpToMapWithAddress" code:HDWHRespCodeCommonFailed type:HDWHCallbackTypeFail params:@{@"reason": errMsg}];
         }];
 }
 
@@ -169,8 +169,8 @@ wh_doc_code(window.webViewHost.invoke("getUserDevice", {}, function(params) {
 wh_doc_code_expect("获取到设备信息")
 wh_doc_end;
 // clang-format on
-- (void)getUserDeviceWithCallback:(NSString *)callBackKey   {
-    
+- (void)getUserDeviceWithCallback:(NSString *)callBackKey {
+
     NSMutableDictionary *params = [NSMutableDictionary dictionaryWithCapacity:6];
     params[@"deviceld"] = [HDDeviceInfo getUniqueId];
     params[@"lang"] = [HDDeviceInfo getDeviceLanguage];
@@ -178,7 +178,7 @@ wh_doc_end;
     params[@"deviceModel"] = [HDDeviceInfo modelName];
     params[@"version"] = [HDDeviceInfo appVersion];
     params[@"networkType"] = [HDDeviceInfo getNetworkType];
-    
+
     [self.webViewHost fireCallback:callBackKey actionName:@"getUserDevice" code:HDWHRespCodeSuccess type:HDWHCallbackTypeSuccess params:params];
 }
 

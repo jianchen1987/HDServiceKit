@@ -316,13 +316,12 @@
         _flashBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
         [_flashBtn setImage:[UIImage imageNamed:@"scanFlashlight" inBundle:[NSBundle hd_ScanCodeResources] compatibleWithTraitCollection:nil] forState:UIControlStateNormal];
         [_flashBtn addTarget:self action:@selector(flashBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
-        _flashBtn.center = CGPointMake(self.frame.size.width/2.0, self.scanRetangleRect.origin.y + self.scanRetangleRect.size.height - 40);
+        _flashBtn.center = CGPointMake(self.frame.size.width / 2.0, self.scanRetangleRect.origin.y + self.scanRetangleRect.size.height - 40);
     }
     return _flashBtn;
 }
 
-
-- (void)dealloc{
+- (void)dealloc {
     [self stopScanAnimation];
     [self finishedHandle];
     [[NSNotificationCenter defaultCenter] removeObserver:self];

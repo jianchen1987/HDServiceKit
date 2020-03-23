@@ -6,10 +6,10 @@
 //
 
 #import "HDWHCapacityResponse.h"
-#import "HDWebViewHostViewController+Callback.h"
-#import <ContactsUI/ContactsUI.h>
 #import "HDLocationManager.h"
 #import "HDScanCodeViewController.h"
+#import "HDWebViewHostViewController+Callback.h"
+#import <ContactsUI/ContactsUI.h>
 
 @interface HDWHCapacityResponse () <CNContactPickerDelegate>
 @property (nonatomic, copy) void (^choosedContactHandler)(NSString *name, NSString *phoneNumber, HDWHRespCode code, HDWHCallbackType callbackType);
@@ -72,7 +72,7 @@ wh_doc_end;
         [store requestAccessForEntityType:CNEntityTypeContacts
                         completionHandler:^(BOOL granted, NSError *_Nullable error) {
                             if (error) {
-                                [self.webViewHost fireCallback:callBackKey actionName:@"getContacts" code:HDWHRespCodeUserRejected type:HDWHCallbackTypeFail params:@{ @"reason": @"用户拒绝授权" }];
+                                [self.webViewHost fireCallback:callBackKey actionName:@"getContacts" code:HDWHRespCodeUserRejected type:HDWHCallbackTypeFail params:@{@"reason": @"用户拒绝授权"}];
                             } else {
                                 continueChooseContact();
                             }
@@ -81,7 +81,7 @@ wh_doc_end;
         // 有通讯录权限
         continueChooseContact();
     } else {
-        [self.webViewHost fireCallback:callBackKey actionName:@"getContacts" code:HDWHRespCodeUserRejected type:HDWHCallbackTypeFail params:@{ @"reason": @"用户已拒绝授权" }];
+        [self.webViewHost fireCallback:callBackKey actionName:@"getContacts" code:HDWHRespCodeUserRejected type:HDWHCallbackTypeFail params:@{@"reason": @"用户已拒绝授权"}];
     }
 }
 
@@ -97,7 +97,6 @@ wh_doc_end;
 
     __weak __typeof(self) weakSelf = self;
     void (^continueGotLocationHandler)(double, double, HDWHRespCode, HDWHCallbackType) = ^void(double latitude, double longitude, HDWHRespCode code, HDWHCallbackType callbackType) {
-
         __strong __typeof(weakSelf) strongSelf = weakSelf;
         NSMutableDictionary *params = [NSMutableDictionary dictionaryWithCapacity:2];
         if (code != HDWHRespCodeSuccess) {
@@ -122,7 +121,7 @@ wh_doc_end;
         };
     } else if (status == HDCLAuthorizationStatusNotAuthed) {
         // 回传失败
-        [self.webViewHost fireCallback:callBackKey actionName:@"getLocation" code:HDWHRespCodeUserRejected type:HDWHCallbackTypeFail params:@{ @"reason": @"用户拒绝授权" }];
+        [self.webViewHost fireCallback:callBackKey actionName:@"getLocation" code:HDWHRespCodeUserRejected type:HDWHCallbackTypeFail params:@{@"reason": @"用户拒绝授权"}];
     } else {
         // 同意过了
         if (HDLocationManager.shared.isCurrentCoordinate2DValid) {
@@ -169,7 +168,7 @@ wh_doc_end;
         __weak __typeof(self) weakSelf = self;
         scanCodeVC.resultBlock = ^(NSString *_Nullable scanString) {
             __strong __typeof(weakSelf) strongSelf = weakSelf;
-            [strongSelf.webViewHost fireCallback:callBackKey actionName:@"scanQRCode" code:HDWHRespCodeSuccess type:HDWHCallbackTypeSuccess params:@{ @"resultStr": scanString }];
+            [strongSelf.webViewHost fireCallback:callBackKey actionName:@"scanQRCode" code:HDWHRespCodeSuccess type:HDWHCallbackTypeSuccess params:@{@"resultStr": scanString}];
         };
         scanCodeVC.userCancelBlock = ^{
             __strong __typeof(weakSelf) strongSelf = weakSelf;

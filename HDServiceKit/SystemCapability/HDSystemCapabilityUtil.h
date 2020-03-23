@@ -40,8 +40,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param appID 应用id
 + (void)gotoAppStoreScoreWithAppID:(NSString *)appID;
 
-
-
 /// 商店中打开应用页面
 /// @param appID 应用ID
 + (void)gotoAppStoreForAppID:(NSString *)appID;

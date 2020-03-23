@@ -5,8 +5,8 @@
 //  Created by VanJay on 2020/3/19.
 //
 
-#import <UIKit/UIKit.h>
 #import "HDScanCodeDefines.h"
+#import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -73,7 +73,6 @@ typedef void (^HDScanCodeClickedFlashLightBlock)(BOOL isOpen);
  完成扫描结果处理
  */
 - (void)finishedHandle;
-
 
 /**
  是否显示闪光灯开关

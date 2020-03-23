@@ -34,10 +34,10 @@ static NSString *kLastWeinreScript = nil;
 + (BOOL)isDebugAction:(NSString *)action {
     NSArray *allKeys = [self supportActionList].allKeys;
     __block BOOL exist = false;
-    [allKeys enumerateObjectsUsingBlock:^(NSString *  _Nonnull key, NSUInteger idx, BOOL * _Nonnull stop) {
+    [allKeys enumerateObjectsUsingBlock:^(NSString *_Nonnull key, NSUInteger idx, BOOL *_Nonnull stop) {
         key = [key stringByReplacingOccurrencesOfString:@"_" withString:@""];
         key = [key stringByReplacingOccurrencesOfString:@"$" withString:@""];
-        
+
         if ([key isEqualToString:action]) {
             exist = true;
             *stop = true;
@@ -127,7 +127,7 @@ static NSString *kLastWeinreScript = nil;
             } else {
                 err = [NSString stringWithFormat:@"The method (%@) doesn't exsit!", signature];
             }
-            [self fire:funcName param:@{ @"error": err }];
+            [self fire:funcName param:@{@"error": err}];
         }
     } else if ([@"testcase" isEqualToString:action]) {
         // 检查是否有文件生成，如果没有则遍历
@@ -162,11 +162,12 @@ static NSString *kLastWeinreScript = nil;
             WKHTTPCookieStore *_Nonnull cookieStorage = [WKWebsiteDataStore defaultDataStore].httpCookieStore;
             [cookieStorage getAllCookies:^(NSArray<NSHTTPCookie *> *_Nonnull cookies) {
                 [cookies enumerateObjectsUsingBlock:^(NSHTTPCookie *_Nonnull cookie, NSUInteger idx, BOOL *_Nonnull stop) {
-                    [cookieStorage deleteCookie:cookie completionHandler:^{
-                        HDWHLog(@"Cookie %@ for %@ deleted successfully", cookie.name, cookie.domain);
-                    }];
+                    [cookieStorage deleteCookie:cookie
+                              completionHandler:^{
+                                  HDWHLog(@"Cookie %@ for %@ deleted successfully", cookie.name, cookie.domain);
+                              }];
                 }];
-                [self.webViewHost fire:@"clearCookieDone" param:@{ @"count": @(cookies.count) }];
+                [self.webViewHost fire:@"clearCookieDone" param:@{@"count": @(cookies.count)}];
             }];
         } else {
             WKWebsiteDataStore *dateStore = [WKWebsiteDataStore defaultDataStore];
@@ -179,7 +180,7 @@ static NSString *kLastWeinreScript = nil;
                                                                                 HDWHLog(@"Cookie for %@ deleted successfully", record.displayName);
                                                                             }];
                                  }
-                                 [self.webViewHost fire:@"clearCookieDone" param:@{ @"count": @(records.count) }];
+                                 [self.webViewHost fire:@"clearCookieDone" param:@{@"count": @(records.count)}];
                              }];
         }
     } else if ([@"console.log" isEqualToString:action]) {
@@ -203,7 +204,7 @@ static NSString *kLastWeinreScript = nil;
 
     [HDWebViewHostViewController prepareJavaScript:[NSURL URLWithString:kLastWeinreScript] when:WKUserScriptInjectionTimeAtDocumentEnd key:@"weinre.js"];
 
-    [self.webViewHost fire:@"weinre.enable" param:@{ @"jsURL": kLastWeinreScript }];
+    [self.webViewHost fire:@"weinre.enable" param:@{@"jsURL": kLastWeinreScript}];
 }
 
 - (void)disableWeinreSupport {
@@ -321,5 +322,5 @@ static NSString *kLastWeinreScript = nil;
         return YES;
     }
     return NO;
-    }
-    @end
+}
+@end

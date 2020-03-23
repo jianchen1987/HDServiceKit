@@ -72,7 +72,7 @@ wh_doc_end;
 
 - (void)ready:(NSDictionary *)paramDict callback:(NSString *)callbackKey {
     // 进行相应的判断
-    
+
     // 触发回调
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self.webViewHost fireCallback:callbackKey actionName:@"ready" code:HDWHRespCodeSuccess type:HDWHCallbackTypeSuccess params:nil];
@@ -81,7 +81,7 @@ wh_doc_end;
 
 - (void)config:(NSDictionary *)paramDict callback:(NSString *)callbackKey {
     // 进行相应的判断
-    
+
     // 触发回调
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self.webViewHost fireCallback:callbackKey actionName:@"config" code:HDWHRespCodeSuccess type:HDWHCallbackTypeSuccess params:nil];
@@ -99,27 +99,27 @@ wh_doc_end;
 // clang-format on
 - (void)checkJsApi:(NSDictionary *)paramDict callback:(NSString *)callbackKey {
     NSArray<NSString *> *list = [paramDict objectForKey:@"jsApiList"];
-    
+
     NSDictionary *supportMethodListAndAppInfo = [self.webViewHost supportMethodListAndAppInfo];
     NSDictionary *supportMethodList = [supportMethodListAndAppInfo objectForKey:kHDWHSupportMethodListKey];
-    
+
     NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:list.count];
-    
+
     NSMutableArray<NSString *> *supportMethodNameList = supportMethodList.allKeys.mutableCopy;
-    [supportMethodNameList enumerateObjectsUsingBlock:^(NSString *  _Nonnull key, NSUInteger idx, BOOL * _Nonnull stop) {
+    [supportMethodNameList enumerateObjectsUsingBlock:^(NSString *_Nonnull key, NSUInteger idx, BOOL *_Nonnull stop) {
         key = [key stringByReplacingOccurrencesOfString:@"_" withString:@""];
         key = [key stringByReplacingOccurrencesOfString:@"$" withString:@""];
         supportMethodNameList[idx] = key;
     }];
-    
-    [list enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+
+    [list enumerateObjectsUsingBlock:^(NSString *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
         if ([supportMethodNameList containsObject:obj]) {
             result[obj] = @(true);
         } else {
             result[obj] = @(false);
         }
     }];
-    
+
     [self.webViewHost fireCallback:callbackKey actionName:@"checkJsApi" code:HDWHRespCodeSuccess type:HDWHCallbackTypeSuccess params:result];
 }
 @end

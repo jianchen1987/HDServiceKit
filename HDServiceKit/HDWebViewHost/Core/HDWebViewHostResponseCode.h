@@ -15,7 +15,7 @@ typedef NS_ENUM(NSInteger, HDWHRespCode) {
     HDWHRespCodeCommonFailed = -1,  ///< 通用失败
     HDWHRespCodeIllegalArg = -2,    ///< 参数不合法
     HDWHRespCodeUserCancel = -3,    ///< 用户取消操作
-    HDWHRespCodeUserRejected = -4,    ///< 用户拒绝授权
+    HDWHRespCodeUserRejected = -4,  ///< 用户拒绝授权
 };
 
 #endif /* HDWebViewHostResponseCode_h */

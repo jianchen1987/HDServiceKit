@@ -11,13 +11,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface HDDeviceInfo : NSObject
 
-
 /** 获取唯一标识 */
 + (nonnull NSString *)getUniqueId;
 
 /** idfa 广告标识 */
 + (nonnull NSString *)idfaString;
-
 
 /** idfv */
 + (nonnull NSString *)idfvString;

@@ -12,7 +12,6 @@ Pod::Spec.new do |s|
   s.social_media_url = 'https://code.kh-super.net/projects/MOB/repos/hdservicekit'
   s.requires_arc     = true
   s.documentation_url = 'https://code.kh-super.net/projects/MOB/repos/hdservicekit'
-  s.screenshot       = 'https://xxx.png'
 
   s.platform         = :ios, '9.0'
   s.frameworks       = 'Foundation', 'UIKit'

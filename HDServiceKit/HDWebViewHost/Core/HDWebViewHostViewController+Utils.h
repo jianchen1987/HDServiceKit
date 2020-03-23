@@ -11,9 +11,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// 支持的方法列表 key
-UIKIT_EXTERN NSString *const  kHDWHSupportMethodListKey;
+UIKIT_EXTERN NSString *const kHDWHSupportMethodListKey;
 /// app 信息 key
-UIKIT_EXTERN NSString *const  kHDWHAppInfoKey;
+UIKIT_EXTERN NSString *const kHDWHAppInfoKey;
 
 @interface HDWebViewHostViewController (Utils)
 

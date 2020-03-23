@@ -11,8 +11,8 @@
 #import "HDWebViewHostViewController+Dispatch.h"
 #import "HDWebViewHostViewController+Utils.h"
 
-NSString *const  kHDWHSupportMethodListKey = @"supportMethodList";
-NSString *const  kHDWHAppInfoKey = @"appInfo";
+NSString *const kHDWHSupportMethodListKey = @"supportMethodList";
+NSString *const kHDWHAppInfoKey = @"appInfo";
 
 @implementation HDWebViewHostViewController (Utils)
 

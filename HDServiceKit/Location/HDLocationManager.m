@@ -24,7 +24,7 @@ NSString *const kLocationPermissionChangedUserInfoKey = @"kLocationPermissionCha
     static HDLocationManager *instance = nil;
     dispatch_once(&onceToken, ^{
         instance = [[super allocWithZone:NULL] init];
-        
+
         [instance invalidateCoordinate2D];
     });
     return instance;
