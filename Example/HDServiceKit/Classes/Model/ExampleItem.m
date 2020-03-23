@@ -9,10 +9,17 @@
 #import "ExampleItem.h"
 
 @implementation ExampleItem
-+ (instancetype)itemWithDesc:(NSString *)desc destVcName:(NSString *)destVcName {
++ (instancetype)itemWithDesc:(NSString *)desc mediatorAction:(NSString *)mediatorAction {
     ExampleItem *item = [[self alloc] init];
     item.desc = desc;
-    item.destVcName = destVcName;
+    item.mediatorAction = mediatorAction;
+    return item;
+}
+
++ (instancetype)itemWithDesc:(NSString *)desc routeURL:(NSString *)routeURL {
+    ExampleItem *item = [[self alloc] init];
+    item.desc = desc;
+    item.routeURL = routeURL;
     return item;
 }
 @end

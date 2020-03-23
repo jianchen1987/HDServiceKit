@@ -9,6 +9,7 @@ platform :ios, '9.0'
 target 'HDServiceKit_Example' do
 
   pod 'HDServiceKit', :path => '../'
+  pod 'HDKitCore/HDMediator'
 
   target 'HDServiceKit_Tests' do
     inherit! :search_paths

@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "HDServiceKit"
-  s.version          = "0.6.2"
+  s.version          = "0.7.0"
   s.summary          = "混沌 iOS 服务"
   s.description      = <<-DESC
                        HDServiceKit 是一系列服务以及能力，用于快速在其他项目使用或者第三方接入
@@ -28,7 +28,7 @@ Pod::Spec.new do |s|
   s.subspec 'AntiCrash' do |ss|
     ss.requires_arc = ['HDServiceKit/AntiCrash/NSObjectSafe.h']
     ss.source_files = 'HDServiceKit/AntiCrash'
-    ss.dependency 'HDUIKit/MethodSwizzle'
+    ss.dependency 'HDKitCore/MethodSwizzle'
   end
 
   s.subspec 'Location' do |ss|
@@ -72,7 +72,7 @@ Pod::Spec.new do |s|
       ss.libraries = 'xml2', 'z'
       ss.frameworks = 'SafariServices', 'WebKit', 'MobileCoreServices', 'ContactsUI'
       ss.xcconfig = { "HEADER_SEARCH_PATHS" => ["$(SDKROOT)/usr/include/libxml2", "$(SDKROOT)/usr/include/libz"] }
-      ss.source_files = 'HDServiceKit/HDWebViewHost/Core', 'HDServiceKit/HDWebViewHost/Core/**/*.{h,m}'
+      ss.source_files = 'HDServiceKit/HDWebViewHost/Core', 'HDServiceKit/HDWebViewHost/Core/*/*.{h,m}'
       ss.resource_bundles = {'HDWebViewHostCoreResources' => ['HDServiceKit/HDWebViewHost/Core/Resources/*.*']}
       ss.dependency  'HDUIKit/MainFrame'
       ss.dependency  'HDServiceKit/HDReachability'

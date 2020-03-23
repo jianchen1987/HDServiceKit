@@ -7,7 +7,7 @@
 //
 
 #import "NSObjectSafe.h"
-#import <HDUIKit/NSObject+HD_Swizzle.h>
+#import <HDKitCore/NSObject+HD_Swizzle.h>
 #import <objc/message.h>
 #import <objc/runtime.h>
 

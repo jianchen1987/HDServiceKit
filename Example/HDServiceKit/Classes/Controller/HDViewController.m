@@ -8,8 +8,8 @@
 
 #import "HDViewController.h"
 #import "ExampleItem.h"
-#import <HDUIKit/HDUIKit.h>
-#import <objc/runtime.h>
+#import "HDMediator+BussinessDemoType.h"
+#import <HDKitCore/HDKitCore.h>
 
 @interface HDViewController () <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, strong) NSMutableArray<ExampleItem *> *dataSource;  ///< 数据源
@@ -22,17 +22,23 @@
 
     HDLog(@"HDServiceKit 版本：%@", HDServiceKit_VERSION);
 
+    //    HDMediator.sharedInstance.noActionHandler = ^(NSString *_Nonnull target, NSString *_Nonnull action, NSDictionary *_Nonnull params) {
+    //        HDLog(@"事件无法响应 %@ - %@ -%@", target, action, params);
+    //    };
+
     [self initDataSource];
     [self setupUI];
 }
 
 - (void)initDataSource {
-    [self.dataSource addObject:[ExampleItem itemWithDesc:@"Crash 保护" destVcName:@"HDCrashProtectViewController"]];
-    [self.dataSource addObject:[ExampleItem itemWithDesc:@"文件操作" destVcName:@"HDFileOperViewController"]];
-    [self.dataSource addObject:[ExampleItem itemWithDesc:@"线程安全键值存储方案（包括归档、内存、keychain、user defaults）" destVcName:@"HDKVDBViewController"]];
-    [self.dataSource addObject:[ExampleItem itemWithDesc:@"定位服务" destVcName:@"HDLocationViewController"]];
-    [self.dataSource addObject:[ExampleItem itemWithDesc:@"H5 容器" destVcName:@"HDH5ViewController"]];
-    [self.dataSource addObject:[ExampleItem itemWithDesc:@"扫一扫" destVcName:@"HDScanCodeViewController"]];
+    [self.dataSource addObject:[ExampleItem itemWithDesc:@"Crash 保护" mediatorAction:@"crashProtectViewController"]];
+    [self.dataSource addObject:[ExampleItem itemWithDesc:@"文件操作" mediatorAction:@"fileOperViewController"]];
+    [self.dataSource addObject:[ExampleItem itemWithDesc:@"线程安全键值存储方案（包括归档、内存、keychain、user defaults）" mediatorAction:@"kvDBViewController"]];
+    [self.dataSource addObject:[ExampleItem itemWithDesc:@"定位服务" routeURL:@"chaos://DemoTarget/locationViewController?address=广州&source=superapp"]];
+    [self.dataSource addObject:[ExampleItem itemWithDesc:@"H5 容器" mediatorAction:@"h5ViewController"]];
+    [self.dataSource addObject:[ExampleItem itemWithDesc:@"扫一扫" routeURL:@"chaos://DemoTarget/scanCodeViewController"]];
+    [self.dataSource addObject:[ExampleItem itemWithDesc:@"执行加法计算" routeURL:nil]];
+    [self.dataSource addObject:[ExampleItem itemWithDesc:@"打开网页" routeURL:@"https://www.baidu.com"]];
 }
 
 - (void)setupUI {
@@ -77,21 +83,42 @@
     ExampleItem *item = self.dataSource[indexPath.row];
 
     UIViewController *vc;
-    const char *className = [item.destVcName cStringUsingEncoding:NSASCIIStringEncoding];
-    Class cls = objc_getClass(className);
-    if (!cls) {
-        // 创建一个类
-        Class superClass = [HDBaseViewController class];
-        cls = objc_allocateClassPair(superClass, className, 0);
-        // 注册你创建的这个类
-        objc_registerClassPair(cls);
-        vc = [[cls alloc] init];
+    if (item.mediatorAction) {
+        NSString *mediatorAction = item.mediatorAction;
+        SEL sel = NSSelectorFromString(mediatorAction);
+        if ([HDMediator.sharedInstance respondsToSelector:sel]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+            vc = [HDMediator.sharedInstance performSelector:sel];
+            HDLog(@"打开：%@", item.mediatorAction);
+#pragma clang diagnostic pop
+        } else {
+            [HDMediator.sharedInstance showUnsupprtedEntryTipWithActionName:item.mediatorAction];
+        }
+    } else if (item.routeURL) {
+        if (true || [HDMediator.sharedInstance canPerformActionWithURL:item.routeURL]) {
+            vc = [HDMediator.sharedInstance performActionWithURL:item.routeURL params:@{@"source": @"home"}];
+            HDLog(@"打开：%@", item.routeURL);
+        } else {
+            [HDMediator.sharedInstance showUnsupprtedEntryTipWithRouteURL:item.routeURL];
+        }
     } else {
-        vc = [[cls alloc] init];
+
+        typedef void (^ResultBlock)(NSUInteger);
+        ResultBlock callback = ^(NSUInteger value) {
+            HDLog(@"回调触发，和：%zd", value);
+        };
+
+        [HDMediator.sharedInstance performTarget:@"DemoTarget"
+                                          action:@"plus"
+                                          params:@{@"value1": @(10),
+                                                   @"value2": @(11),
+                                                   @"callback": callback}];
     }
-    vc.hd_navigationItem.title = item.desc;
-    [self.navigationController pushViewController:vc animated:true];
-    HDLog(@"打开：%@", item.destVcName);
+    if (vc && [vc isKindOfClass:UIViewController.class]) {
+        vc.hd_navigationItem.title = item.desc;
+        [self.navigationController pushViewController:vc animated:true];
+    }
 }
 
 #pragma mark - lazy load

@@ -21,6 +21,10 @@
 		6003F5BC195388D20070C39A /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* Tests.m */; };
 		71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */; };
 		7E9B124B206E35723EB3BA44 /* Pods_HDServiceKit_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20BD82A8F3CFCDAE0E80D2B8 /* Pods_HDServiceKit_Tests.framework */; };
+		95555C582426812500AD3EB3 /* Target_DemoTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = 95555C572426812500AD3EB3 /* Target_DemoTarget.m */; };
+		95555C5E2426835500AD3EB3 /* HDMediator+BussinessDemoType.m in Sources */ = {isa = PBXBuildFile; fileRef = 95555C5D2426835500AD3EB3 /* HDMediator+BussinessDemoType.m */; };
+		95555C6124275EAF00AD3EB3 /* Target_NoTargetAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 95555C6024275EAF00AD3EB3 /* Target_NoTargetAction.m */; };
+		95555C64242763FA00AD3EB3 /* Target_HTTP.m in Sources */ = {isa = PBXBuildFile; fileRef = 95555C63242763FA00AD3EB3 /* Target_HTTP.m */; };
 		956762ED2417850C00374171 /* HDCallBackExample.m in Sources */ = {isa = PBXBuildFile; fileRef = 956762EC2417850C00374171 /* HDCallBackExample.m */; };
 		95676309241881BD00374171 /* HDBaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 956762FE241881BD00374171 /* HDBaseViewController.m */; };
 		9567630B241881BD00374171 /* HDViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 95676304241881BD00374171 /* HDViewController.m */; };
@@ -67,6 +71,14 @@
 		6AF699D8D32D641968DBB0B4 /* Pods-HDServiceKit_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HDServiceKit_Tests.debug.xcconfig"; path = "Target Support Files/Pods-HDServiceKit_Tests/Pods-HDServiceKit_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		71719F9E1E33DC2100824A3D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8C8A0C567C061D2929A977B0 /* Pods-HDServiceKit_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HDServiceKit_Example.debug.xcconfig"; path = "Target Support Files/Pods-HDServiceKit_Example/Pods-HDServiceKit_Example.debug.xcconfig"; sourceTree = "<group>"; };
+		95555C562426812500AD3EB3 /* Target_DemoTarget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Target_DemoTarget.h; sourceTree = "<group>"; };
+		95555C572426812500AD3EB3 /* Target_DemoTarget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Target_DemoTarget.m; sourceTree = "<group>"; };
+		95555C5C2426835500AD3EB3 /* HDMediator+BussinessDemoType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HDMediator+BussinessDemoType.h"; sourceTree = "<group>"; };
+		95555C5D2426835500AD3EB3 /* HDMediator+BussinessDemoType.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "HDMediator+BussinessDemoType.m"; sourceTree = "<group>"; };
+		95555C5F24275EAF00AD3EB3 /* Target_NoTargetAction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Target_NoTargetAction.h; sourceTree = "<group>"; };
+		95555C6024275EAF00AD3EB3 /* Target_NoTargetAction.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Target_NoTargetAction.m; sourceTree = "<group>"; };
+		95555C62242763FA00AD3EB3 /* Target_HTTP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Target_HTTP.h; sourceTree = "<group>"; };
+		95555C63242763FA00AD3EB3 /* Target_HTTP.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Target_HTTP.m; sourceTree = "<group>"; };
 		956762EB2417850C00374171 /* HDCallBackExample.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HDCallBackExample.h; sourceTree = "<group>"; };
 		956762EC2417850C00374171 /* HDCallBackExample.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HDCallBackExample.m; sourceTree = "<group>"; };
 		956762FE241881BD00374171 /* HDBaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HDBaseViewController.m; sourceTree = "<group>"; };
@@ -232,6 +244,14 @@
 				956762FD241881BD00374171 /* Demo */,
 				95676303241881BD00374171 /* HDViewController.h */,
 				95676304241881BD00374171 /* HDViewController.m */,
+				95555C5C2426835500AD3EB3 /* HDMediator+BussinessDemoType.h */,
+				95555C5D2426835500AD3EB3 /* HDMediator+BussinessDemoType.m */,
+				95555C562426812500AD3EB3 /* Target_DemoTarget.h */,
+				95555C572426812500AD3EB3 /* Target_DemoTarget.m */,
+				95555C5F24275EAF00AD3EB3 /* Target_NoTargetAction.h */,
+				95555C6024275EAF00AD3EB3 /* Target_NoTargetAction.m */,
+				95555C62242763FA00AD3EB3 /* Target_HTTP.h */,
+				95555C63242763FA00AD3EB3 /* Target_HTTP.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -413,6 +433,7 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-HDServiceKit_Example/Pods-HDServiceKit_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/GCDWebServer/GCDWebServer.framework",
+				"${BUILT_PRODUCTS_DIR}/HDKitCore/HDKitCore.framework",
 				"${BUILT_PRODUCTS_DIR}/HDServiceKit/HDServiceKit.framework",
 				"${BUILT_PRODUCTS_DIR}/HDUIKit/HDUIKit.framework",
 				"${BUILT_PRODUCTS_DIR}/UICKeyChainStore/UICKeyChainStore.framework",
@@ -421,6 +442,7 @@
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GCDWebServer.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HDKitCore.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HDServiceKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HDUIKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UICKeyChainStore.framework",
@@ -480,13 +502,17 @@
 			files = (
 				956763142418873F00374171 /* H5DescTableViewCell.m in Sources */,
 				6003F59E195388D20070C39A /* HDAppDelegate.m in Sources */,
+				95555C6124275EAF00AD3EB3 /* Target_NoTargetAction.m in Sources */,
 				9567630C241881BD00374171 /* ExampleItem.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				95676309241881BD00374171 /* HDBaseViewController.m in Sources */,
+				95555C64242763FA00AD3EB3 /* Target_HTTP.m in Sources */,
+				95555C582426812500AD3EB3 /* Target_DemoTarget.m in Sources */,
 				9567630B241881BD00374171 /* HDViewController.m in Sources */,
 				956763172418874700374171 /* LoadJDWebViewViewController.m in Sources */,
 				956762ED2417850C00374171 /* HDCallBackExample.m in Sources */,
 				956763102418827100374171 /* HDH5ViewController.m in Sources */,
+				95555C5E2426835500AD3EB3 /* HDMediator+BussinessDemoType.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -6,10 +6,10 @@
 //
 
 #import "HDScanCodeViewController.h"
-#import "HDScanCodeView.h"
 #import "HDScanCodeManager.h"
-#import <HDUIKit/HDLog.h>
+#import "HDScanCodeView.h"
 #import "NSBundle+HDScanCode.h"
+#import <HDKitCore/HDLog.h>
 
 @interface HDScanCodeViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 @property (nonatomic, strong) HDScanCodeManager *scanTool;
