@@ -6,7 +6,9 @@
 //  Copyright © 2020 wangwanjie. All rights reserved.
 //
 
+#import <HDKitCore/HDKitCore.h>
 #import <HDServiceKit/HDServiceKit.h>
+#import <HDUIKit/HDCommonViewController+NAT.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

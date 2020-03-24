@@ -8,6 +8,8 @@
 
 #import "Target_DemoTarget.h"
 #import "HDH5ViewController.h"
+#import "HDNetworkViewController.h"
+#import "HDRSACipherViewController.h"
 #import "HDScanCodeViewController.h"
 #import <objc/runtime.h>
 
@@ -22,6 +24,16 @@
     return vc;
 }
 
+- (UIViewController *)_Action(rsaCipherViewController):(NSDictionary *)params {
+    HDRSACipherViewController *vc = [HDRSACipherViewController new];
+    return vc;
+}
+
+- (UIViewController *)_Action(networkViewController):(NSDictionary *)params {
+    HDNetworkViewController *vc = [HDNetworkViewController new];
+    return vc;
+}
+
 - (NSUInteger)_Action(plus):(NSDictionary *)params {
     NSUInteger value1 = [[params valueForKey:@"value1"] integerValue];
     NSUInteger value2 = [[params valueForKey:@"value2"] integerValue];
@@ -33,7 +45,7 @@
     return value1 + value2;
 }
 
-- (UIViewController *)_Action(notF2ound):(NSDictionary *)params {
+- (UIViewController *)_Action(notFound):(NSDictionary *)params {
     Class cls = NSClassFromString(@"HDNotFoundViewController");
     if (!cls) {
         // 创建一个类

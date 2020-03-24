@@ -34,6 +34,17 @@
 		956763172418874700374171 /* LoadJDWebViewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 956763152418874700374171 /* LoadJDWebViewViewController.m */; };
 		95676321241887FA00374171 /* localFileSendXHR.html in Resources */ = {isa = PBXBuildFile; fileRef = 9567631B241887FA00374171 /* localFileSendXHR.html */; };
 		956763272418880E00374171 /* LocalDir in Resources */ = {isa = PBXBuildFile; fileRef = 956763262418880E00374171 /* LocalDir */; };
+		959AB07E2428C3C400883616 /* rsa_1024_private_key.p12 in Resources */ = {isa = PBXBuildFile; fileRef = 959AB0782428C3C400883616 /* rsa_1024_private_key.p12 */; };
+		959AB07F2428C3C400883616 /* rsa_2048_private_key_pkcs8.pem in Resources */ = {isa = PBXBuildFile; fileRef = 959AB0792428C3C400883616 /* rsa_2048_private_key_pkcs8.pem */; };
+		959AB0802428C3C400883616 /* rsa_1024_public_key.der in Resources */ = {isa = PBXBuildFile; fileRef = 959AB07A2428C3C400883616 /* rsa_1024_public_key.der */; };
+		959AB0812428C3C400883616 /* rsa_1024_public_key.pem in Resources */ = {isa = PBXBuildFile; fileRef = 959AB07B2428C3C400883616 /* rsa_1024_public_key.pem */; };
+		959AB0822428C3C400883616 /* rsa_1024_private_key_pkcs8.pem in Resources */ = {isa = PBXBuildFile; fileRef = 959AB07C2428C3C400883616 /* rsa_1024_private_key_pkcs8.pem */; };
+		959AB0832428C3C400883616 /* rsa_2048_public_key.pem in Resources */ = {isa = PBXBuildFile; fileRef = 959AB07D2428C3C400883616 /* rsa_2048_public_key.pem */; };
+		959AB08624291FDA00883616 /* HDRSACipherViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 959AB08524291FDA00883616 /* HDRSACipherViewController.m */; };
+		959AB08A2429E20500883616 /* HDNetworkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 959AB0892429E20500883616 /* HDNetworkViewController.m */; };
+		959AB08D2429E28400883616 /* SANetworkRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 959AB08C2429E28400883616 /* SANetworkRequest.m */; };
+		959AB0922429E61E00883616 /* HDNetworkResponse+SuperApp.m in Sources */ = {isa = PBXBuildFile; fileRef = 959AB0912429E61E00883616 /* HDNetworkResponse+SuperApp.m */; };
+		959AB0952429F74000883616 /* HDRspModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 959AB0942429F74000883616 /* HDRspModel.m */; };
 		F10A14B383EBDDDE371FB108 /* Pods_HDServiceKit_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8BF9A6FFAAB58CBA3D4B355 /* Pods_HDServiceKit_Example.framework */; };
 /* End PBXBuildFile section */
 
@@ -95,6 +106,22 @@
 		956763162418874700374171 /* LoadJDWebViewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadJDWebViewViewController.h; sourceTree = "<group>"; };
 		9567631B241887FA00374171 /* localFileSendXHR.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = localFileSendXHR.html; sourceTree = "<group>"; };
 		956763262418880E00374171 /* LocalDir */ = {isa = PBXFileReference; lastKnownFileType = folder; path = LocalDir; sourceTree = "<group>"; };
+		959AB0782428C3C400883616 /* rsa_1024_private_key.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; path = rsa_1024_private_key.p12; sourceTree = "<group>"; };
+		959AB0792428C3C400883616 /* rsa_2048_private_key_pkcs8.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rsa_2048_private_key_pkcs8.pem; sourceTree = "<group>"; };
+		959AB07A2428C3C400883616 /* rsa_1024_public_key.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = rsa_1024_public_key.der; sourceTree = "<group>"; };
+		959AB07B2428C3C400883616 /* rsa_1024_public_key.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rsa_1024_public_key.pem; sourceTree = "<group>"; };
+		959AB07C2428C3C400883616 /* rsa_1024_private_key_pkcs8.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rsa_1024_private_key_pkcs8.pem; sourceTree = "<group>"; };
+		959AB07D2428C3C400883616 /* rsa_2048_public_key.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rsa_2048_public_key.pem; sourceTree = "<group>"; };
+		959AB08424291FDA00883616 /* HDRSACipherViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HDRSACipherViewController.h; sourceTree = "<group>"; };
+		959AB08524291FDA00883616 /* HDRSACipherViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HDRSACipherViewController.m; sourceTree = "<group>"; };
+		959AB0882429E20500883616 /* HDNetworkViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HDNetworkViewController.h; sourceTree = "<group>"; };
+		959AB0892429E20500883616 /* HDNetworkViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HDNetworkViewController.m; sourceTree = "<group>"; };
+		959AB08B2429E28400883616 /* SANetworkRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SANetworkRequest.h; sourceTree = "<group>"; };
+		959AB08C2429E28400883616 /* SANetworkRequest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SANetworkRequest.m; sourceTree = "<group>"; };
+		959AB0902429E61E00883616 /* HDNetworkResponse+SuperApp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HDNetworkResponse+SuperApp.h"; sourceTree = "<group>"; };
+		959AB0912429E61E00883616 /* HDNetworkResponse+SuperApp.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "HDNetworkResponse+SuperApp.m"; sourceTree = "<group>"; };
+		959AB0932429F74000883616 /* HDRspModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HDRspModel.h; sourceTree = "<group>"; };
+		959AB0942429F74000883616 /* HDRspModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HDRspModel.m; sourceTree = "<group>"; };
 		959AEAEA2413F99100D3E3AE /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
 		A8DE880A4F8F41BE837802F6 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		CAD66B6F8B2A50BCA944DB23 /* Pods-HDServiceKit_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HDServiceKit_Example.release.xcconfig"; path = "Target Support Files/Pods-HDServiceKit_Example/Pods-HDServiceKit_Example.release.xcconfig"; sourceTree = "<group>"; };
@@ -259,11 +286,15 @@
 		956762FD241881BD00374171 /* Demo */ = {
 			isa = PBXGroup;
 			children = (
+				959AB0872429E19000883616 /* Network */,
+				959AB0772428C3C400883616 /* PemFiles */,
 				9567630D2418825900374171 /* H5 */,
 				956762FE241881BD00374171 /* HDBaseViewController.m */,
 				95676302241881BD00374171 /* HDBaseViewController.h */,
 				956762EB2417850C00374171 /* HDCallBackExample.h */,
 				956762EC2417850C00374171 /* HDCallBackExample.m */,
+				959AB08424291FDA00883616 /* HDRSACipherViewController.h */,
+				959AB08524291FDA00883616 /* HDRSACipherViewController.m */,
 			);
 			path = Demo;
 			sourceTree = "<group>";
@@ -297,6 +328,34 @@
 				9567630F2418827100374171 /* HDH5ViewController.m */,
 			);
 			path = H5;
+			sourceTree = "<group>";
+		};
+		959AB0772428C3C400883616 /* PemFiles */ = {
+			isa = PBXGroup;
+			children = (
+				959AB0782428C3C400883616 /* rsa_1024_private_key.p12 */,
+				959AB0792428C3C400883616 /* rsa_2048_private_key_pkcs8.pem */,
+				959AB07A2428C3C400883616 /* rsa_1024_public_key.der */,
+				959AB07B2428C3C400883616 /* rsa_1024_public_key.pem */,
+				959AB07C2428C3C400883616 /* rsa_1024_private_key_pkcs8.pem */,
+				959AB07D2428C3C400883616 /* rsa_2048_public_key.pem */,
+			);
+			path = PemFiles;
+			sourceTree = "<group>";
+		};
+		959AB0872429E19000883616 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				959AB0882429E20500883616 /* HDNetworkViewController.h */,
+				959AB0892429E20500883616 /* HDNetworkViewController.m */,
+				959AB08B2429E28400883616 /* SANetworkRequest.h */,
+				959AB08C2429E28400883616 /* SANetworkRequest.m */,
+				959AB0902429E61E00883616 /* HDNetworkResponse+SuperApp.h */,
+				959AB0912429E61E00883616 /* HDNetworkResponse+SuperApp.m */,
+				959AB0932429F74000883616 /* HDRspModel.h */,
+				959AB0942429F74000883616 /* HDRspModel.m */,
+			);
+			path = Network;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -384,11 +443,17 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				959AB07F2428C3C400883616 /* rsa_2048_private_key_pkcs8.pem in Resources */,
+				959AB0812428C3C400883616 /* rsa_1024_public_key.pem in Resources */,
 				71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */,
+				959AB0802428C3C400883616 /* rsa_1024_public_key.der in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
+				959AB07E2428C3C400883616 /* rsa_1024_private_key.p12 in Resources */,
 				95676321241887FA00374171 /* localFileSendXHR.html in Resources */,
+				959AB0822428C3C400883616 /* rsa_1024_private_key_pkcs8.pem in Resources */,
 				956763272418880E00374171 /* LocalDir in Resources */,
+				959AB0832428C3C400883616 /* rsa_2048_public_key.pem in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -432,20 +497,24 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-HDServiceKit_Example/Pods-HDServiceKit_Example-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework",
 				"${BUILT_PRODUCTS_DIR}/GCDWebServer/GCDWebServer.framework",
 				"${BUILT_PRODUCTS_DIR}/HDKitCore/HDKitCore.framework",
 				"${BUILT_PRODUCTS_DIR}/HDServiceKit/HDServiceKit.framework",
 				"${BUILT_PRODUCTS_DIR}/HDUIKit/HDUIKit.framework",
 				"${BUILT_PRODUCTS_DIR}/UICKeyChainStore/UICKeyChainStore.framework",
+				"${BUILT_PRODUCTS_DIR}/YYCache/YYCache.framework",
 				"${BUILT_PRODUCTS_DIR}/YYModel/YYModel.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AFNetworking.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GCDWebServer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HDKitCore.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HDServiceKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HDUIKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UICKeyChainStore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YYCache.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YYModel.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -504,12 +573,17 @@
 				6003F59E195388D20070C39A /* HDAppDelegate.m in Sources */,
 				95555C6124275EAF00AD3EB3 /* Target_NoTargetAction.m in Sources */,
 				9567630C241881BD00374171 /* ExampleItem.m in Sources */,
+				959AB08D2429E28400883616 /* SANetworkRequest.m in Sources */,
+				959AB0922429E61E00883616 /* HDNetworkResponse+SuperApp.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				95676309241881BD00374171 /* HDBaseViewController.m in Sources */,
 				95555C64242763FA00AD3EB3 /* Target_HTTP.m in Sources */,
 				95555C582426812500AD3EB3 /* Target_DemoTarget.m in Sources */,
 				9567630B241881BD00374171 /* HDViewController.m in Sources */,
 				956763172418874700374171 /* LoadJDWebViewViewController.m in Sources */,
+				959AB08624291FDA00883616 /* HDRSACipherViewController.m in Sources */,
+				959AB0952429F74000883616 /* HDRspModel.m in Sources */,
+				959AB08A2429E20500883616 /* HDNetworkViewController.m in Sources */,
 				956762ED2417850C00374171 /* HDCallBackExample.m in Sources */,
 				956763102418827100374171 /* HDH5ViewController.m in Sources */,
 				95555C5E2426835500AD3EB3 /* HDMediator+BussinessDemoType.m in Sources */,

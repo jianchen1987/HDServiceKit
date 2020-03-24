@@ -22,10 +22,6 @@
 
     HDLog(@"HDServiceKit 版本：%@", HDServiceKit_VERSION);
 
-    //    HDMediator.sharedInstance.noActionHandler = ^(NSString *_Nonnull target, NSString *_Nonnull action, NSDictionary *_Nonnull params) {
-    //        HDLog(@"事件无法响应 %@ - %@ -%@", target, action, params);
-    //    };
-
     [self initDataSource];
     [self setupUI];
 }
@@ -39,6 +35,8 @@
     [self.dataSource addObject:[ExampleItem itemWithDesc:@"扫一扫" routeURL:@"chaos://DemoTarget/scanCodeViewController"]];
     [self.dataSource addObject:[ExampleItem itemWithDesc:@"执行加法计算" routeURL:nil]];
     [self.dataSource addObject:[ExampleItem itemWithDesc:@"打开网页" routeURL:@"https://www.baidu.com"]];
+    [self.dataSource addObject:[ExampleItem itemWithDesc:@"RSA加解密" routeURL:@"chaos://DemoTarget/rsaCipherViewController"]];
+    [self.dataSource addObject:[ExampleItem itemWithDesc:@"网络请求" routeURL:@"chaos://DemoTarget/networkViewController"]];
 }
 
 - (void)setupUI {
@@ -96,14 +94,13 @@
             [HDMediator.sharedInstance showUnsupprtedEntryTipWithActionName:item.mediatorAction];
         }
     } else if (item.routeURL) {
-        if (true || [HDMediator.sharedInstance canPerformActionWithURL:item.routeURL]) {
+        if ([HDMediator.sharedInstance canPerformActionWithURL:item.routeURL]) {
             vc = [HDMediator.sharedInstance performActionWithURL:item.routeURL params:@{@"source": @"home"}];
             HDLog(@"打开：%@", item.routeURL);
         } else {
             [HDMediator.sharedInstance showUnsupprtedEntryTipWithRouteURL:item.routeURL];
         }
     } else {
-
         typedef void (^ResultBlock)(NSUInteger);
         ResultBlock callback = ^(NSUInteger value) {
             HDLog(@"回调触发，和：%zd", value);

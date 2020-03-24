@@ -12,7 +12,7 @@
 #import <UIKit/UIKit.h>
 
 /// 版本号
-static NSString *const HDServiceKit_VERSION = @"0.7.1";
+static NSString *const HDServiceKit_VERSION = @"0.8.0";
 
 #if __has_include("HDWHViewControllerPreRender.h")
 #import "HDWHViewControllerPreRender.h"
@@ -182,6 +182,14 @@ static NSString *const HDServiceKit_VERSION = @"0.7.1";
 #import "HDWHDebugViewController.h"
 #endif
 
+#if __has_include("HDImageCompressTool.h")
+#import "HDImageCompressTool.h"
+#endif
+
+#if __has_include("RSACipher.h")
+#import "RSACipher.h"
+#endif
+
 #if __has_include("HDPodAsset.h")
 #import "HDPodAsset.h"
 #endif
@@ -232,6 +240,38 @@ static NSString *const HDServiceKit_VERSION = @"0.7.1";
 
 #if __has_include("NSString+HDCache.h")
 #import "NSString+HDCache.h"
+#endif
+
+#if __has_include("HDNetworkRequest.h")
+#import "HDNetworkRequest.h"
+#endif
+
+#if __has_include("HDNetwork.h")
+#import "HDNetwork.h"
+#endif
+
+#if __has_include("HDNetworkDefine.h")
+#import "HDNetworkDefine.h"
+#endif
+
+#if __has_include("HDNetworkResponse.h")
+#import "HDNetworkResponse.h"
+#endif
+
+#if __has_include("HDNetworkCache.h")
+#import "HDNetworkCache.h"
+#endif
+
+#if __has_include("HDNetworkCache+Internal.h")
+#import "HDNetworkCache+Internal.h"
+#endif
+
+#if __has_include("HDNetworkRequest+Internal.h")
+#import "HDNetworkRequest+Internal.h"
+#endif
+
+#if __has_include("HDNetworkManager.h")
+#import "HDNetworkManager.h"
 #endif
 
 #if __has_include("HDReachability.h")
