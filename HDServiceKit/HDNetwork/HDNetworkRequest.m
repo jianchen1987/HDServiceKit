@@ -41,6 +41,7 @@
         self.releaseStrategy = HDNetworkReleaseStrategyHoldRequest;
         self.repeatStrategy = HDNetworkRepeatStrategyAllAllowed;
         self.taskIDRecord = [NSMutableSet set];
+        self.requestTimeoutInterval = 30;
     }
     return self;
 }
@@ -250,11 +251,14 @@
         }
 
         if (fromCache) {
-            if ([self.delegate respondsToSelector:@selector(request:cacheWithResponse:)]) {
-                [self.delegate request:self cacheWithResponse:response];
-            }
-            if (self.cacheBlock) {
-                self.cacheBlock(response);
+            BOOL shouldReadCache = !self.cacheHandler.shouldReadCacheBlock || self.cacheHandler.shouldReadCacheBlock(response);
+            if (shouldReadCache) {
+                if ([self.delegate respondsToSelector:@selector(request:cacheWithResponse:)]) {
+                    [self.delegate request:self cacheWithResponse:response];
+                }
+                if (self.cacheBlock) {
+                    self.cacheBlock(response);
+                }
             }
         } else {
             if ([self.delegate respondsToSelector:@selector(request:successWithResponse:)]) {
@@ -266,7 +270,7 @@
             [self clearRequestBlocks];
 
             // 在网络响应数据被业务处理完成后进行缓存，可避免将异常数据写入缓存（比如数据导致 Crash 的情况）
-            BOOL shouldCache = !self.cacheHandler.shouldCacheBlock || self.cacheHandler.shouldCacheBlock(response);
+            BOOL shouldCache = !self.cacheHandler.shouldWriteCacheBlock || self.cacheHandler.shouldWriteCacheBlock(response);
             BOOL isSendFile = self.requestConstructingBody || self.downloadPath.length > 0;
             if (!isSendFile && shouldCache) {
                 [self.cacheHandler setObject:response.responseObject forKey:cacheKey];
@@ -367,5 +371,4 @@
     }
     return _cacheHandler;
 }
-
 @end

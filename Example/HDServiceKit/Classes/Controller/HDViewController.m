@@ -36,7 +36,8 @@
     [self.dataSource addObject:[ExampleItem itemWithDesc:@"执行加法计算" routeURL:nil]];
     [self.dataSource addObject:[ExampleItem itemWithDesc:@"打开网页" routeURL:@"https://www.baidu.com"]];
     [self.dataSource addObject:[ExampleItem itemWithDesc:@"RSA加解密" routeURL:@"chaos://DemoTarget/rsaCipherViewController"]];
-    [self.dataSource addObject:[ExampleItem itemWithDesc:@"网络请求" routeURL:@"chaos://DemoTarget/networkViewController"]];
+    [self.dataSource addObject:[ExampleItem itemWithDesc:@"使用 SANetworkRequest，使用 md5 或者 RSA加密逻辑" routeURL:@"chaos://DemoTarget/sa_networkViewController"]];
+    [self.dataSource addObject:[ExampleItem itemWithDesc:@"使用CMNetworkRequest，重定向了成功、失败逻辑，返回数据中根据实际业务需求插入额外数据，业务请求返回码不是 00000 统一触发失败回调，而不再是默认的网络错误只走失败回调，还扩充了错误类型" routeURL:@"chaos://DemoTarget/cm_networkViewController"]];
 }
 
 - (void)setupUI {

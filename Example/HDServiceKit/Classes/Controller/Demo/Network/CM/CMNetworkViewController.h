@@ -1,5 +1,5 @@
 //
-//  HDNetworkViewController.h
+//  CMNetworkViewController.h
 //  HDServiceKit_Example
 //
 //  Created by VanJay on 2020/3/24.
@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface HDNetworkViewController : HDBaseViewController
+@interface CMNetworkViewController : HDBaseViewController
 
 @end
 

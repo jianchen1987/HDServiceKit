@@ -10,6 +10,7 @@ target 'HDServiceKit_Example' do
 
   pod 'HDServiceKit', :path => '../'
   pod 'HDKitCore/HDMediator'
+  pod 'HDKitCore/UnicodeLog'
   pod 'HDUIKit/MainFrame'
 
   target 'HDServiceKit_Tests' do

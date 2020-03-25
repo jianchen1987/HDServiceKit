@@ -12,7 +12,7 @@
 #import <UIKit/UIKit.h>
 
 /// 版本号
-static NSString *const HDServiceKit_VERSION = @"0.8.0";
+static NSString *const HDServiceKit_VERSION = @"0.9.0";
 
 #if __has_include("HDWHViewControllerPreRender.h")
 #import "HDWHViewControllerPreRender.h"
@@ -304,6 +304,14 @@ static NSString *const HDServiceKit_VERSION = @"0.8.0";
 
 #if __has_include("NSObjectSafe.h")
 #import "NSObjectSafe.h"
+#endif
+
+#if __has_include("SANetwork.h")
+#import "SANetwork.h"
+#endif
+
+#if __has_include("SANetworkRequest.h")
+#import "SANetworkRequest.h"
 #endif
 
 #endif /* HDServiceKit_h */

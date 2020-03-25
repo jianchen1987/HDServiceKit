@@ -1,17 +1,16 @@
 //
-//  SANetworkRequest.h
+//  SANetworkViewController.h
 //  HDServiceKit_Example
 //
 //  Created by VanJay on 2020/3/24.
 //  Copyright © 2020 wangwanjie. All rights reserved.
 //
 
-#import "HDRspModel.h"
-#import <HDServiceKit/HDNetwork.h>
+#import "HDBaseViewController.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SANetworkRequest : HDNetworkRequest
+@interface SANetworkViewController : HDBaseViewController
 
 @end
 

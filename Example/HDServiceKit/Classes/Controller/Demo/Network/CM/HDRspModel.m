@@ -8,6 +8,8 @@
 
 #import "HDRspModel.h"
 
+SAResponseType const SAResponseTypeSuccess = @"00000";
+
 @implementation HDRspModel
 + (instancetype)modelWithDict:(NSDictionary *)dict {
     HDRspModel *model = [HDRspModel new];

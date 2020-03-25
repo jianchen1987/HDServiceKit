@@ -7,10 +7,11 @@
 //
 
 #import "Target_DemoTarget.h"
+#import "CMNetworkViewController.h"
 #import "HDH5ViewController.h"
-#import "HDNetworkViewController.h"
 #import "HDRSACipherViewController.h"
 #import "HDScanCodeViewController.h"
+#import "SANetworkViewController.h"
 #import <objc/runtime.h>
 
 @implementation _Target (DemoTarget)
@@ -29,8 +30,13 @@
     return vc;
 }
 
-- (UIViewController *)_Action(networkViewController):(NSDictionary *)params {
-    HDNetworkViewController *vc = [HDNetworkViewController new];
+- (UIViewController *)_Action(sa_networkViewController):(NSDictionary *)params {
+    SANetworkViewController *vc = [SANetworkViewController new];
+    return vc;
+}
+
+- (UIViewController *)_Action(cm_networkViewController):(NSDictionary *)params {
+    CMNetworkViewController *vc = [CMNetworkViewController new];
     return vc;
 }
 

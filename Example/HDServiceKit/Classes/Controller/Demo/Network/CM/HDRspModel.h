@@ -7,12 +7,17 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <YYModel/YYModel.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NSString *SAResponseType NS_STRING_ENUM;
+/// 成功
+FOUNDATION_EXPORT SAResponseType const SAResponseTypeSuccess;
+
 @interface HDRspModel : NSObject
 /// 码
-@property (nonatomic, copy, nullable) NSString *code;
+@property (nonatomic, copy, nullable) SAResponseType code;
 /// 信息
 @property (nonatomic, copy, nullable) NSString *msg;
 /// 版本

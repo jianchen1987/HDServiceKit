@@ -33,8 +33,11 @@ NS_ASSUME_NONNULL_BEGIN
 /** 缓存 key 额外的部分，默认是 app 版本号 */
 @property (nonatomic, copy) NSString *extraCacheKey;
 
-/** 根据请求成功数据判断是否需要缓存 (保证仅在数据有效时返回 YES) */
-@property (nonatomic, copy, nullable) BOOL (^shouldCacheBlock)(HDNetworkResponse *response);
+/** 根据请求成功数据判断是否需要写缓存 (保证仅在数据有效时返回 YES) */
+@property (nonatomic, copy, nullable) BOOL (^shouldWriteCacheBlock)(HDNetworkResponse *response);
+
+/** 根据读取到的缓存数据判断是否使用缓存 (保证仅在数据有效时返回 YES) */
+@property (nonatomic, copy, nullable) BOOL (^shouldReadCacheBlock)(HDNetworkResponse *response);
 
 /** 根据默认的缓存 key 自定义缓存 key */
 @property (nonatomic, copy, nullable) NSString * (^customCacheKeyBlock)(NSString *defaultCacheKey);

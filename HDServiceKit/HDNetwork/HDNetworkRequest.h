@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 /** 请求参数 */
 @property (nonatomic, copy, nullable) NSDictionary *requestParameter;
 
-/** 请求超时时间 */
+/** 请求超时时间，默认 30s */
 @property (nonatomic, assign) NSTimeInterval requestTimeoutInterval;
 
 /** 请求上传文件包 */
@@ -37,24 +37,24 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma - 发起网络请求
 
 /** 发起网络请求 */
-- (void)start;
+- (void)start NS_REQUIRES_SUPER;
 
 /** 发起网络请求带回调 */
 - (void)startWithSuccess:(nullable HDRequestSuccessBlock)success
-                 failure:(nullable HDRequestFailureBlock)failure;
+                 failure:(nullable HDRequestFailureBlock)failure NS_REQUIRES_SUPER;
 
 - (void)startWithCache:(nullable HDRequestCacheBlock)cache
                success:(nullable HDRequestSuccessBlock)success
-               failure:(nullable HDRequestFailureBlock)failure;
+               failure:(nullable HDRequestFailureBlock)failure NS_REQUIRES_SUPER;
 
 - (void)startWithUploadProgress:(nullable HDRequestProgressBlock)uploadProgress
                downloadProgress:(nullable HDRequestProgressBlock)downloadProgress
                           cache:(nullable HDRequestCacheBlock)cache
                         success:(nullable HDRequestSuccessBlock)success
-                        failure:(nullable HDRequestFailureBlock)failure;
+                        failure:(nullable HDRequestFailureBlock)failure NS_REQUIRES_SUPER;
 
 /** 取消网络请求 */
-- (void)cancel;
+- (void)cancel NS_REQUIRES_SUPER;
 
 #pragma - 相关回调代理
 
@@ -81,7 +81,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString *)requestIdentifier;
 
 /** 清空所有请求回调闭包 */
-- (void)clearRequestBlocks;
+- (void)clearRequestBlocks NS_REQUIRES_SUPER;
 
 #pragma - 网络请求公共配置(以子类化方式实现 \
                            : 针对不同的接口团队设计不同的公共配置)
