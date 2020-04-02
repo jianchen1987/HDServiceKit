@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "HDServiceKit"
-  s.version          = "0.9.2"
+  s.version          = "0.9.3"
   s.summary          = "混沌 iOS 服务"
   s.description      = <<-DESC
                        HDServiceKit 是一系列服务以及能力，用于快速在其他项目使用或者第三方接入
@@ -22,6 +22,7 @@ Pod::Spec.new do |s|
 
     s.frameworks       = 'Foundation', 'UIKit', 'CoreLocation', 'MapKit', 'CoreTelephony', 'AdSupport', 'SafariServices', 'WebKit', 'MobileCoreServices', 'ContactsUI'
     s.ios.vendored_framework = "#{s.name}-#{s.version}/ios/#{s.name}.framework"
+    s.resources = "#{s.name}-#{s.version}/ios/#{s.name}.framework/Versions/A/Resources/*.bundle"
     s.dependency  'GCDWebServer', '~> 3.0'
     s.dependency 'AFNetworking', '~>3.2.1'
     s.dependency 'YYCache', '~>1.0.4'
