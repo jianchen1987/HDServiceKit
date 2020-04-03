@@ -99,9 +99,56 @@
     return taskIdentifier;
 }
 
-- (NSNumber *)startDataTaskWithManager:(AFHTTPSessionManager *)manager URLRequest:(NSURLRequest *)URLRequest uploadProgress:(nullable HDRequestProgressBlock)uploadProgress downloadProgress:(nullable HDRequestProgressBlock)downloadProgress completion:(HDRequestCompletionBlock)completion {
+- (NSNumber *)startDataTaskWithManager:(AFHTTPSessionManager *)manager URLRequest:(NSURLRequest *)URLRequest retryConfig:(HDNetworkRetryConfig *)retryConfig uploadProgress:(nullable HDRequestProgressBlock)uploadProgress downloadProgress:(nullable HDRequestProgressBlock)downloadProgress completion:(HDRequestCompletionBlock)completion {
+    __block NSURLSessionDataTask *task;
+    void (^retryBlock)(NSURLResponse *_Nonnull, id _Nullable, NSError *_Nullable) = ^(NSURLResponse *_Nonnull response, id _Nullable responseObject, NSError *_Nullable error) {
+        HDNetworkResponse *wrappedResponse = [HDNetworkResponse responseWithSessionTask:task responseObject:responseObject error:error];
 
-    __block NSURLSessionDataTask *task = [manager dataTaskWithRequest:URLRequest
+        // 判断是否是致命错误，无需重试
+        if ([self isErrorFatal:error]) {
+            [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"收到严重错误，请查看屏蔽列表，将停止重试，直接触发回调，原因：%@", error.localizedDescription]];
+            !completion ?: completion(wrappedResponse);
+            return;
+        }
+
+        // 判断是否是不需重试的状态码
+        NSHTTPURLResponse *taskResponse = (NSHTTPURLResponse *)task.response;
+        for (NSNumber *fatalStatusCode in retryConfig.fatalStatusCodes) {
+            if (taskResponse.statusCode == fatalStatusCode.integerValue) {
+                [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"请求得到状态码 %zd ，在指定不再尝试的 statusCode 数组中，将停止重试，原因：%@", fatalStatusCode.integerValue, error.localizedDescription]];
+                !completion ?: completion(wrappedResponse);
+                return;
+            }
+        }
+
+        if (retryConfig.remainingRetryCount > 0) {
+            BOOL shouldRetry = retryConfig.shouldRetryBlock && retryConfig.shouldRetryBlock(wrappedResponse);
+            if (shouldRetry) {
+                [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"外部判断应该重试，还剩：%zd 次", retryConfig.remainingRetryCount]];
+                int64_t delay;
+                if (retryConfig.isRetryProgressive) {
+                    delay = (int64_t)(retryConfig.retryInterval * pow(2, 2 - retryConfig.maxRetryCount));
+                } else {
+                    delay = retryConfig.retryInterval;
+                }
+                [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"延迟重试时间：%llu", delay]];
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"延迟时间 %lld 到，开始发起重试", delay]];
+                    [self startDataTaskWithManager:manager URLRequest:URLRequest retryConfig:retryConfig uploadProgress:uploadProgress downloadProgress:downloadProgress completion:completion];
+                    retryConfig.remainingRetryCount -= 1;
+                });
+            } else {
+                [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"重试次数还剩：%zd 次，但 shouldRetryBlock 返回 false，将不再重试，回调数据", retryConfig.remainingRetryCount]];
+                !completion ?: completion(wrappedResponse);
+            }
+        } else {
+            [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"重试次数已达最大次数 %zd，将回调数据", retryConfig.maxRetryCount]];
+
+            !completion ?: completion(wrappedResponse);
+        }
+    };
+
+    task = [manager dataTaskWithRequest:URLRequest
         uploadProgress:^(NSProgress *_Nonnull _uploadProgress) {
             if (uploadProgress) {
                 uploadProgress(_uploadProgress);
@@ -114,15 +161,87 @@
         }
         completionHandler:^(NSURLResponse *_Nonnull response, id _Nullable responseObject, NSError *_Nullable error) {
             HDNM_TASKRECORD_LOCK([self.taskRecord removeObjectForKey:@(task.taskIdentifier)];)
-            if (completion) {
-                completion([HDNetworkResponse responseWithSessionTask:task responseObject:responseObject error:error]);
-            }
+            retryBlock(response, responseObject, error);
         }];
 
     NSNumber *taskIdentifier = @(task.taskIdentifier);
     HDNM_TASKRECORD_LOCK(self.taskRecord[taskIdentifier] = task;)
     [task resume];
     return taskIdentifier;
+}
+
+- (void)logMessageLogEnabled:(BOOL)logEnabled string:(NSString *)message, ... {
+    if (!logEnabled) {
+        return;
+    }
+#ifdef DEBUG
+    NSLog(@"%@", message);
+#endif
+}
+
+- (BOOL)isErrorFatal:(NSError *)error {
+    switch (error.code) {
+        case kCFHostErrorHostNotFound:
+        case kCFHostErrorUnknown:  // 查询kCFGetAddrInfoFailureKey以获取getaddrinfo返回的值; 在netdb.h中查找
+        // HTTP 错误
+        case kCFErrorHTTPAuthenticationTypeUnsupported:
+        case kCFErrorHTTPBadCredentials:
+        case kCFErrorHTTPParseFailure:
+        case kCFErrorHTTPRedirectionLoopDetected:
+        case kCFErrorHTTPBadURL:
+        case kCFErrorHTTPBadProxyCredentials:
+        case kCFErrorPACFileError:
+        case kCFErrorPACFileAuth:
+        case kCFStreamErrorHTTPSProxyFailureUnexpectedResponseToCONNECTMethod:
+        // CFURLConnection和CFURLProtocol的错误代码
+        case kCFURLErrorUnknown:
+        case kCFURLErrorCancelled:
+        case kCFURLErrorBadURL:
+        case kCFURLErrorUnsupportedURL:
+        case kCFURLErrorHTTPTooManyRedirects:
+        case kCFURLErrorBadServerResponse:
+        case kCFURLErrorUserCancelledAuthentication:
+        case kCFURLErrorUserAuthenticationRequired:
+        case kCFURLErrorZeroByteResource:
+        case kCFURLErrorCannotDecodeRawData:
+        case kCFURLErrorCannotDecodeContentData:
+        case kCFURLErrorCannotParseResponse:
+        case kCFURLErrorInternationalRoamingOff:
+        case kCFURLErrorCallIsActive:
+        case kCFURLErrorDataNotAllowed:
+        case kCFURLErrorRequestBodyStreamExhausted:
+        case kCFURLErrorFileDoesNotExist:
+        case kCFURLErrorFileIsDirectory:
+        case kCFURLErrorNoPermissionsToReadFile:
+        case kCFURLErrorDataLengthExceedsMaximum:
+        // SSL 错误
+        case kCFURLErrorServerCertificateHasBadDate:
+        case kCFURLErrorServerCertificateUntrusted:
+        case kCFURLErrorServerCertificateHasUnknownRoot:
+        case kCFURLErrorServerCertificateNotYetValid:
+        case kCFURLErrorClientCertificateRejected:
+        case kCFURLErrorClientCertificateRequired:
+        case kCFURLErrorCannotLoadFromNetwork:
+        // Cookie 错误
+        case kCFHTTPCookieCannotParseCookieFile:
+        // CFNetServices
+        case kCFNetServiceErrorUnknown:
+        case kCFNetServiceErrorCollision:
+        case kCFNetServiceErrorNotFound:
+        case kCFNetServiceErrorInProgress:
+        case kCFNetServiceErrorBadArgument:
+        case kCFNetServiceErrorCancel:
+        case kCFNetServiceErrorInvalid:
+        // 特例
+        case 101:  // 空地址
+        case 102:  // 忽略“帧加载中断”错误
+            return YES;
+
+        default:
+            break;
+    }
+
+    return NO;
 }
 
 #pragma mark - public
@@ -165,7 +284,7 @@
     if (request.downloadPath.length > 0) {
         return [self startDownloadTaskWithManager:manager URLRequest:URLRequest downloadPath:request.downloadPath downloadProgress:downloadProgress completion:completion];
     } else {
-        return [self startDataTaskWithManager:manager URLRequest:URLRequest uploadProgress:uploadProgress downloadProgress:downloadProgress completion:completion];
+        return [self startDataTaskWithManager:manager URLRequest:URLRequest retryConfig:request.retryConfig uploadProgress:uploadProgress downloadProgress:downloadProgress completion:completion];
     }
 }
 

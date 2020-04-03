@@ -47,7 +47,7 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self requestData];
 
-        [self requestData2];
+        //        [self requestData2];
     });
 }
 
@@ -121,13 +121,18 @@
 - (CMNetworkRequest *)request {
     if (!_request) {
         CMNetworkRequest *request = [CMNetworkRequest new];
-        request.requestMethod = HDRequestMethodGET;
+        request.requestMethod = HDRequestMethodPOST;
         request.cacheHandler.writeMode = HDNetworkCacheWriteModeMemoryAndDisk;
         request.cacheHandler.readMode = HDNetworkCacheReadModeAlsoNetwork;
         request.requestURI = @"charconvert/change.from";
         request.requestParameter = @{@"key": @"0e27c575047e83b407ff9e517cde9c76",
                                      @"type": @"2",
                                      @"text": @"输入字段，这里是入参"};
+        request.retryConfig.maxRetryCount = 2;
+        request.retryConfig.shouldRetryBlock = ^BOOL(HDNetworkResponse *_Nonnull response) {
+            // 这里写重试的逻辑，也可以统一写在 request init 方法里，对所有业务生效
+            return YES;
+        };
         _request = request;
     }
     return _request;
@@ -136,7 +141,7 @@
 - (CMNetworkRequest *)request2 {
     if (!_request2) {
         CMNetworkRequest *request = [CMNetworkRequest new];
-        request.requestMethod = HDRequestMethodGET;
+        request.requestMethod = HDRequestMethodPOST;
         request.cacheHandler.writeMode = HDNetworkCacheWriteModeMemoryAndDisk;
         request.cacheHandler.readMode = HDNetworkCacheReadModeAlsoNetwork;
         request.requestURI = @"charconvert/change.from";

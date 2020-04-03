@@ -24,6 +24,7 @@
 @property (nonatomic, copy, nullable) HDRequestSuccessBlock successBlock;
 @property (nonatomic, copy, nullable) HDRequestFailureBlock failureBlock;
 @property (nonatomic, strong) HDNetworkCache *cacheHandler;
+@property (nonatomic, strong) HDNetworkRetryConfig *retryConfig;
 /// 记录网络任务标识容器
 @property (nonatomic, strong) NSMutableSet<NSNumber *> *taskIDRecord;
 @end
@@ -370,5 +371,9 @@
         _cacheHandler = [HDNetworkCache new];
     }
     return _cacheHandler;
+}
+
+- (HDNetworkRetryConfig *)retryConfig {
+    return _retryConfig ?: ({ _retryConfig = HDNetworkRetryConfig.new; });
 }
 @end

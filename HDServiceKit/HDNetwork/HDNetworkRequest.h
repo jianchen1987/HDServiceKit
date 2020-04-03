@@ -8,6 +8,7 @@
 
 #import "HDNetworkCache.h"
 #import "HDNetworkResponse.h"
+#import "HDNetworkRetryConfig.h"
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -65,6 +66,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** 缓存处理器 */
 @property (nonatomic, strong, readonly) HDNetworkCache *cacheHandler;
+
+#pragma - 重试机制
+
+/** 重试配置 */
+@property (nonatomic, strong, readonly) HDNetworkRetryConfig *retryConfig;
 
 #pragma - 其它
 
