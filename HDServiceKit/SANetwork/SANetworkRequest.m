@@ -152,7 +152,8 @@
         @"Accept-Language": HDIsStringNotEmpty(self.acceptLanguage) ? self.acceptLanguage : HDDeviceInfo.getDeviceLanguage,
         @"appVersion": HDIsStringNotEmpty(self.appVersion) ? self.appVersion : HDDeviceInfo.appVersion,
         @"channel": HDIsStringNotEmpty(self.channel) ? self.channel : @"AppStore",
-        @"projectName": HDIsStringNotEmpty(self.projectName) ? self.projectName : @"SuperApp"
+        @"projectName": HDIsStringNotEmpty(self.projectName) ? self.projectName : @"SuperApp",
+        @"appId": HDIsStringNotEmpty(self.appID) ? self.appID : @"SuperApp"
     }];
     if (HDIsStringNotEmpty(self.tokenId)) {
         headerFieldsDict[@"tokenId"] = self.tokenId;

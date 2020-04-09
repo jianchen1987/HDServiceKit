@@ -17,6 +17,9 @@ typedef NS_ENUM(NSInteger, SANetworkRequestCipherMode) {
 
 @interface SANetworkRequest : HDNetworkRequest
 
+/** app id，默认 SuperApp */
+@property (nonatomic, copy, nullable) NSString *appID;
+
 /** 用户名 */
 @property (nonatomic, copy, nullable) NSString *userName;
 
