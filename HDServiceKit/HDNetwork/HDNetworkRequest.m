@@ -27,6 +27,10 @@
 @property (nonatomic, strong) HDNetworkRetryConfig *retryConfig;
 /// 记录网络任务标识容器
 @property (nonatomic, strong) NSMutableSet<NSNumber *> *taskIDRecord;
+/// 处理过的 URL
+@property (nonatomic, copy, nullable) NSString *hd_preprocessURLString;
+/// 处理过的参数
+@property (nonatomic, strong, nullable) id hd_preprocessParameter;
 @end
 
 @implementation HDNetworkRequest {
@@ -348,18 +352,27 @@
 }
 
 - (NSString *)validRequestURLString {
+
+    if (self.hd_preprocessURLString && self.hd_preprocessURLString.length > 0) return self.hd_preprocessURLString;
+
     NSURL *baseURL = [NSURL URLWithString:self.baseURI];
     NSString *URLString = [NSURL URLWithString:self.requestURI relativeToURL:baseURL].absoluteString;
     if ([self respondsToSelector:@selector(hd_preprocessURLString:)]) {
         URLString = [self hd_preprocessURLString:URLString];
+        // 防止多次调用子类
+        self.hd_preprocessURLString = URLString;
     }
     return URLString;
 }
 
 - (id)validRequestParameter {
+    if (self.hd_preprocessParameter) return self.hd_preprocessParameter;
+
     id parameter = self.requestParameter;
     if ([self respondsToSelector:@selector(hd_preprocessParameter:)]) {
         parameter = [self hd_preprocessParameter:parameter];
+        // 防止多次调用子类
+        self.hd_preprocessParameter = parameter;
     }
     return parameter;
 }

@@ -121,27 +121,21 @@
 - (NSDictionary *)extraParams {
     NSMutableDictionary *extraParams = [NSMutableDictionary dictionaryWithCapacity:2];
     extraParams[@"userApp"] = @"appType";
-    if (HDIsStringNotEmpty(self.userName)) {
+    if (self.isNeedLogin && HDIsStringNotEmpty(self.userName)) {
         extraParams[@"loginName"] = self.userName;
     }
     return extraParams;
 }
 
 #pragma mark - override
-
-- (void)start {
-    // 请求前有什么要做的可以写在这里
-    [super start];
-}
-
 - (AFHTTPRequestSerializer *)requestSerializer {
     AFHTTPRequestSerializer *serializer = [AFHTTPRequestSerializer new];
 
     // 设置 HTTPHeaderField
-    NSDateFormatter *formatter1 = [[NSDateFormatter alloc] init];
-    [formatter1 setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-    [formatter1 setLocale:[NSLocale currentLocale]];
-    NSString *requestTm = [formatter1 stringFromDate:[NSDate date]];
+    NSDateFormatter *fmt = [[NSDateFormatter alloc] init];
+    [fmt setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    [fmt setLocale:[NSLocale currentLocale]];
+    NSString *requestTm = [fmt stringFromDate:NSDate.date];
 
     NSMutableDictionary<NSString *, NSString *> *headerFieldsDict = [NSMutableDictionary dictionaryWithDictionary:@{
         @"requestTm": requestTm,
@@ -181,21 +175,4 @@
     [params addEntriesFromDictionary:self.extraParams];
     return params;
 }
-
-- (NSString *)hd_preprocessURLString:(NSString *)URLString {
-    return URLString;
-}
-
-- (void)hd_preprocessSuccessInChildThreadWithResponse:(HDNetworkResponse *)response {
-}
-
-- (void)hd_preprocessSuccessInMainThreadWithResponse:(HDNetworkResponse *)response {
-}
-
-- (void)hd_preprocessFailureInChildThreadWithResponse:(HDNetworkResponse *)response {
-}
-
-- (void)hd_preprocessFailureInMainThreadWithResponse:(HDNetworkResponse *)response {
-}
-
 @end
