@@ -55,7 +55,7 @@
         return (NSComparisonResult)[str1 compare:str2 options:NSNumericSearch];
     }];
     NSMutableString *oriSign = [[NSMutableString alloc] init];
-    if (HDIsStringNotEmpty(self.userName)) {
+    if (self.isNeedLogin && HDIsStringNotEmpty(self.userName)) {
         [oriSign appendString:self.userName];
     } else {
         self.key = HDIsStringNotEmpty(self.key) ? self.key : @"chaos";
