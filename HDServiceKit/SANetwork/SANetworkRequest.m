@@ -58,7 +58,7 @@
     if (self.isNeedLogin && HDIsStringNotEmpty(self.userName)) {
         [oriSign appendString:self.userName];
     } else {
-        self.key = HDIsStringNotEmpty(self.key) ? self.key : @"chaos";
+        self.key = HDIsStringNotEmpty(self.key) ? self.key : @"SuperApp";
         [oriSign appendString:self.key];
     }
     for (NSString *key in keys) {
@@ -141,13 +141,14 @@
         @"requestTm": requestTm,
         @"termTyp": @"iOS",
         @"deviceId": HDDeviceInfo.getUniqueId,
+        @"signVer": @"1.0",
         @"sign": self.getSignature,
         @"type": self.cipherMode == SANetworkRequestCipherModeMD5 ? @"md5" : @"rsa",
         @"Accept-Language": HDIsStringNotEmpty(self.acceptLanguage) ? self.acceptLanguage : HDDeviceInfo.getDeviceLanguage,
         @"appVersion": HDIsStringNotEmpty(self.appVersion) ? self.appVersion : HDDeviceInfo.appVersion,
         @"channel": HDIsStringNotEmpty(self.channel) ? self.channel : @"AppStore",
-        @"projectName": HDIsStringNotEmpty(self.projectName) ? self.projectName : @"SuperApp",
-        @"appId": HDIsStringNotEmpty(self.appID) ? self.appID : @"SuperApp"
+        @"appId": HDIsStringNotEmpty(self.appID) ? self.appID : @"SuperApp",
+        @"Content-Type": @"application/json; charset=utf-8",
     }];
     if (HDIsStringNotEmpty(self.tokenId)) {
         headerFieldsDict[@"tokenId"] = self.tokenId;

@@ -26,9 +26,6 @@ typedef NS_ENUM(NSInteger, SANetworkRequestCipherMode) {
 /** 渠道，默认 AppStore */
 @property (nonatomic, copy, nullable) NSString *channel;
 
-/** 项目名，默认 SuperApp */
-@property (nonatomic, copy, nullable) NSString *projectName;
-
 /** 语言，为空将默认使用系统语言 */
 @property (nonatomic, copy, nullable) NSString *acceptLanguage;
 
@@ -38,7 +35,7 @@ typedef NS_ENUM(NSInteger, SANetworkRequestCipherMode) {
 /// 加密类型
 @property (nonatomic, assign) SANetworkRequestCipherMode cipherMode;
 
-/** md5 或者 RSA 方案公有的 key, 默认 chaos */
+/** md5 或者 RSA 方案公有的 key, 默认 SuperApp */
 @property (nonatomic, copy) NSString *key;
 
 /** RSA 方案使用的公钥字符串（与公钥文件二选一） */
