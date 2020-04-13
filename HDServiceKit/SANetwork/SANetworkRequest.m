@@ -120,7 +120,6 @@
 
 - (NSDictionary *)extraParams {
     NSMutableDictionary *extraParams = [NSMutableDictionary dictionaryWithCapacity:2];
-    extraParams[@"userApp"] = @"appType";
     if (self.isNeedLogin && HDIsStringNotEmpty(self.userName)) {
         extraParams[@"loginName"] = self.userName;
     }
@@ -129,8 +128,7 @@
 
 #pragma mark - override
 - (AFHTTPRequestSerializer *)requestSerializer {
-    AFHTTPRequestSerializer *serializer = [AFHTTPRequestSerializer new];
-
+    AFJSONRequestSerializer *serializer = [AFJSONRequestSerializer new];
     // 设置 HTTPHeaderField
     NSDateFormatter *fmt = [[NSDateFormatter alloc] init];
     [fmt setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
@@ -139,16 +137,17 @@
 
     NSMutableDictionary<NSString *, NSString *> *headerFieldsDict = [NSMutableDictionary dictionaryWithDictionary:@{
         @"requestTm": requestTm,
-        @"termTyp": @"iOS",
+        @"termTyp": @"IOS",
         @"deviceId": HDDeviceInfo.getUniqueId,
         @"signVer": @"1.0",
         @"sign": self.getSignature,
         @"type": self.cipherMode == SANetworkRequestCipherModeMD5 ? @"md5" : @"rsa",
-        @"Accept-Language": HDIsStringNotEmpty(self.acceptLanguage) ? self.acceptLanguage : HDDeviceInfo.getDeviceLanguage,
+        @"lang": HDIsStringNotEmpty(self.acceptLanguage) ? self.acceptLanguage : HDDeviceInfo.getDeviceLanguage,
         @"appVersion": HDIsStringNotEmpty(self.appVersion) ? self.appVersion : HDDeviceInfo.appVersion,
         @"channel": HDIsStringNotEmpty(self.channel) ? self.channel : @"AppStore",
         @"appId": HDIsStringNotEmpty(self.appID) ? self.appID : @"SuperApp",
-        @"Content-Type": @"application/json; charset=utf-8",
+        @"projectName": HDIsStringNotEmpty(self.projectName) ? self.projectName : @"SuperApp",
+        @"Content-Type": @"application/json",
     }];
     if (HDIsStringNotEmpty(self.tokenId)) {
         headerFieldsDict[@"tokenId"] = self.tokenId;
