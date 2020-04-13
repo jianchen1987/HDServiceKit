@@ -47,8 +47,8 @@ typedef NS_ENUM(NSInteger, SANetworkRequestCipherMode) {
 /** RSA 方案使用的公钥 pem 或者 der 文件路径（与公钥字符串二选一） */
 @property (nonatomic, copy, nullable) NSString *rsaPublicKeyFile;
 
-/** 会话 ID */
-@property (nonatomic, copy) NSString *tokenId;
+/** 会话 accessToken */
+@property (nonatomic, copy) NSString *accessToken;
 
 /** 请求重试次数，默认 0，即不重试，交由业务控制 */
 @property (nonatomic, assign) NSInteger retryCount;

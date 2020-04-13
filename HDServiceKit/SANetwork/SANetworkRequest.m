@@ -149,8 +149,8 @@
         @"projectName": HDIsStringNotEmpty(self.projectName) ? self.projectName : @"SuperApp",
         @"Content-Type": @"application/json",
     }];
-    if (HDIsStringNotEmpty(self.tokenId)) {
-        headerFieldsDict[@"tokenId"] = self.tokenId;
+    if (self.isNeedLogin && HDIsStringNotEmpty(self.accessToken)) {
+        headerFieldsDict[@"accessToken"] = self.accessToken;
     }
     [headerFieldsDict enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull key, NSString *_Nonnull obj, BOOL *_Nonnull stop) {
         [serializer setValue:obj forHTTPHeaderField:key];
