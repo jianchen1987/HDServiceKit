@@ -10,6 +10,7 @@
 #import "HDDeviceInfo.h"
 #import "RSACipher.h"
 #import <HDKitCore/HDCommonDefines.h>
+#import <HDKitCore/NSArray+HDKitCore.h>
 
 @interface SANetworkRequest ()
 @end
@@ -45,26 +46,23 @@
 
 #pragma mark - 签名
 /// 获取签名
-- (NSString *)getSignature {
+- (NSString *)getSignatureWithRequestTime:(NSString *)requestTime deviceId:(NSString *)deviceId {
 
     NSMutableDictionary *finalParams = [NSMutableDictionary dictionary];
     [finalParams addEntriesFromDictionary:self.requestParameter];
     [finalParams addEntriesFromDictionary:self.extraParams];
+    [finalParams addEntriesFromDictionary:@{@"requestTm": requestTime,
+                                            @"deviceId": deviceId}];
 
     NSArray *keys = [[finalParams allKeys] sortedArrayUsingComparator:^NSComparisonResult(NSString *str1, NSString *str2) {
         return (NSComparisonResult)[str1 compare:str2 options:NSNumericSearch];
     }];
-    NSMutableString *oriSign = [[NSMutableString alloc] init];
-    if (self.isNeedLogin && HDIsStringNotEmpty(self.userName)) {
-        [oriSign appendString:self.userName];
-    } else {
-        self.key = HDIsStringNotEmpty(self.key) ? self.key : @"SuperApp";
-        [oriSign appendString:self.key];
-    }
-    for (NSString *key in keys) {
+
+    NSArray *kvPairs = [keys mapObjectsUsingBlock:^id _Nonnull(id _Nonnull key, NSUInteger idx) {
         id value = [finalParams valueForKey:key];
-        [oriSign appendFormat:@"&%@=%@", key, [self stringForRecursiveNestedObject:value]];
-    }
+        return [NSString stringWithFormat:@"%@=%@", key, value];
+    }];
+    NSString *oriSign = [kvPairs componentsJoinedByString:@"&"];
     NSString *signature = @"";
     if (self.cipherMode == SANetworkRequestCipherModeMD5) {
         signature = oriSign.hd_md5;
@@ -109,7 +107,6 @@
             if (i != 0) {
                 jsonStr = [jsonStr stringByAppendingString:@", "];
             }
-
             id value = [self stringForRecursiveNestedObject:array[i]];
             jsonStr = [jsonStr stringByAppendingString:[NSString stringWithFormat:@"%@", value]];
         }
@@ -134,13 +131,13 @@
     [fmt setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     [fmt setLocale:[NSLocale currentLocale]];
     NSString *requestTm = [fmt stringFromDate:NSDate.date];
-
+    NSString *deviceId = HDDeviceInfo.getUniqueId;
     NSMutableDictionary<NSString *, NSString *> *headerFieldsDict = [NSMutableDictionary dictionaryWithDictionary:@{
         @"requestTm": requestTm,
         @"termTyp": @"IOS",
-        @"deviceId": HDDeviceInfo.getUniqueId,
+        @"deviceId": deviceId,
         @"signVer": @"1.0",
-        @"sign": self.getSignature,
+        @"sign": [self getSignatureWithRequestTime:requestTm deviceId:deviceId],
         @"type": self.cipherMode == SANetworkRequestCipherModeMD5 ? @"md5" : @"rsa",
         @"lang": HDIsStringNotEmpty(self.acceptLanguage) ? self.acceptLanguage : HDDeviceInfo.getDeviceLanguage,
         @"appVersion": HDIsStringNotEmpty(self.appVersion) ? self.appVersion : HDDeviceInfo.appVersion,
