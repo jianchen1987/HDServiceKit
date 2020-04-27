@@ -64,6 +64,7 @@
     }];
     NSString *oriSign = [kvPairs componentsJoinedByString:@"&"];
     NSString *signature = @"";
+    NSLog(@"oriString == %@",oriSign);
     if (self.cipherMode == SANetworkRequestCipherModeMD5) {
         signature = oriSign.hd_md5;
     } else if (self.cipherMode == SANetworkRequestCipherModeRSA) {
@@ -105,7 +106,7 @@
         NSArray *array = (NSArray *)object;
         for (NSInteger i = 0; i < array.count; ++i) {
             if (i != 0) {
-                jsonStr = [jsonStr stringByAppendingString:@", "];
+                jsonStr = [jsonStr stringByAppendingString:@","];
             }
             id value = [self stringForRecursiveNestedObject:array[i]];
             jsonStr = [jsonStr stringByAppendingString:[NSString stringWithFormat:@"%@", value]];
