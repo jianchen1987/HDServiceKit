@@ -140,7 +140,7 @@
         @"signVer": @"1.0",
         @"sign": [self getSignatureWithRequestTime:requestTm deviceId:deviceId],
         @"type": self.cipherMode == SANetworkRequestCipherModeMD5 ? @"md5" : @"rsa",
-        @"lang": HDIsStringNotEmpty(self.acceptLanguage) ? self.acceptLanguage : HDDeviceInfo.getDeviceLanguage,
+        @"Accept-Language": HDIsStringNotEmpty(self.acceptLanguage) ? self.acceptLanguage : HDDeviceInfo.getDeviceLanguage,
         @"appVersion": HDIsStringNotEmpty(self.appVersion) ? self.appVersion : HDDeviceInfo.appVersion,
         @"channel": HDIsStringNotEmpty(self.channel) ? self.channel : @"AppStore",
         @"appId": HDIsStringNotEmpty(self.appID) ? self.appID : @"SuperApp",
