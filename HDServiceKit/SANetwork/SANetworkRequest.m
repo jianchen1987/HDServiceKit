@@ -61,11 +61,12 @@
 
     NSArray *kvPairs = [keys mapObjectsUsingBlock:^id _Nonnull(id _Nonnull key, NSUInteger idx) {
         id value = [finalParams valueForKey:key];
-        return [NSString stringWithFormat:@"%@=%@", key, value];
+        return [NSString stringWithFormat:@"%@=%@", key, [self stringForRecursiveNestedObject:value]];
     }];
     NSString *oriSign = [kvPairs componentsJoinedByString:@"&"];
     NSString *signature = @"";
     HDLog(@"oriString == %@",oriSign);
+    
     if (self.cipherMode == SANetworkRequestCipherModeMD5) {
         signature = oriSign.hd_md5;
     } else if (self.cipherMode == SANetworkRequestCipherModeRSA) {
