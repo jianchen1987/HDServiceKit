@@ -10,6 +10,7 @@
 #import "HDDeviceInfo.h"
 #import "RSACipher.h"
 #import <HDKitCore/HDCommonDefines.h>
+#import <HDKitCore/HDLog.h>
 #import <HDKitCore/NSArray+HDKitCore.h>
 
 @interface SANetworkRequest ()
@@ -60,10 +61,11 @@
 
     NSArray *kvPairs = [keys mapObjectsUsingBlock:^id _Nonnull(id _Nonnull key, NSUInteger idx) {
         id value = [finalParams valueForKey:key];
-        return [NSString stringWithFormat:@"%@=%@", key, value];
+        return [NSString stringWithFormat:@"%@=%@", key, [self stringForRecursiveNestedObject:value]];
     }];
     NSString *oriSign = [kvPairs componentsJoinedByString:@"&"];
     NSString *signature = @"";
+
     if (self.cipherMode == SANetworkRequestCipherModeMD5) {
         signature = oriSign.hd_md5;
     } else if (self.cipherMode == SANetworkRequestCipherModeRSA) {
@@ -105,7 +107,7 @@
         NSArray *array = (NSArray *)object;
         for (NSInteger i = 0; i < array.count; ++i) {
             if (i != 0) {
-                jsonStr = [jsonStr stringByAppendingString:@", "];
+                jsonStr = [jsonStr stringByAppendingString:@","];
             }
             id value = [self stringForRecursiveNestedObject:array[i]];
             jsonStr = [jsonStr stringByAppendingString:[NSString stringWithFormat:@"%@", value]];
