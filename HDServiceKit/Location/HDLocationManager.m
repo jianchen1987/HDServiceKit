@@ -8,10 +8,10 @@
 
 #import "HDLocationManager.h"
 
-NSString *const kNotificationNameLocationPermissionChanged = @"kNotificationNameLocationPermissionChanged";
-NSString *const kNotificationNameLocationChanged = @"kNotificationNameLocationChanged";
-NSString *const kLocationChangedUserInfoKey = @"kLocationChangedUserInfoKey";
-NSString *const kLocationPermissionChangedUserInfoKey = @"kLocationPermissionChangedUserInfoKey";
+NSString *const kNotificationNameLocationPermissionChanged = @"kLocationManagerNotificationNameLocationPermissionChanged";
+NSString *const kNotificationNameLocationChanged = @"kLocationManagerNotificationNameLocationChanged";
+NSString *const kLocationChangedUserInfoKey = @"kLocationManagerLocationChangedUserInfoKey";
+NSString *const kLocationPermissionChangedUserInfoKey = @"kLocationManagerLocationPermissionChangedUserInfoKey";
 
 @interface HDLocationManager () <CLLocationManagerDelegate>
 @property (nonatomic, strong) CLLocationManager *locationManager;  ///< 位置管理者

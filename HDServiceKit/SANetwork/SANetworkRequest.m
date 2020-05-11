@@ -11,7 +11,6 @@
 #import "RSACipher.h"
 #import <HDKitCore/HDCommonDefines.h>
 #import <HDKitCore/NSArray+HDKitCore.h>
-#import <HDKitCore/HDLog.h>
 
 @interface SANetworkRequest ()
 @end
@@ -65,8 +64,7 @@
     }];
     NSString *oriSign = [kvPairs componentsJoinedByString:@"&"];
     NSString *signature = @"";
-    HDLog(@"oriString == %@",oriSign);
-    
+
     if (self.cipherMode == SANetworkRequestCipherModeMD5) {
         signature = oriSign.hd_md5;
     } else if (self.cipherMode == SANetworkRequestCipherModeRSA) {
