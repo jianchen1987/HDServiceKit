@@ -13,7 +13,7 @@
 @implementation HDWHSystemCapabilityResponse
 + (NSDictionary<NSString *, NSString *> *)supportActionList {
     return @{
-        @"makePhoneCall_": kHDWHResponseMethodOn,
+        @"makePhoneCall_$": kHDWHResponseMethodOn,
         @"sendSms_": kHDWHResponseMethodOn,
         @"sendEmail_": kHDWHResponseMethodOn,
         @"gotoAppStoreScore_": kHDWHResponseMethodOn,
@@ -23,20 +23,22 @@
         @"graduallySetBrightness_": kHDWHResponseMethodOn,
         @"openAppSystemSettingPage": kHDWHResponseMethodOn,
         @"getUserDevice$": kHDWHResponseMethodOn,
-        @"openLocation_": kHDWHResponseMethodOn
+        @"openLocation_": kHDWHResponseMethodOn,
+        @"socialShare_$":kHDWHResponseMethodOn
     };
 }
 
 // clang-format off
 wh_doc_begin(makePhoneCall_, "拨打电话")
 wh_doc_param(phoneNum, "字符串，电话号码")
-wh_doc_code(window.webViewHost.invoke("makePhoneCall",{"phoneNum": "855987657867"}))
+wh_doc_code(window.webViewHost.invoke("makePhoneCall",{"phoneNum": "855987657867"},function()))
 wh_doc_code_expect("调用系统功能，弹出拨打电话弹窗")
 wh_doc_end;
 // clang-format on
-- (void)makePhoneCall:(NSDictionary *)paramDict {
-    NSString *phoneNum = [paramDict objectForKey:@"phoneNum"];
+- (void)makePhoneCall:(NSDictionary *)paramDict callback:(NSString *)callBackKey{
+    NSString *phoneNum = [paramDict objectForKey:@"phone"];
     [HDSystemCapabilityUtil makePhoneCall:phoneNum];
+    [self.webViewHost fireCallback:callBackKey actionName:@"makePhoneCall" code:HDWHRespCodeSuccess type:HDWHCallbackTypeSuccess params:nil];
 }
 
 // clang-format off
@@ -200,4 +202,44 @@ wh_doc_end;
     NSString *address = [paramDict objectForKey:@"address"];
     [HDSystemCapabilityUtil jumpToMapWithLongitude:longitude latitude:latitude locationName:address];
 }
+
+- (void)socialShare:(NSDictionary *)paramDic callback:(NSString *)callBackKey {
+    
+    NSMutableArray *items = [[NSMutableArray alloc] initWithCapacity:3];
+    
+    NSString *title = [paramDic valueForKey:@"title"];
+    NSString *titleImage = [paramDic valueForKey:@"image"];
+    NSString *content = [paramDic valueForKey:@"content"];
+    
+    if(content &&![content isKindOfClass:[NSNull class]] && ![content isEqualToString:@""]) {
+        NSURL *urlToShare = [NSURL URLWithString:content];
+        if(urlToShare) {
+            [items addObject:urlToShare];
+        } else {
+            [items addObject:content];
+        }
+    }
+    
+
+    NSArray *activityItems = [NSArray arrayWithArray:items];
+    UIActivityViewController *activityVC = [[UIActivityViewController alloc]initWithActivityItems:activityItems applicationActivities:nil];
+    __weak __typeof(self) weakSelf = self;
+    activityVC.completionWithItemsHandler = ^(NSString *activityType,BOOL completed,NSArray *returnedItems,NSError *activityError) {
+        __strong __typeof(weakSelf) strongSelf = weakSelf;
+           if (completed) {
+           }
+           else {
+           }
+        [strongSelf.webViewHost fireCallback:callBackKey
+        actionName:@"socialShare"
+              code:HDWHRespCodeSuccess
+              type:HDWHCallbackTypeSuccess
+            params:@{}];
+       };
+
+    [self.webViewHost presentViewController:activityVC animated:YES completion:nil];
+    
+    
+}
+
 @end
