@@ -9,6 +9,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import <MapKit/MapKit.h>
 
+
 static CGFloat _currentBrightness;
 static NSOperationQueue *_queue;
 
@@ -163,4 +164,56 @@ static NSOperationQueue *_queue;
         }
     }
 }
++ (void)socialShareTitle:(NSString *)title imageUrl:(NSString *)image content:(NSString *)content inViewController:(UIViewController *)viewController result:(void (^)(NSError *error))result {
+    NSMutableArray *shareItems = [[NSMutableArray alloc] initWithCapacity:3];
+    
+    void (^shareAll)(NSArray *) = ^void(NSArray *items) {
+        UIActivityViewController *activityVC = [[UIActivityViewController alloc]initWithActivityItems:items applicationActivities:nil];
+        activityVC.completionWithItemsHandler = ^(NSString *activityType,BOOL completed,NSArray *returnedItems,NSError *activityError) {
+               if (completed) {
+                   result();
+               }
+               else {
+                   result(activityError);
+               }
+           };
+        [viewController presentViewController:activityVC animated:YES completion:nil];
+    };
+
+    if(title && ![title isEqual:[NSNull null]] &&title.length > 0) {
+        [shareItems addObject:title];
+    }
+    
+    if(content &&![content isEqual:[NSNull class]] && content.length > 0) {
+        NSURL *urlToShare = [NSURL URLWithString:content];
+        if(urlToShare) {
+            [shareItems addObject:urlToShare];
+        } else {
+            [shareItems addObject:content];
+        }
+    }
+    
+    if(image &&![image isEqual:[NSNull class]] && image.length > 0) {
+//        HDTips *hud = [HDTips showLoading:@"0.0%" inView:viewController.view];
+        [HDWebImageManager setImageWithURL:image
+                          placeholderImage:nil
+                                 imageView:[UIImageView new]
+                                  progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                [hud showProgressViewWithProgress:progress.fractionCompleted text:[NSString stringWithFormat:@"%.0f%%", progress.fractionCompleted * 100.0]];
+//            });
+        } completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+            if(!error) {
+                [shareItems addObject:image];
+                shareAll(shareItems);
+            } else {
+                result(error);
+            }
+        }];
+    } else {
+        shareAll(shareItems);
+    }
+}
+
+           
 @end
