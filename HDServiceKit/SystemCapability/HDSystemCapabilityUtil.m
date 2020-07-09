@@ -9,7 +9,6 @@
 #import <CoreLocation/CoreLocation.h>
 #import <MapKit/MapKit.h>
 
-
 static CGFloat _currentBrightness;
 static NSOperationQueue *_queue;
 
@@ -164,56 +163,50 @@ static NSOperationQueue *_queue;
         }
     }
 }
-+ (void)socialShareTitle:(NSString *)title imageUrl:(NSString *)image content:(NSString *)content inViewController:(UIViewController *)viewController result:(void (^)(NSError *error))result {
+
++ (void)socialShareTitle:(NSString *_Nullable)title imageUrl:(NSString *_Nullable)imageUrl content:(NSString *_Nullable)content inViewController:(UIViewController *)viewController result:(void (^)(NSError *error_Nullable))result {
     NSMutableArray *shareItems = [[NSMutableArray alloc] initWithCapacity:3];
-    
+
     void (^shareAll)(NSArray *) = ^void(NSArray *items) {
-        UIActivityViewController *activityVC = [[UIActivityViewController alloc]initWithActivityItems:items applicationActivities:nil];
-        activityVC.completionWithItemsHandler = ^(NSString *activityType,BOOL completed,NSArray *returnedItems,NSError *activityError) {
-               if (completed) {
-                   result();
-               }
-               else {
-                   result(activityError);
-               }
-           };
+        UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
+        activityVC.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
+            if (completed) {
+                !result ?: result(nil);
+            } else {
+                !result ?: result(activityError);
+            }
+        };
         [viewController presentViewController:activityVC animated:YES completion:nil];
     };
 
-    if(title && ![title isEqual:[NSNull null]] &&title.length > 0) {
+    if (title && ![title isEqual:[NSNull null]] && title.length > 0) {
         [shareItems addObject:title];
     }
-    
-    if(content &&![content isEqual:[NSNull class]] && content.length > 0) {
+
+    if (content && ![content isEqual:[NSNull class]] && content.length > 0) {
         NSURL *urlToShare = [NSURL URLWithString:content];
-        if(urlToShare) {
+        if (urlToShare) {
             [shareItems addObject:urlToShare];
         } else {
             [shareItems addObject:content];
         }
     }
-    
-    if(image &&![image isEqual:[NSNull class]] && image.length > 0) {
-//        HDTips *hud = [HDTips showLoading:@"0.0%" inView:viewController.view];
-        [HDWebImageManager setImageWithURL:image
+
+    if (imageUrl && ![imageUrl isEqual:[NSNull class]] && imageUrl.length > 0) {
+        [HDWebImageManager setImageWithURL:imageUrl
                           placeholderImage:nil
                                  imageView:[UIImageView new]
-                                  progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                [hud showProgressViewWithProgress:progress.fractionCompleted text:[NSString stringWithFormat:@"%.0f%%", progress.fractionCompleted * 100.0]];
-//            });
-        } completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-            if(!error) {
-                [shareItems addObject:image];
-                shareAll(shareItems);
-            } else {
-                result(error);
-            }
-        }];
+                                  progress:nil
+                                 completed:^(UIImage *_Nullable image, NSError *_Nullable error, SDImageCacheType cacheType, NSURL *_Nullable imageURL) {
+                                     if (!error) {
+                                         [shareItems addObject:image];
+                                         shareAll(shareItems);
+                                     } else {
+                                         !result ?: result(error);
+                                     }
+                                 }];
     } else {
         shareAll(shareItems);
     }
 }
-
-           
 @end

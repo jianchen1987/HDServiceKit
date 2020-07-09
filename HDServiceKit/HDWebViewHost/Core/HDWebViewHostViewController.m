@@ -23,6 +23,9 @@
 #import "HDWebViewHostViewController+Timing.h"
 #import "HDWebViewHostViewController+Utils.h"
 
+// 该 key 为业务方的 key，因为是应用内语言切换，所以不能获取系统语言
+static NSString *const kCurrentLanguageCacheKey = @"kCurrentLanguageCache";
+
 @interface HDWebViewHostViewController () <UIScrollViewDelegate, WKUIDelegate, WKScriptMessageHandler>
 @property (nonatomic, strong) WKWebView *webView;
 @property (nonatomic, strong) HDWHSchemeTaskDelegate *taskDelegate API_AVAILABLE(ios(11));
@@ -170,7 +173,30 @@ BOOL kGCDWebServer_logging_enabled = false;
         [mDict setValuesForKeysWithDictionary:dict];
         fixedRequest.allHTTPHeaderFields = mDict;
     }
+    [self updateRequestAcceptLanguage:fixedRequest];
     return fixedRequest;
+}
+
+/// 设置语言
+- (void)updateRequestAcceptLanguage:(NSMutableURLRequest *)request {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *currentLanguage = [defaults valueForKey:kCurrentLanguageCacheKey];
+    if (currentLanguage) {
+        if ([currentLanguage isEqualToString:@"zh-CN"]) {
+            currentLanguage = @"zh";
+        } else if ([currentLanguage isEqualToString:@"en-US"]) {
+            currentLanguage = @"en";
+        } else if ([currentLanguage isEqualToString:@"km-KH"]) {
+            currentLanguage = @"km";
+        } else {
+            // 都不是就英文
+            currentLanguage = @"en";
+        }
+    } else {
+        // 获取不到就英文
+        currentLanguage = @"en";
+    }
+    [request setValue:currentLanguage forHTTPHeaderField:@"Accept-Language"];
 }
 
 #pragma mark - UI相关
@@ -186,6 +212,7 @@ BOOL kGCDWebServer_logging_enabled = false;
     if ([reachability isReachable]) {
         NSMutableURLRequest *mutableRequest = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:120];
         [self mark:kWebViewHostTimingLoadRequest];
+        [self updateRequestAcceptLanguage:mutableRequest];
         [self.webView loadRequest:mutableRequest];
     } else {
         [self showTextTip:@"网络断开了，请检查网络。" hideAfterDelay:10.f];
@@ -415,6 +442,7 @@ BOOL kGCDWebServer_logging_enabled = false;
         WKWebView *cookieWebview = [self cookieWebview];
         [self.view addSubview:cookieWebview];
         [self mark:kWebViewHostTimingLoadRequest];
+        [self updateRequestAcceptLanguage:mutableRequest];
         [cookieWebview loadRequest:mutableRequest];
     } else {
         [self loadWebPageWithURL];
