@@ -181,22 +181,40 @@ BOOL kGCDWebServer_logging_enabled = false;
 - (void)updateRequestAcceptLanguage:(NSMutableURLRequest *)request {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *currentLanguage = [defaults valueForKey:kCurrentLanguageCacheKey];
-    if (currentLanguage) {
-        if ([currentLanguage isEqualToString:@"zh-CN"]) {
-            currentLanguage = @"zh";
-        } else if ([currentLanguage isEqualToString:@"en-US"]) {
-            currentLanguage = @"en";
-        } else if ([currentLanguage isEqualToString:@"km-KH"]) {
-            currentLanguage = @"km";
-        } else {
-            // 都不是就英文
-            currentLanguage = @"en";
-        }
-    } else {
-        // 获取不到就英文
-        currentLanguage = @"en";
+    if (!currentLanguage) {
+        currentLanguage = @"en-US"; /// 默认英文
     }
     [request setValue:currentLanguage forHTTPHeaderField:@"Accept-Language"];
+    
+    NSString *ua = [NSString stringWithFormat:@" %@/%@ ", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"],
+    [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]];
+
+    if (@available(iOS 12.0, *)) {
+        NSString *baseAgent = [self.webView valueForKey:@"applicationNameForUserAgent"];
+        NSString *userAgent = [NSString stringWithFormat:@"%@%@", baseAgent, ua];
+        [self.webView setValue:userAgent forKey:@"applicationNameForUserAgent"];
+    }
+
+    if (@available(iOS 9.0, *)) {
+        __weak __typeof(self) weakSelf = self;
+        [self.webView evaluateJavaScript:@"navigator.userAgent"
+                       completionHandler:^(id _Nullable result, NSError *_Nullable error) {
+                           __strong __typeof(weakSelf) strongSelf = weakSelf;
+                           if (!error) {
+                               HDWHLog(@"获取UA成功:%@", result);
+                               if ([result rangeOfString:ua].location == NSNotFound) {
+                                   [strongSelf.webView setCustomUserAgent:[result stringByAppendingString:ua]];
+                               }
+                           } else {
+                               [strongSelf.webView setCustomUserAgent:ua];
+                           }
+                       }];
+    } else {
+        NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:ua, @"UserAgent", nil];
+        [[NSUserDefaults standardUserDefaults] registerDefaults:dic];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        [self.webView setValue:ua forKey:@"applicationNameForUserAgent"];
+    }
 }
 
 #pragma mark - UI相关
