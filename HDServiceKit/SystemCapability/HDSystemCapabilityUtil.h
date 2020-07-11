@@ -6,7 +6,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <HDVendorKit/HDWebImageManager.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -79,11 +78,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 系统社会分享
 /// @param title 标题
-/// @param imageUrl 图片地址
+/// @param image 图片
 /// @param content 内容
 /// @param viewController 弹出的窗口
 /// @param result 分享结果
-+ (void)socialShareTitle:(NSString *_Nullable)title imageUrl:(NSString *_Nullable)imageUrl content:(NSString *_Nullable)content inViewController:(UIViewController *)viewController result:(void (^)(NSError *error_Nullable))result;
++ (void)socialShareTitle:(NSString *_Nullable)title image:(UIImage *_Nullable)image content:(NSString *_Nullable)content inViewController:(UIViewController *)viewController result:(void (^)(NSError *error_Nullable))result;
 @end
 
 NS_ASSUME_NONNULL_END

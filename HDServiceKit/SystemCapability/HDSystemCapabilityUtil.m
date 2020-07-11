@@ -164,20 +164,8 @@ static NSOperationQueue *_queue;
     }
 }
 
-+ (void)socialShareTitle:(NSString *_Nullable)title imageUrl:(NSString *_Nullable)imageUrl content:(NSString *_Nullable)content inViewController:(UIViewController *)viewController result:(void (^)(NSError *error_Nullable))result {
++ (void)socialShareTitle:(NSString *_Nullable)title image:(UIImage *_Nullable)image content:(NSString *_Nullable)content inViewController:(UIViewController *)viewController result:(void (^)(NSError *error_Nullable))result {
     NSMutableArray *shareItems = [[NSMutableArray alloc] initWithCapacity:3];
-
-    void (^shareAll)(NSArray *) = ^void(NSArray *items) {
-        UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
-        activityVC.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
-            if (completed) {
-                !result ?: result(nil);
-            } else {
-                !result ?: result(activityError);
-            }
-        };
-        [viewController presentViewController:activityVC animated:YES completion:nil];
-    };
 
     if (title && ![title isEqual:[NSNull null]] && title.length > 0) {
         [shareItems addObject:title];
@@ -192,21 +180,18 @@ static NSOperationQueue *_queue;
         }
     }
 
-    if (imageUrl && ![imageUrl isEqual:[NSNull class]] && imageUrl.length > 0) {
-        [HDWebImageManager setImageWithURL:imageUrl
-                          placeholderImage:nil
-                                 imageView:[UIImageView new]
-                                  progress:nil
-                                 completed:^(UIImage *_Nullable image, NSError *_Nullable error, SDImageCacheType cacheType, NSURL *_Nullable imageURL) {
-                                     if (!error) {
-                                         [shareItems addObject:image];
-                                         shareAll(shareItems);
-                                     } else {
-                                         !result ?: result(error);
-                                     }
-                                 }];
-    } else {
-        shareAll(shareItems);
+    if (image) {
+        [shareItems addObject:image];
     }
+    
+    UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:shareItems applicationActivities:nil];
+    activityVC.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
+        if (completed) {
+            !result ?: result(nil);
+        } else {
+            !result ?: result(activityError);
+        }
+    };
+    [viewController presentViewController:activityVC animated:YES completion:nil];
 }
 @end
