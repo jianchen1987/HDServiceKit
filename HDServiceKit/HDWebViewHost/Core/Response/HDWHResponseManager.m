@@ -95,6 +95,8 @@
                     vc = [[responseClass alloc] initWithWebViewHost:webViewHost];
                     // 缓存住
                     [self.responseClassObjs setObject:vc forKey:key];
+                } else {
+                    vc = [vc initWithWebViewHost:webViewHost];
                 }
             } else {
                 vc = [responseClass new];
