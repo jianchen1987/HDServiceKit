@@ -90,8 +90,8 @@
             // 先判断是否可以响应，再决定初始化。
             if (webViewHost) {
                 NSString *key = NSStringFromClass(responseClass);
+                vc = [self.responseClassObjs objectForKey:key];
                 if (vc == nil) {
-                    vc = [self.responseClassObjs objectForKey:key];
                     vc = [[responseClass alloc] initWithWebViewHost:webViewHost];
                     // 缓存住
                     [self.responseClassObjs setObject:vc forKey:key];
