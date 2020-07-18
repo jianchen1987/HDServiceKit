@@ -24,7 +24,7 @@ Pod::Spec.new do |s|
     s.ios.vendored_framework = "#{s.name}-#{s.version}/ios/#{s.name}.framework"
     s.resources = "#{s.name}-#{s.version}/ios/#{s.name}.framework/Versions/A/Resources/*.bundle"
     s.dependency  'GCDWebServer', '~> 3.0'
-    s.dependency 'AFNetworking', '~>3.2.1'
+    s.dependency 'AFNetworking', '~>4.0'
     s.dependency 'YYCache', '~>1.0.4'
     s.dependency 'UICKeyChainStore', '~> 2.1.2'
     s.dependency 'YYModel', '~> 1.0.4'
@@ -91,7 +91,7 @@ Pod::Spec.new do |s|
 
     s.subspec 'HDNetwork' do |ss|
       ss.source_files = 'HDServiceKit/HDNetwork', 'HDServiceKit/HDNetwork/*/*'
-      ss.dependency 'AFNetworking', '~>3.2.1'
+      ss.dependency 'AFNetworking', '~>4.0'
       ss.dependency 'YYCache', '~>1.0.4'
     end
 

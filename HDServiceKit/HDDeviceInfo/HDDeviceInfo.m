@@ -22,11 +22,14 @@
 
 #import <AdSupport/AdSupport.h>
 
+#import <WebKit/WebKit.h>
+
 #import "sys/utsname.h"
 #include <net/if.h>
 #include <net/if_dl.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+
 
 #define IOS_CELLULAR @"pdp_ip0"
 #define IOS_WIFI @"en0"
@@ -164,27 +167,6 @@ NSString *const kUUIDServiceName = @"com.chaosource.keychain";
     uname(&systemInfo);
     NSString *platform = [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
     return platform ? platform : @"unknow";
-}
-
-+ (nonnull NSString *)userAgent {
-    NSString *ua = [[NSUserDefaults standardUserDefaults] objectForKey:@"navigator.userAgent"];
-    if (!ua) {
-        if ([NSThread isMainThread]) {
-            UIWebView *webView = [[UIWebView alloc] initWithFrame:CGRectZero];
-            NSString *useAgent = [webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
-            [[NSUserDefaults standardUserDefaults] setObject:useAgent forKey:@"navigator.userAgent"];
-        } else {
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                UIWebView *webView = [[UIWebView alloc] initWithFrame:CGRectZero];
-                NSString *useAgent = [webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
-                [[NSUserDefaults standardUserDefaults] setObject:useAgent forKey:@"navigator.userAgent"];
-            });
-        }
-    }
-    if (ua) {
-        return ua;
-    }
-    return @"";
 }
 
 + (nonnull NSString *)screenSize {

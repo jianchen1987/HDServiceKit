@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (nonnull NSString *)modelName;
 
 /** 浏览器userAgent */
-+ (nonnull NSString *)userAgent;
+//+ (nonnull NSString *)userAgent;
 
 /** 屏幕尺⼨ */
 + (nonnull NSString *)screenSize;
