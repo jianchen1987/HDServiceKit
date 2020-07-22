@@ -113,7 +113,7 @@ NSString *const kHDWHAppInfoKey = @"appInfo";
 static NSString *const kWHRequestItmsApp = @"itms-apps://";
 - (BOOL)isItmsAppsRequest:(NSString *)url {
     // https://itunes.apple.com/cn/app/id1440238257
-    NSArray<NSString *> *prefixs = @[kWHRequestItmsApp, @"https://itunes.apple.com", @"itms-appss://", @"itms-services://", @"itmss://"];
+    NSArray<NSString *> *prefixs = @[kWHRequestItmsApp, @"https://itunes.apple.com", @"itms-appss://", @"itmss://"];
     BOOL __block pass = NO;
 
     [prefixs enumerateObjectsUsingBlock:^(NSString *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
