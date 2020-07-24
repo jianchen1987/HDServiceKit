@@ -144,6 +144,7 @@
         @"appVersion": HDIsStringNotEmpty(self.appVersion) ? self.appVersion : HDDeviceInfo.appVersion,
         @"channel": HDIsStringNotEmpty(self.channel) ? self.channel : @"AppStore",
         @"appId": HDIsStringNotEmpty(self.appID) ? self.appID : @"SuperApp",
+        @"appNo":HDIsStringNotEmpty(self.appNo) ? self.appNo : @"11",
         @"projectName": HDIsStringNotEmpty(self.projectName) ? self.projectName : @"SuperApp",
         @"Content-Type": @"application/json",
     }];
