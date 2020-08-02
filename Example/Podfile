@@ -12,7 +12,7 @@ target 'HDServiceKit_Example' do
   pod 'HDKitCore/HDMediator'
   pod 'HDKitCore/UnicodeLog'
   pod 'HDUIKit/MainFrame'
-  pod 'HDVendorKit', :path => '/Users/VanJay/Documents/Work/Chaos/HDKit/HDVendorKit'
+  pod 'HDVendorKit'
 
   target 'HDServiceKit_Tests' do
     inherit! :search_paths

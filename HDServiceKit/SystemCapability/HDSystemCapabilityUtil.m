@@ -18,9 +18,23 @@ static NSOperationQueue *_queue;
     if (!phoneNum || phoneNum.length <= 0) {
         return;
     }
+    
 
     // 号码去空格，否则生成 url 为 nil
     phoneNum = [phoneNum stringByReplacingOccurrencesOfString:@" " withString:@""];
+    phoneNum = [phoneNum stringByReplacingOccurrencesOfString:@"<" withString:@""];
+    phoneNum = [phoneNum stringByReplacingOccurrencesOfString:@">" withString:@""];
+    phoneNum = [phoneNum stringByReplacingOccurrencesOfString:@"(" withString:@""];
+    phoneNum = [phoneNum stringByReplacingOccurrencesOfString:@")" withString:@""];
+    phoneNum = [phoneNum stringByReplacingOccurrencesOfString:@"+" withString:@""];
+    phoneNum = [phoneNum stringByReplacingOccurrencesOfString:@"-" withString:@""];
+    if([phoneNum hasPrefix:@"855"]) {
+        [phoneNum stringByReplacingOccurrencesOfString:@"855" withString:@""];
+        if(![phoneNum hasPrefix:@"0"]) {
+            // 按需求方要求，去掉855 补0
+            phoneNum = [@"0" stringByAppendingString:phoneNum];
+        }
+    }
     NSURL *phoneURL = [NSURL URLWithString:[NSString stringWithFormat:@"tel://%@", phoneNum]];
     [[UIApplication sharedApplication] openURL:phoneURL];
 }
