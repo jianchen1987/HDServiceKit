@@ -88,13 +88,13 @@ static NSOperationQueue *_queue;
 }
 
 + (void)gotoAppStoreScoreWithAppID:(NSString *)appID {
-    appID = appID ?: @"1440238257";
+    appID = appID ?: @"1507128993";
     NSString *str = [NSString stringWithFormat:@"itms-apps://itunes.apple.com/cn/app/id%@?mt=8&action=write-review", appID];
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:str]];
 }
 
 + (void)gotoAppStoreForAppID:(NSString *)appID {
-    appID = appID ?: @"1440238257";
+    appID = appID ?: @"1507128993";
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"itms-apps://itunes.apple.com/app/id%@", appID]];
     [[UIApplication sharedApplication] openURL:url];
 }
