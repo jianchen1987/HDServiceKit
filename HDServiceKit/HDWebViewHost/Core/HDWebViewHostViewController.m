@@ -25,6 +25,7 @@
 
 // 该 key 为业务方的 key，因为是应用内语言切换，所以不能获取系统语言
 static NSString *const kCurrentLanguageCacheKey = @"kCurrentLanguageCache";
+static NSTimeInterval const kTimeoutInterval = 60;
 
 @interface HDWebViewHostViewController () <UIScrollViewDelegate, WKUIDelegate, WKScriptMessageHandler>
 @property (nonatomic, strong) WKWebView *webView;
@@ -173,6 +174,8 @@ BOOL kGCDWebServer_logging_enabled = false;
         [mDict setValuesForKeysWithDictionary:dict];
         fixedRequest.allHTTPHeaderFields = mDict;
     }
+    fixedRequest.cachePolicy = NSURLRequestReloadRevalidatingCacheData;
+    fixedRequest.timeoutInterval = kTimeoutInterval;
     [self updateRequestAcceptLanguage:fixedRequest];
     return fixedRequest;
 }
@@ -182,12 +185,12 @@ BOOL kGCDWebServer_logging_enabled = false;
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *currentLanguage = [defaults valueForKey:kCurrentLanguageCacheKey];
     if (!currentLanguage) {
-        currentLanguage = @"en-US"; /// 默认英文
+        currentLanguage = @"en-US";  /// 默认英文
     }
     [request setValue:currentLanguage forHTTPHeaderField:@"Accept-Language"];
-    
+
     NSString *ua = [NSString stringWithFormat:@" %@/%@ ", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"],
-    [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]];
+                                              [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]];
 
     if (@available(iOS 12.0, *)) {
         NSString *baseAgent = [self.webView valueForKey:@"applicationNameForUserAgent"];
@@ -228,7 +231,7 @@ BOOL kGCDWebServer_logging_enabled = false;
     // 检查网络是否联网
     HDReachability *reachability = [HDReachability reachabilityForInternetConnection];
     if ([reachability isReachable]) {
-        NSMutableURLRequest *mutableRequest = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:120];
+        NSMutableURLRequest *mutableRequest = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:kTimeoutInterval];
         [self mark:kWebViewHostTimingLoadRequest];
         [self updateRequestAcceptLanguage:mutableRequest];
         [self.webView loadRequest:mutableRequest];
@@ -456,7 +459,7 @@ BOOL kGCDWebServer_logging_enabled = false;
 
     if (kFakeCookieWebPageURLWithQueryString.length > 0 && [HDWebViewHostCookie loginCookieHasBeenSynced] == NO) {  // 此时需要同步 Cookie，走同步 Cookie 的流程
         NSURL *cookieURL = [NSURL URLWithString:kFakeCookieWebPageURLWithQueryString];
-        NSMutableURLRequest *mutableRequest = [NSMutableURLRequest requestWithURL:cookieURL cachePolicy:NSURLRequestReloadRevalidatingCacheData timeoutInterval:120];
+        NSMutableURLRequest *mutableRequest = [NSMutableURLRequest requestWithURL:cookieURL cachePolicy:NSURLRequestReloadRevalidatingCacheData timeoutInterval:kTimeoutInterval];
         WKWebView *cookieWebview = [self cookieWebview];
         [self.view addSubview:cookieWebview];
         [self mark:kWebViewHostTimingLoadRequest];

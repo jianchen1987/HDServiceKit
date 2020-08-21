@@ -7,10 +7,10 @@
 //
 
 #import "HDH5ViewController.h"
-#import <HDServiceKit/HDWebViewHost.h>
-#import "HDCallBackExample.h"
 #import "H5DescTableViewCell.h"
+#import "HDCallBackExample.h"
 #import "LoadJDWebViewViewController.h"
+#import <HDServiceKit/HDWebViewHost.h>
 
 @interface HDH5ViewController () <UITableViewDataSource, UITableViewDelegate>
 /// 列表
@@ -60,32 +60,30 @@
 
 - (void)initDataSource {
     NSArray *dataSource = [NSArray arrayWithObjects:
-                                       @{ @"name": @"自动生成测试用例并加载",
-                                          @"url": @"testcase",
-                                          @"desc": @"该项会自动获取项目中已经实现的方法，并自动渲染成本地 html 并加载，用于自动测试用例"
-                                       },
-                                       @{ @"name": @"加载京东页面，拦截京东 JSBridge 协议",
-                                          @"url": @"https://item.m.jd.com/ware/view.action?wareId=5904827&sid=null",
-                                          @"desc": @"本用例展示：WebViewHost 不仅提供了内置的 JSBridge 协议，还可以和原有的协议共存。\n 通过继承 HDWebViewHostViewController，重载了 decidePolicy 来实现这一点。保持内聚的同时，也具备一定的灵活性。\nWebViewHost 也可以让 native 主动调用自己实现的h5调用原生的能力。将前后端能力统一，满足特殊场景。\n 操作步骤:\n 点击顶部的立即下载，此时弹出一个 toast，内容是京东 JSBridge 接口传的参数。"
-                                       },
-                                       @{ @"name": @"加载淘宝移动端首页，观察其性能参数",
-                                          @"url": @"https://m.taobao.com",
-                                          @"desc": @"本用例展示：WebViewHost 的定制能力和查看简单的性能工具。 根据Xcode 控制台日志里的提示，用电脑浏览器打开调试页面，按照提示或者点击左侧快捷菜单、或直接输入 :timing 接口查看"
-                                       },
-                                       @{ @"name": @"加载本地文件夹，测试接口参数",
-                                          @"fileName": @"/index.html",
-                                          @"dir": @"LocalDir",
-                                          @"domain": @"https://www.chaosource.com",
-                                          @"desc": @"本用例展示：WebViewHost 加载本地文件夹资源的能力，可以自定义域名"
-                                       },
-                                       @{ @"name": @"加载本地页面，可向服务器发 ajax 请求",
-                                          @"fileName": @"localFileSendXHR.html",
-                                          @"desc": @"本地文件服务器发送请求",
-                                          @"domain": @"https://github.com" },
-                                       @{ @"name": @"加载内网H5测试页面",
-                                          @"url": @"http://172.16.19.200:8080/test-page/index.html",
-                                          @"desc": @"测试"
-                                       },
+                                       @{@"name": @"自动生成测试用例并加载",
+                                         @"url": @"testcase",
+                                         @"desc": @"该项会自动获取项目中已经实现的方法，并自动渲染成本地 html 并加载，用于自动测试用例"},
+                                       @{@"name": @"加载京东页面，拦截京东 JSBridge 协议",
+                                         @"url": @"https://item.m.jd.com/ware/view.action?wareId=5904827&sid=null",
+                                         @"desc": @"本用例展示：WebViewHost 不仅提供了内置的 JSBridge 协议，还可以和原有的协议共存。\n 通过继承 HDWebViewHostViewController，重载了 decidePolicy 来实现这一点。保持内聚的同时，也具备一定的灵活性。\nWebViewHost 也可以让 native 主动调用自己实现的h5调用原生的能力。将前后端能力统一，满足特殊场景。\n 操作步骤:\n 点击顶部的立即下载，此时弹出一个 toast，内容是京东 JSBridge 接口传的参数。"},
+                                       @{@"name": @"加载淘宝移动端首页，观察其性能参数",
+                                         @"url": @"https://m.taobao.com",
+                                         @"desc": @"本用例展示：WebViewHost 的定制能力和查看简单的性能工具。 根据Xcode 控制台日志里的提示，用电脑浏览器打开调试页面，按照提示或者点击左侧快捷菜单、或直接输入 :timing 接口查看"},
+                                       @{@"name": @"加载本地文件夹，测试接口参数",
+                                         @"fileName": @"/index.html",
+                                         @"dir": @"LocalDir",
+                                         @"domain": @"https://www.chaosource.com",
+                                         @"desc": @"本用例展示：WebViewHost 加载本地文件夹资源的能力，可以自定义域名"},
+                                       @{@"name": @"加载本地页面，可向服务器发 ajax 请求",
+                                         @"fileName": @"localFileSendXHR.html",
+                                         @"desc": @"本地文件服务器发送请求",
+                                         @"domain": @"https://github.com"},
+                                       @{@"name": @"加载内网H5测试页面",
+                                         @"url": @"http://172.16.19.200:8080/test-page/index.html",
+                                         @"desc": @"测试"},
+                                       @{@"name": @"缓存测试",
+                                         @"url": @"https://h5-uat.lifekh.com/mobile-h5/super/app/user/v1/download-app",
+                                         @"desc": @"测试"},
                                        nil];
     self.dataSource = dataSource;
 }

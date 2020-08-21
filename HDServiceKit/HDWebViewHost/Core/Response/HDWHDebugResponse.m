@@ -79,10 +79,12 @@ static NSString *kLastWeinreScript = nil;
     NSString *timingTxt = [NSString stringWithContentsOfURL:timing encoding:NSUTF8StringEncoding error:nil];
     script = [HDWebViewHostCustomJavscript customJavscriptWithScript:timingTxt injectionTime:WKUserScriptInjectionTimeAtDocumentEnd key:@"timing.js"];
     [scripts addObject:script];
-
+    // 取消注入 debug js
+    /*
     [scripts enumerateObjectsUsingBlock:^(HDWebViewHostCustomJavscript *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
         [HDWebViewHostViewController prepareJavaScript:obj.script when:obj.injectionTime key:obj.key];
     }];
+    */
 #endif
 }
 
