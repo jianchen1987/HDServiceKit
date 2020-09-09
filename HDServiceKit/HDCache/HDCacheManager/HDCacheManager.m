@@ -109,23 +109,27 @@ static pthread_rwlock_t rwLock;
         [self removeObjectForKey:aKey];
         return;
     }
-    pthread_rwlock_wrlock(&rwLock);
+
     if (toDisk) {
+        // 里面有加锁操作
         [self setObject:aObject forKey:aKey];
     } else {
+        pthread_rwlock_wrlock(&rwLock);
         [[NSNotificationCenter defaultCenter]
             postNotificationName:kHDCacheManagerSetObjectNotification
                           object:@{kHDCacheManagerObjectKey: @{aKey: aObject}}];
         [self.tmpDatas setObject:aObject forKey:aKey];
+        pthread_rwlock_unlock(&rwLock);
     }
-    pthread_rwlock_unlock(&rwLock);
 }
 
 - (void)setObjectTokeyChain:(id)aObject forKey:(NSString *)aKey {
     if (!aKey)
         return;
     if (!aObject) {
+        pthread_rwlock_wrlock(&rwLock);
         [self removeObjectForKey:aKey];
+        pthread_rwlock_unlock(&rwLock);
         return;
     }
     pthread_rwlock_wrlock(&rwLock);
@@ -146,7 +150,9 @@ static pthread_rwlock_t rwLock;
     if (!aKey)
         return;
     if (!aObject) {
+        pthread_rwlock_wrlock(&rwLock);
         [self removeObjectForKey:aKey];
+        pthread_rwlock_unlock(&rwLock);
         return;
     }
     pthread_rwlock_wrlock(&rwLock);
@@ -164,16 +170,18 @@ static pthread_rwlock_t rwLock;
 
 #pragma mark - 获取数据
 - (id)objectForKey:(NSString *)aKey {
-    pthread_rwlock_rdlock(&rwLock);
+
     if (!aKey) {
-        pthread_rwlock_unlock(&rwLock);
         return nil;
     }
+    pthread_rwlock_rdlock(&rwLock);
     id value = [self.tmpDatas objectForKey:aKey] ?: ({
         HDCacheStorageObject *object = [self.fileStorage objectForKey:aKey];
         id returnObject = [object storageObject];
-        if (!returnObject)
+        if (!returnObject) {
+            pthread_rwlock_unlock(&rwLock);
             return nil;
+        }
         [[NSNotificationCenter defaultCenter]
             postNotificationName:kHDCacheManagerGetObjectNotification
                           object:@{
@@ -187,9 +195,12 @@ static pthread_rwlock_t rwLock;
 
 /** 异步根据Key获取缓存对象 */
 - (void)objectKey:(NSString *)aKey completion:(void (^)(id obj))block {
-    pthread_rwlock_rdlock(&rwLock);
-    if (!aKey)
+
+    if (!aKey) {
         return;
+    }
+
+    pthread_rwlock_rdlock(&rwLock);
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
                    ^{
                        id obj = [self objectForKey:aKey];
@@ -255,7 +266,9 @@ static pthread_rwlock_t rwLock;
 }
 
 - (void)clearMemory {
+    pthread_rwlock_wrlock(&rwLock);
     [self.tmpDatas removeAllObjects];
     [self.fileStorage clearMemory];
+    pthread_rwlock_unlock(&rwLock);
 }
 @end

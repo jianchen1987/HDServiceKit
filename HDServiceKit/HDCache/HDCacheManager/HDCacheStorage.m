@@ -12,7 +12,7 @@
 #import <UICKeyChainStore/UICKeyChainStore.h>
 
 const NSString *HDCacheStorageDefaultFinderName = @"Storage";
-const NSString *HDCacheStorageDefaultkeyChainServiceSuffix = @"com.vipay.keyChain";
+const NSString *HDCacheStorageDefaultkeyChainServiceSuffix = @"com.wownow.keyChain";
 
 typedef NSCache HDMemoryCache;
 
