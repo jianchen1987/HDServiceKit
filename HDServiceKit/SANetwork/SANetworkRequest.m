@@ -130,7 +130,7 @@
     // 设置 HTTPHeaderField
     NSDateFormatter *fmt = [[NSDateFormatter alloc] init];
     [fmt setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-    [fmt setLocale:[NSLocale currentLocale]];
+    [fmt setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]];
     NSString *requestTm = [fmt stringFromDate:NSDate.date];
     NSString *deviceId = HDDeviceInfo.getUniqueId;
     NSMutableDictionary<NSString *, NSString *> *headerFieldsDict = [NSMutableDictionary dictionaryWithDictionary:@{
