@@ -154,6 +154,7 @@
     [headerFieldsDict enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull key, NSString *_Nonnull obj, BOOL *_Nonnull stop) {
         [serializer setValue:obj forHTTPHeaderField:key];
     }];
+    serializer.HTTPShouldHandleCookies = NO;
     return serializer;
 }
 
