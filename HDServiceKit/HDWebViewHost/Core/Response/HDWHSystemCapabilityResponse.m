@@ -9,6 +9,13 @@
 #import "HDDeviceInfo.h"
 #import "HDSystemCapabilityUtil.h"
 #import "HDWebViewHostViewController+Callback.h"
+#import <HDVendorKit/HDVendorKit.h>
+
+@interface HDWHSystemCapabilityResponse ()
+
+@property (nonatomic, copy) NSString *socialShareCallBackKey;      ///< 回调
+
+@end
 
 @implementation HDWHSystemCapabilityResponse
 + (NSDictionary<NSString *, NSString *> *)supportActionList {
@@ -204,41 +211,47 @@ wh_doc_end;
 }
 
 - (void)socialShare:(NSDictionary *)paramDic callback:(NSString *)callBackKey {
-    
-    NSMutableArray *items = [[NSMutableArray alloc] initWithCapacity:3];
-    
+        
     NSString *title = [paramDic valueForKey:@"title"];
     NSString *titleImage = [paramDic valueForKey:@"image"];
     NSString *content = [paramDic valueForKey:@"content"];
     
-    if(content &&![content isKindOfClass:[NSNull class]] && ![content isEqualToString:@""]) {
-        NSURL *urlToShare = [NSURL URLWithString:content];
-        if(urlToShare) {
-            [items addObject:urlToShare];
-        } else {
-            [items addObject:content];
-        }
+    if(HDIsStringEmpty(title) && HDIsStringEmpty(titleImage) && HDIsStringEmpty(content)) {
+        [self.webViewHost fireCallback:callBackKey actionName:@"socialShare" code:HDWHRespCodeIllegalArg type:HDWHCallbackTypeFail params:@{}];
+        return;
     }
     
-
-    NSArray *activityItems = [NSArray arrayWithArray:items];
-    UIActivityViewController *activityVC = [[UIActivityViewController alloc]initWithActivityItems:activityItems applicationActivities:nil];
-    __weak __typeof(self) weakSelf = self;
-    activityVC.completionWithItemsHandler = ^(NSString *activityType,BOOL completed,NSArray *returnedItems,NSError *activityError) {
-        __strong __typeof(weakSelf) strongSelf = weakSelf;
-           if (completed) {
-           }
-           else {
-           }
-        [strongSelf.webViewHost fireCallback:callBackKey
-        actionName:@"socialShare"
-              code:HDWHRespCodeSuccess
-              type:HDWHCallbackTypeSuccess
-            params:@{}];
-       };
-
-    [self.webViewHost presentViewController:activityVC animated:YES completion:nil];
+    self.socialShareCallBackKey = callBackKey;
     
+    HDWeakify(self);
+    void (^socialShare)(UIImage *, NSString *, NSString *) = ^void(UIImage *image, NSString *title, NSString *url) {
+        HDStrongify(self);
+        [HDSystemCapabilityUtil socialShareTitle:title
+                                           image:image
+                                         content:url
+                                inViewController:self.webViewHost
+                                          result:^(NSError *_Nonnull error_Nullable){
+            [self.webViewHost fireCallback:self.socialShareCallBackKey
+                                actionName:@"socialShare"
+                                      code:HDWHRespCodeSuccess
+                                      type:HDWHCallbackTypeSuccess
+                                    params:@{}];
+        }];
+    };
+    
+    if (!HDIsObjectNil(titleImage) && HDIsStringNotEmpty(titleImage)) {
+        [self.webViewHost showloading];
+        [HDWebImageManager setImageWithURL:titleImage
+                          placeholderImage:nil
+                                 imageView:UIImageView.new
+                                 completed:^(UIImage *_Nullable image, NSError *_Nullable error, SDImageCacheType cacheType, NSURL *_Nullable imageURL) {
+            HDStrongify(self);
+                                     [self.webViewHost dismissLoading];
+                                     socialShare(image, shareTitle, content);
+                                 }];
+    } else {
+        socialShare(nil, title, content);
+    }
     
 }
 
