@@ -9,7 +9,7 @@
 #import "HDDeviceInfo.h"
 #import "HDSystemCapabilityUtil.h"
 #import "HDWebViewHostViewController+Callback.h"
-#import <HDVendorKit/HDVendorKit.h>
+#import <HDVendorKit/HDWebImageManager.h>
 
 @interface HDWHSystemCapabilityResponse ()
 
@@ -223,15 +223,17 @@ wh_doc_end;
     
     self.socialShareCallBackKey = callBackKey;
     
-    HDWeakify(self);
+    __weak __typeof(self) weakSelf = self;
     void (^socialShare)(UIImage *, NSString *, NSString *) = ^void(UIImage *image, NSString *title, NSString *url) {
-        HDStrongify(self);
+        __strong __typeof(weakSelf) strongSelf = weakSelf;
+        __weak __typeof(strongSelf) weakSelf2 = strongSelf;
         [HDSystemCapabilityUtil socialShareTitle:title
                                            image:image
                                          content:url
-                                inViewController:self.webViewHost
+                                inViewController:strongSelf.webViewHost
                                           result:^(NSError *_Nonnull error_Nullable){
-            [self.webViewHost fireCallback:self.socialShareCallBackKey
+            __strong __typeof(weakSelf2) strongSelf2 = weakSelf2;
+            [self.webViewHost fireCallback:strongSelf2.socialShareCallBackKey
                                 actionName:@"socialShare"
                                       code:HDWHRespCodeSuccess
                                       type:HDWHCallbackTypeSuccess
@@ -240,14 +242,11 @@ wh_doc_end;
     };
     
     if (!HDIsObjectNil(titleImage) && HDIsStringNotEmpty(titleImage)) {
-        [self.webViewHost showloading];
         [HDWebImageManager setImageWithURL:titleImage
                           placeholderImage:nil
                                  imageView:UIImageView.new
                                  completed:^(UIImage *_Nullable image, NSError *_Nullable error, SDImageCacheType cacheType, NSURL *_Nullable imageURL) {
-            HDStrongify(self);
-                                     [self.webViewHost dismissLoading];
-                                     socialShare(image, shareTitle, content);
+                                     socialShare(image, title, content);
                                  }];
     } else {
         socialShare(nil, title, content);

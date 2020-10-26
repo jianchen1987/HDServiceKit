@@ -12,7 +12,7 @@ target 'HDServiceKit_Example' do
   pod 'HDKitCore/HDMediator'
   pod 'HDKitCore/UnicodeLog'
   pod 'HDUIKit/MainFrame'
-  pod 'HDVendorKit'
+  pod 'HDVendorKit/HDWebImageManager'
 
   target 'HDServiceKit_Tests' do
     inherit! :search_paths

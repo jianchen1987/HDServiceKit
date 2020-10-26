@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
   if $lib || $lib_name
     puts '--------- HDServiceKit binary -------'
 
-    s.frameworks       = 'Foundation', 'UIKit', 'CoreLocation', 'MapKit', 'CoreTelephony', 'AdSupport', 'SafariServices', 'WebKit', 'MobileCoreServices', 'ContactsUI'
+    s.frameworks       = 'Foundation', 'UIKit', 'CoreLocation', 'MapKit', 'CoreTelephony', 'AdSupport', 'SafariServices', 'WebKit', 'CoreServices', 'ContactsUI'
     s.ios.vendored_framework = "#{s.name}-#{s.version}/ios/#{s.name}.framework"
     s.resources = "#{s.name}-#{s.version}/ios/#{s.name}.framework/Versions/A/Resources/*.bundle"
     s.dependency  'GCDWebServer', '~> 3.0'
@@ -119,7 +119,7 @@ Pod::Spec.new do |s|
         ss.dependency  'HDServiceKit/HDDeviceInfo'
         ss.dependency  'HDServiceKit/Location'
         ss.dependency  'HDServiceKit/ScanCode'
-        ss.dependency  'HDVendorKit'
+        ss.dependency  'HDVendorKit/HDWebImageManager'
       end
 
       ss.subspec 'RemoteDebug' do |ss|
