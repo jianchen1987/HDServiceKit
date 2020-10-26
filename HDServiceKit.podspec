@@ -119,7 +119,7 @@ Pod::Spec.new do |s|
         ss.dependency  'HDServiceKit/HDDeviceInfo'
         ss.dependency  'HDServiceKit/Location'
         ss.dependency  'HDServiceKit/ScanCode'
-        ss.dependency  'HDVendorKit/HDWebImageManager'
+        ss.dependency  'HDVendorKit'
       end
 
       ss.subspec 'RemoteDebug' do |ss|
