@@ -129,9 +129,10 @@
     AFJSONRequestSerializer *serializer = [AFJSONRequestSerializer new];
     // 设置 HTTPHeaderField
     NSDateFormatter *fmt = [[NSDateFormatter alloc] init];
-    [fmt setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    [fmt setDateFormat:@"yyyyMMddHHmmss"];
     [fmt setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]];
     NSString *requestTm = [fmt stringFromDate:NSDate.date];
+    requestTm = [requestTm stringByAppendingFormat:@"%04d",arc4random() % 10000];
     NSString *deviceId = HDDeviceInfo.getUniqueId;
     NSMutableDictionary<NSString *, NSString *> *headerFieldsDict = [NSMutableDictionary dictionaryWithDictionary:@{
         @"requestTm": requestTm,
@@ -139,7 +140,7 @@
         @"deviceId": deviceId,
         @"signVer": @"1.0",
         @"sign": [self getSignatureWithRequestTime:requestTm deviceId:deviceId],
-        @"type": self.cipherMode == SANetworkRequestCipherModeMD5 ? @"md5" : @"rsa",
+//        @"type": self.cipherMode == SANetworkRequestCipherModeMD5 ? @"md5" : @"rsa",
         @"Accept-Language": HDIsStringNotEmpty(self.acceptLanguage) ? self.acceptLanguage : HDDeviceInfo.getDeviceLanguage,
         @"appVersion": HDIsStringNotEmpty(self.appVersion) ? self.appVersion : HDDeviceInfo.appVersion,
         @"channel": HDIsStringNotEmpty(self.channel) ? self.channel : @"AppStore",
