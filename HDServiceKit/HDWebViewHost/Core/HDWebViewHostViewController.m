@@ -194,8 +194,10 @@ BOOL kGCDWebServer_logging_enabled = false;
 
     if (@available(iOS 12.0, *)) {
         NSString *baseAgent = [self.webView valueForKey:@"applicationNameForUserAgent"];
-        NSString *userAgent = [NSString stringWithFormat:@"%@%@", baseAgent, ua];
-        [self.webView setValue:userAgent forKey:@"applicationNameForUserAgent"];
+        if([baseAgent rangeOfString:ua].location == NSNotFound) {
+            NSString *userAgent = [NSString stringWithFormat:@"%@%@", baseAgent, ua];
+            [self.webView setValue:userAgent forKey:@"applicationNameForUserAgent"];
+        }
     }
 
     if (@available(iOS 9.0, *)) {
