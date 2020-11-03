@@ -9,6 +9,7 @@
 #import "HDWHNavigationResponse.h"
 #import "HDWebViewHostViewController.h"
 #import <SafariServices/SafariServices.h>
+#import "HDWebViewHostViewController+Callback.h"
 
 @implementation HDWHNavigationResponse
 
@@ -16,8 +17,15 @@
     return @{
         @"startNewPage_": kHDWHResponseMethodOn,
         @"openExternalUrl_": kHDWHResponseMethodOn,
-        @"closeWindow": kHDWHResponseMethodOn
+        @"closeWindow": kHDWHResponseMethodOn,
+        @"enableWebViewGesture_$": kHDWHResponseMethodOn
     };
+}
+
+- (void)enableWebViewGesture:(NSDictionary *)paramDic callback:(NSString *)callBackKey {
+    NSNumber *enable = paramDic[@"enable"];
+    self.webViewHost.disableGesture = enable.boolValue;
+    [self.webViewHost fireCallback:callBackKey actionName:@"enableWebViewGesture" code:HDWHRespCodeSuccess type:HDWHCallbackTypeSuccess params:@{}];
 }
 
 #pragma mark - inner

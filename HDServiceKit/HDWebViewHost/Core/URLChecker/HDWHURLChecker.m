@@ -92,4 +92,25 @@ static NSDictionary *_authorizedTable = nil;
     }
 }
 
+- (BOOL)addWhiteList:(NSArray<NSString *> *)whiteList forAuthorizationType:(HDWHAuthorizationType)authType {
+    if(whiteList.count == 0) {
+        return YES;
+    }
+    NSString *key = nil;
+    if (authType == HDWHAuthorizationTypeSchema) {
+        key = @"schema-open-url";
+    } else if (authType == HDWHAuthorizationTypeWebViewHost) {
+        key = @"webviewhost";
+    }
+    if (key) {
+        NSArray *rules = [_authorizedTable objectForKey:key];
+        NSMutableArray *tmp = [[NSMutableArray alloc] initWithArray:rules];
+        [tmp addObjectsFromArray:whiteList];
+        [_authorizedTable setValue:tmp forKey:key];
+        return YES;
+    }
+    
+    return NO;
+}
+
 @end

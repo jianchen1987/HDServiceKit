@@ -81,6 +81,11 @@
                                        @{@"name": @"加载内网H5测试页面",
                                          @"url": @"http://172.16.19.200:8080/test-page/index.html",
                                          @"desc": @"测试"},
+                           @{
+                               @"name" : @"加载sit TestPage",
+                               @"url" : @"https://h5-sit.lifekh.com/mobile-h5/hybrid-jssdk-test-page",
+                               @"desc" : @"testPage"
+                           },
                                        @{@"name": @"缓存测试",
                                          @"url": @"https://h5-uat.lifekh.com/mobile-h5/super/app/user/v1/download-app",
                                          @"desc": @"测试"},

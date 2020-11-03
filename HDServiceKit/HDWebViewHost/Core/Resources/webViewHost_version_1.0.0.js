@@ -51,6 +51,86 @@
         __fire: function (_action, _data) {
             var funcCached = this.reqs[String(_action)];
             this.isFunction(funcCached) && funcCached(_data);
-        }
+        },
+        apis : ['addGoodsToShoppingCar-sync-function',
+                'checkJsApi-async-function',
+                'chooseImage-sync-function',
+                'closeWindow-async-function-lackCallback',
+                'deleteGoodsFromShoppingCar-sync-function',
+                'downloadImage-async-function',
+                'getContacts-sync-function',
+                'getLocalImgData-async-function',
+                'getLocation-async-function',
+                'getSelectedAddress-async-function',
+                'getUserDevice-async-function',
+                'getUserInfo-async-function',
+                'hideRightMenu-async-function-lackCallback',
+                'makePhoneCall-sync-function',
+                'navigationToRoute-async-function-lackCallback',
+                'onSearchBeacons-sync-function',
+                'openAddress-async-function',
+                'openLocation-sync-function',
+                'orderAndPay-sync-function',
+                'payOrder-sync-function',
+                'phoneChargePay-sync-function',
+                'previewImage-sync-function',
+                'queryOrderState-async-function',
+                'scanQRCode-sync-function',
+                'shareFacebook-sync-function',
+                'shareMore-sync-function',
+                'showRightMenu-async-function-lackCallback',
+                'socialShare-sync-function',
+                'uploadImage-async-function',
+                'showSocialShareNavButton-async-function',
+                'showPhoneCallNavButton-async-function',
+                'removeAllNavButton-async-function',
+                'getAddressInfo-async-function',
+                'loginWithPermissions-async-function',
+                'networkRequest-async-function',
+                'enableWebViewGesture-async-function',
+                'setWebViewBackStyle-async-function']
     };
 }(window);
+
+
+/*
+ 函数名-同步/异步(sync/async)-函数/事件(function/event)-回调（lackCallback:无回调）
+ [
+     'addGoodsToShoppingCar-sync-function',
+     'checkJsApi-async-function',
+     'chooseImage-sync-function',
+     'closeWindow-async-function-lackCallback',
+     'deleteGoodsFromShoppingCar-sync-function',
+     'downloadImage-async-function',
+     'getContacts-sync-function',
+     'getLocalImgData-async-function',
+     'getLocation-async-function',
+     'getSelectedAddress-async-function',
+     'getUserDevice-async-function',
+     'getUserInfo-async-function',
+     'hideRightMenu-async-function-lackCallback',
+     'makePhoneCall-sync-function',
+     'navigationToRoute-async-function-lackCallback',
+     'onSearchBeacons-sync-function',
+     'openAddress-async-function',
+     'openLocation-sync-function',
+     'orderAndPay-sync-function',
+     'payOrder-sync-function',
+     'phoneChargePay-sync-function',
+     'previewImage-sync-function',
+     'queryOrderState-async-function',
+     'scanQRCode-sync-function',
+     'shareFacebook-sync-function',
+     'shareMore-sync-function',
+     'showRightMenu-async-function-lackCallback',
+     'socialShare-sync-function',
+     'uploadImage-async-function',
+     'showSocialShareNavButton-async-function',
+     'showPhoneCallNavButton-async-function',
+     'removeAllNavButton-async-function',
+     'getAddressInfo-async-function',
+     'loginWithPermissions-async-function',
+     'networkRequest-async-function'
+   ]
+ 
+ */

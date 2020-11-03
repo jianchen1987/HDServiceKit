@@ -9,6 +9,7 @@
 #import "HDWHNavigationBarResponse.h"
 #import "HDWebViewHostViewController+Dispatch.h"
 #import "NSBundle+HDWebViewHost.h"
+#import "HDWebViewHostViewController+Callback.h"
 
 @interface HDWHNavigationBarResponse ()
 /// 以下是 short hand，都是从 webViewHost 上的属性
@@ -23,8 +24,19 @@
         @"setNavRightTitle_": kHDWHResponseMethodOn,
         @"setNavTitle_": kHDWHResponseMethodOn,
         @"showRightMenu": kHDWHResponseMethodOn,
-        @"hideRightMenu": kHDWHResponseMethodOn
+        @"hideRightMenu": kHDWHResponseMethodOn,
+        @"setWebViewBackStyle_$": kHDWHResponseMethodOn
     };
+}
+
+- (void)setWebViewBackStyle:(NSDictionary *)paramDict callback:(NSString *)callBackKey {
+    NSString *style = paramDict[@"style"];
+    if(!style || !([style isEqualToString:HDWebViewBakcButtonStyleGoBack] || [style isEqualToString:HDWebViewBakcButtonStyleClose])) {
+        [self.webViewHost fireCallback:callBackKey actionName:@"setWebViewBackStyle" code:HDWHRespCodeIllegalArg type:HDWHCallbackTypeFail params:@{}];
+        return;
+    }
+    self.webViewHost.backButtonStyle = style;
+    [self.webViewHost fireCallback:callBackKey actionName:@"setWebViewBackStyle" code:HDWHRespCodeSuccess type:HDWHCallbackTypeSuccess params:@{}];
 }
 
 #pragma mark - inner

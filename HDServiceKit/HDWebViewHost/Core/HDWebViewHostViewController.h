@@ -17,6 +17,12 @@ static NSString *kWebViewHostInvokeResponseEvent = @"kWebViewHostInvokeResponseE
 
 @class HDWebViewHostViewController;
 
+///返回按钮类型
+typedef NSString *HDWebViewBakcButtonStyle NS_STRING_ENUM;
+FOUNDATION_EXPORT HDWebViewBakcButtonStyle const HDWebViewBakcButtonStyleClose;      ///< 关闭
+FOUNDATION_EXPORT HDWebViewBakcButtonStyle const HDWebViewBakcButtonStyleGoBack;     ///< 返回
+
+
 /**
  监听 Response 里的事件；
  */
@@ -50,6 +56,9 @@ static NSString *kWebViewHostInvokeResponseEvent = @"kWebViewHostInvokeResponseE
  */
 @property (nonatomic, assign) BOOL disabledProgressor;
 
+@property (nonatomic, assign) BOOL disableGesture;      ///< 关闭全屏手势
+
+@property (nonatomic, copy) HDWebViewBakcButtonStyle backButtonStyle;      ///< 返回交互风格
 /**
  取消记住上次浏览历史的特性
  */

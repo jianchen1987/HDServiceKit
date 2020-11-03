@@ -32,4 +32,9 @@ typedef NS_ENUM(NSUInteger, HDWHAuthorizationType) {
  */
 - (BOOL)checkURL:(NSURL *)url forAuthorizationType:(HDWHAuthorizationType)authType;
 
+/// 添加白名单
+/// @param whiteList 白名单列表
+/// @param authType 授权类型
+- (BOOL)addWhiteList:(NSArray<NSString *> *)whiteList forAuthorizationType:(HDWHAuthorizationType)authType;
+
 @end

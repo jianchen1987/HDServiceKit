@@ -22,10 +22,17 @@
 #import "HDWebViewHostViewController+Scripts.h"
 #import "HDWebViewHostViewController+Timing.h"
 #import "HDWebViewHostViewController+Utils.h"
+#import <HDUIKit/UIViewController+HDNavigationBar.h>
+#import "NSBundle+HDWebViewHost.h"
 
 // 该 key 为业务方的 key，因为是应用内语言切换，所以不能获取系统语言
 static NSString *const kCurrentLanguageCacheKey = @"kCurrentLanguageCache";
 static NSTimeInterval const kTimeoutInterval = 60;
+
+HDWebViewBakcButtonStyle const HDWebViewBakcButtonStyleClose = @"close";      ///< 关闭
+HDWebViewBakcButtonStyle const HDWebViewBakcButtonStyleGoBack = @"goBack";    ///< 返回
+
+
 
 @interface HDWebViewHostViewController () <UIScrollViewDelegate, WKUIDelegate, WKScriptMessageHandler>
 @property (nonatomic, strong) WKWebView *webView;
@@ -91,6 +98,9 @@ BOOL kGCDWebServer_logging_enabled = false;
     // 检查是否有上次遗留下来的进度条,避免 webview 在 tabbar 第一屏时出现进度条残留
     if (self.webView.estimatedProgress >= 1.f) {
         [self stopProgressor];
+    }
+    if(!self.backButtonStyle || [self.backButtonStyle isEqualToString:@""]) {
+        self.backButtonStyle = HDWebViewBakcButtonStyleClose;
     }
 }
 
@@ -455,6 +465,43 @@ BOOL kGCDWebServer_logging_enabled = false;
     }
 }
 
+#pragma mark - Event
+- (void)hd_backItemClick:(UIBarButtonItem *)sender {
+    HDWHLog(@"返回按钮被点击啦！！");
+    if([self.backButtonStyle isEqualToString:HDWebViewBakcButtonStyleGoBack]) {
+        if([self.webView canGoBack]) {
+            [self.webView goBack];
+        } else {
+            [self close];
+        }
+    } else {
+        [self close];
+    }
+}
+
+- (void)close {
+    if (self.presentingViewController) {
+        if (self.presentingViewController.presentedViewController == self) {
+            [self dismissViewControllerAnimated:YES completion:nil];
+        } else {
+            // 判断有没有导航控制器
+            UINavigationController *navigationController = self.navigationController;
+            if (navigationController) {
+                // 判断是不是只有一个
+                if (navigationController.viewControllers.count <= 1) {
+                    [self dismissViewControllerAnimated:YES completion:nil];
+                } else {
+                    [navigationController popViewControllerAnimated:YES];
+                }
+            } else {
+                [self dismissViewControllerAnimated:YES completion:nil];
+            }
+        }
+    } else {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+}
+
 #pragma mark - setters
 - (void)setUrl:(NSString *)url {
     _url = url;
@@ -470,6 +517,22 @@ BOOL kGCDWebServer_logging_enabled = false;
     } else {
         [self loadWebPageWithURL];
     }
+}
+
+- (void)setDisableGesture:(BOOL)disableGesture {
+    _disableGesture = disableGesture;
+    self.hd_interactivePopDisabled = !disableGesture;
+}
+
+- (void)setBackButtonStyle:(HDWebViewBakcButtonStyle)backButtonStyle {
+    _backButtonStyle = backButtonStyle;
+    UIImage *image = nil;
+    if([backButtonStyle isEqualToString:HDWebViewBakcButtonStyleGoBack]) {
+        image = [UIImage imageNamed:@"goBack" inBundle:[NSBundle hd_WebViewHostCoreResources] compatibleWithTraitCollection:nil];
+    } else {
+        image = [UIImage imageNamed:@"close" inBundle:[NSBundle hd_WebViewHostCoreResources] compatibleWithTraitCollection:nil];
+    }
+    self.hd_backButtonImage = image;
 }
 
 #pragma mark - getter
