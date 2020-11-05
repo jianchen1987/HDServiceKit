@@ -307,8 +307,8 @@
             defaultManager = [AFHTTPSessionManager new];
         });
         manager = defaultManager;
+        manager.completionQueue = dispatch_queue_create("com.hdnetwork.completionqueue", DISPATCH_QUEUE_CONCURRENT);
     }
-    manager.completionQueue = dispatch_queue_create("com.hdnetwork.completionqueue", DISPATCH_QUEUE_CONCURRENT);
     AFHTTPResponseSerializer *customSerializer = request.responseSerializer;
     if (customSerializer) manager.responseSerializer = customSerializer;
     return manager;
