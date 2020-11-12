@@ -34,7 +34,8 @@ FOUNDATION_EXPORT NSString *const kLocationPermissionChangedUserInfoKey;
 
 @interface HDLocationManager : NSObject
 
-@property (nonatomic, assign) CLLocationCoordinate2D coordinate2D;  ///< 当前经纬度
+@property (nonatomic, assign) CLLocationCoordinate2D coordinate2D;      ///< 当前经纬度（不超过100米不会变化）
+@property (nonatomic, assign) CLLocationCoordinate2D realCoordinate2D;  ///< 真实经纬度
 
 /// 单例管理者
 + (instancetype)shared;

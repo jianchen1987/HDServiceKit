@@ -37,6 +37,7 @@ NSString *const kLocationPermissionChangedUserInfoKey = @"kLocationManagerLocati
 #pragma mark - private methods
 - (void)invalidateCoordinate2D {
     self.coordinate2D = CLLocationCoordinate2DMake(-91, -181);
+    self.realCoordinate2D = CLLocationCoordinate2DMake(-91, -181);
 }
 
 #pragma mark - public methods
@@ -91,11 +92,13 @@ NSString *const kLocationPermissionChangedUserInfoKey = @"kLocationManagerLocati
 
     if (!self.isCurrentCoordinate2DValid) {
         self.coordinate2D = locations.lastObject.coordinate;
+        self.realCoordinate2D = locations.lastObject.coordinate;
         // 发送通知
         [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationNameLocationChanged object:nil userInfo:@{kLocationChangedUserInfoKey: locations}];
     } else {
         if (self.mustCallDelegateFlag) {
             self.coordinate2D = locations.lastObject.coordinate;
+            self.realCoordinate2D = locations.lastObject.coordinate;
             // 发送通知
             [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationNameLocationChanged object:nil userInfo:@{kLocationChangedUserInfoKey: locations}];
             self.mustCallDelegateFlag = false;
@@ -104,8 +107,9 @@ NSString *const kLocationPermissionChangedUserInfoKey = @"kLocationManagerLocati
             CLLocation *l1 = [[CLLocation alloc] initWithLatitude:self.coordinate2D.latitude longitude:self.coordinate2D.longitude];
             CLLocation *l2 = [[CLLocation alloc] initWithLatitude:locations.lastObject.coordinate.latitude longitude:locations.lastObject.coordinate.longitude];
             CLLocationDistance distance = [HDLocationUtils distanceFromLocation:l1 toLocation:l2];
-
-            if (distance > 50) {
+            
+            self.realCoordinate2D = locations.lastObject.coordinate;
+            if (distance > 100) {
                 NSLog(@"距离变化超过 %f 米，发出通知", distance);
                 self.coordinate2D = locations.lastObject.coordinate;
 
