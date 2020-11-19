@@ -89,9 +89,7 @@
         completionHandler:^(NSURLResponse *_Nonnull response, NSURL *_Nullable filePath, NSError *_Nullable error) {
             HDNM_TASKRECORD_LOCK([self.taskRecord removeObjectForKey:@(task.taskIdentifier)];)
             if (completion) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    completion([HDNetworkResponse responseWithSessionTask:task responseObject:filePath error:error]);
-                });
+                completion([HDNetworkResponse responseWithSessionTask:task responseObject:filePath error:error]);
             }
         }];
 
@@ -109,9 +107,7 @@
         // 判断是否是致命错误，无需重试
         if ([self isErrorFatal:error]) {
             [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"收到严重错误，请查看屏蔽列表，将停止重试，直接触发回调，原因：%@", error.localizedDescription]];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                !completion ?: completion(wrappedResponse);
-            });
+            !completion ?: completion(wrappedResponse);
             return;
         }
 
@@ -120,9 +116,7 @@
         for (NSNumber *fatalStatusCode in retryConfig.fatalStatusCodes) {
             if (taskResponse.statusCode == fatalStatusCode.integerValue) {
                 [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"请求得到状态码 %zd ，在指定不再尝试的 statusCode 数组中，将停止重试，原因：%@", fatalStatusCode.integerValue, error.localizedDescription]];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    !completion ?: completion(wrappedResponse);
-                });
+                !completion ?: completion(wrappedResponse);
                 return;
             }
         }
@@ -145,15 +139,12 @@
                 });
             } else {
                 [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"重试次数还剩：%zd 次，但 shouldRetryBlock 返回 false，将不再重试，回调数据", retryConfig.remainingRetryCount]];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    !completion ?: completion(wrappedResponse);
-                });
+                !completion ?: completion(wrappedResponse);
             }
         } else {
             [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"重试次数已达最大次数 %zd，将回调数据", retryConfig.maxRetryCount]];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                !completion ?: completion(wrappedResponse);
-            });
+
+            !completion ?: completion(wrappedResponse);
         }
     };
 
