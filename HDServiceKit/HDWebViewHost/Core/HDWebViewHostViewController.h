@@ -72,6 +72,8 @@ FOUNDATION_EXPORT HDWebViewBakcButtonStyle const HDWebViewBakcButtonStyleGoBack;
 @property (nonatomic, weak) id<HDWebViewHostViewControllerDelegate> webViewHostDelegate;
 /// 核心的函数分发机制。可以继承
 @property (nonatomic, strong, readonly) HDWHSchemeTaskDelegate *taskDelegate API_AVAILABLE(ios(11.0));
+/// 主动关闭回调
+@property(nonatomic, copy) void (^closeByUser)(void);
 
 #pragma mark - 使用缓存渲染界面
 /**

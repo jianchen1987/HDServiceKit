@@ -500,6 +500,7 @@ BOOL kGCDWebServer_logging_enabled = false;
     } else {
         [self.navigationController popViewControllerAnimated:YES];
     }
+    !self.closeByUser?:self.closeByUser();
 }
 
 #pragma mark - setters
