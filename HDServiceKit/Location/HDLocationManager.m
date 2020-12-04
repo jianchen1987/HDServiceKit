@@ -7,6 +7,7 @@
 //
 
 #import "HDLocationManager.h"
+#import "HDLocationConverter.h"
 
 NSString *const kNotificationNameLocationPermissionChanged = @"kLocationManagerNotificationNameLocationPermissionChanged";
 NSString *const kNotificationNameLocationChanged = @"kLocationManagerNotificationNameLocationChanged";
@@ -44,6 +45,8 @@ NSString *const kLocationPermissionChangedUserInfoKey = @"kLocationManagerLocati
 - (void)start {
     // 初始化
     [self initLocationManager];
+    // 初始化中国边境线数据
+    [HDLocationConverter start];
 }
 
 - (BOOL)isCurrentCoordinate2DValid {
@@ -91,16 +94,10 @@ NSString *const kLocationPermissionChangedUserInfoKey = @"kLocationManagerLocati
     NSLog(@"HDLocationManager - 位置变化");
 
     if (!self.isCurrentCoordinate2DValid) {
-        self.coordinate2D = locations.lastObject.coordinate;
-        self.realCoordinate2D = locations.lastObject.coordinate;
-        // 发送通知
-        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationNameLocationChanged object:nil userInfo:@{kLocationChangedUserInfoKey: locations}];
+        [self converLocations:locations];
     } else {
         if (self.mustCallDelegateFlag) {
-            self.coordinate2D = locations.lastObject.coordinate;
-            self.realCoordinate2D = locations.lastObject.coordinate;
-            // 发送通知
-            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationNameLocationChanged object:nil userInfo:@{kLocationChangedUserInfoKey: locations}];
+            [self converLocations:locations];
             self.mustCallDelegateFlag = false;
         } else {
             // 计算距离
@@ -108,16 +105,24 @@ NSString *const kLocationPermissionChangedUserInfoKey = @"kLocationManagerLocati
             CLLocation *l2 = [[CLLocation alloc] initWithLatitude:locations.lastObject.coordinate.latitude longitude:locations.lastObject.coordinate.longitude];
             CLLocationDistance distance = [HDLocationUtils distanceFromLocation:l1 toLocation:l2];
             
-            self.realCoordinate2D = locations.lastObject.coordinate;
+            [HDLocationConverter wgs84ToGcj02:locations.lastObject.coordinate result:^(CLLocationCoordinate2D resultCoordinate) {
+                self.realCoordinate2D = resultCoordinate;
+            }];
             if (distance > 100) {
                 NSLog(@"距离变化超过 %f 米，发出通知", distance);
-                self.coordinate2D = locations.lastObject.coordinate;
-
-                // 发送通知
-                [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationNameLocationChanged object:nil userInfo:@{kLocationChangedUserInfoKey: locations}];
+                [self converLocations:locations];
             }
         }
     }
+}
+
+- (void)converLocations:(NSArray<CLLocation *> *)locations {
+    [HDLocationConverter wgs84ToGcj02:locations.lastObject.coordinate result:^(CLLocationCoordinate2D resultCoordinate) {
+        self.coordinate2D = resultCoordinate;
+        self.realCoordinate2D = resultCoordinate;
+        // 发送通知
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationNameLocationChanged object:nil userInfo:@{kLocationChangedUserInfoKey: locations}];
+    }];
 }
 
 #pragma mark - lazy load

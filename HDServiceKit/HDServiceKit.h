@@ -12,7 +12,7 @@
 #import <UIKit/UIKit.h>
 
 /// 版本号
-static NSString *const HDServiceKit_VERSION = @"1.2.7";
+static NSString *const HDServiceKit_VERSION = @"1.2.8";
 
 #if __has_include("HDWHViewControllerPreRender.h")
 #import "HDWHViewControllerPreRender.h"
@@ -204,6 +204,14 @@ static NSString *const HDServiceKit_VERSION = @"1.2.7";
 
 #if __has_include("HDLocationUtils.h")
 #import "HDLocationUtils.h"
+#endif
+
+#if __has_include("HDLocationAreaManager.h")
+#import "HDLocationAreaManager.h"
+#endif
+
+#if __has_include("HDLocationConverter.h")
+#import "HDLocationConverter.h"
 #endif
 
 #if __has_include("HDLocationManager.h")
