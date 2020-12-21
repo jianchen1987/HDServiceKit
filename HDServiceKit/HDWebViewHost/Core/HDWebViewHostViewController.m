@@ -199,8 +199,8 @@ BOOL kGCDWebServer_logging_enabled = false;
     }
     [request setValue:currentLanguage forHTTPHeaderField:@"Accept-Language"];
 
-    NSString *ua = [NSString stringWithFormat:@" %@/%@ ", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"],
-                                              [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]];
+    NSString *ua = [NSString stringWithFormat:@" %@/%@ AcceptLanguage/%@", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"],
+                                              [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"], currentLanguage];
 
     if (@available(iOS 12.0, *)) {
         NSString *baseAgent = [self.webView valueForKey:@"applicationNameForUserAgent"];
