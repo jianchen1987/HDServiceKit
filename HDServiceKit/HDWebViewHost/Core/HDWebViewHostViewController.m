@@ -342,6 +342,12 @@ BOOL kGCDWebServer_logging_enabled = false;
     } else if (policy == WKNavigationActionPolicyAllow) {
         [self startProgressor];
     }
+    
+    //H5页面跳转不一定会触发 didFinishNavigation 回调，在这里重新获取一次
+    [self callNative:@"setNavTitle"
+           parameter:@{
+               @"text": self.webView.title ?: self.pageTitle
+           }];
 }
 
 - (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(WKNavigation *)navigation {
