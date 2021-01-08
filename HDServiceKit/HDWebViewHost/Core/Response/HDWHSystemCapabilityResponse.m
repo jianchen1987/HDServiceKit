@@ -13,8 +13,6 @@
 
 @interface HDWHSystemCapabilityResponse ()
 
-@property (nonatomic, copy) NSString *socialShareCallBackKey;      ///< 回调
-
 @end
 
 @implementation HDWHSystemCapabilityResponse
@@ -30,8 +28,7 @@
         @"graduallySetBrightness_": kHDWHResponseMethodOn,
         @"openAppSystemSettingPage": kHDWHResponseMethodOn,
         @"getUserDevice$": kHDWHResponseMethodOn,
-        @"openLocation_": kHDWHResponseMethodOn,
-        @"socialShare_$":kHDWHResponseMethodOn
+        @"openLocation_": kHDWHResponseMethodOn
     };
 }
 
@@ -208,50 +205,6 @@ wh_doc_end;
     double latitude = [[paramDict objectForKey:@"latitude"] doubleValue];
     NSString *address = [paramDict objectForKey:@"address"];
     [HDSystemCapabilityUtil jumpToMapWithLongitude:longitude latitude:latitude locationName:address];
-}
-
-- (void)socialShare:(NSDictionary *)paramDic callback:(NSString *)callBackKey {
-        
-    NSString *title = [paramDic valueForKey:@"title"];
-    NSString *titleImage = [paramDic valueForKey:@"image"];
-    NSString *content = [paramDic valueForKey:@"content"];
-    
-    if(HDIsStringEmpty(title) && HDIsStringEmpty(titleImage) && HDIsStringEmpty(content)) {
-        [self.webViewHost fireCallback:callBackKey actionName:@"socialShare" code:HDWHRespCodeIllegalArg type:HDWHCallbackTypeFail params:@{}];
-        return;
-    }
-    
-    self.socialShareCallBackKey = callBackKey;
-    
-    __weak __typeof(self) weakSelf = self;
-    void (^socialShare)(UIImage *, NSString *, NSString *) = ^void(UIImage *image, NSString *title, NSString *url) {
-        __strong __typeof(weakSelf) strongSelf = weakSelf;
-        __weak __typeof(strongSelf) weakSelf2 = strongSelf;
-        [HDSystemCapabilityUtil socialShareTitle:title
-                                           image:image
-                                         content:url
-                                inViewController:strongSelf.webViewHost
-                                          result:^(NSError *_Nonnull error_Nullable){
-            __strong __typeof(weakSelf2) strongSelf2 = weakSelf2;
-            [self.webViewHost fireCallback:strongSelf2.socialShareCallBackKey
-                                actionName:@"socialShare"
-                                      code:HDWHRespCodeSuccess
-                                      type:HDWHCallbackTypeSuccess
-                                    params:@{}];
-        }];
-    };
-    
-    if (!HDIsObjectNil(titleImage) && HDIsStringNotEmpty(titleImage)) {
-        [HDWebImageManager setImageWithURL:titleImage
-                          placeholderImage:nil
-                                 imageView:UIImageView.new
-                                 completed:^(UIImage *_Nullable image, NSError *_Nullable error, SDImageCacheType cacheType, NSURL *_Nullable imageURL) {
-                                     socialShare(image, title, content);
-                                 }];
-    } else {
-        socialShare(nil, title, content);
-    }
-    
 }
 
 @end
