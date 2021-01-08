@@ -10,6 +10,11 @@
 
 @interface RSACipher : NSObject
 
+/// RSA字符串私钥签名
+/// @param plaintext 明文
+/// @param privKey 私钥字符串
++ (NSString *)signText:(NSString *)plaintext privateKey:(NSString *)privKey;
+
 /// RSA 字符串公钥加密
 /// @param plaintext 明文，待加密的字符串
 /// @param pubKey 公钥字符串

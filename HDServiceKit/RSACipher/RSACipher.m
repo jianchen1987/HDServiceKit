@@ -8,6 +8,8 @@
 
 #import "RSACipher.h"
 #import <Security/Security.h>
+#import <CommonCrypto/CommonDigest.h>
+#import <CommonCrypto/CommonCryptor.h>
 
 @implementation RSACipher
 
@@ -73,6 +75,15 @@ static NSData *base64_decode(NSString *str) {
         result = [self decryptString:ciphertext privateKeyRef:[self getPrivateKeyRefWithContentsOfFile:path password:pwd]];
     }
     return result;
+}
+
++ (NSString *)signText:(NSString *)plaintext privateKey:(NSString *)privKey {
+    if (plaintext.length == 0 || privKey.length == 0) {
+        return nil;
+    }
+    NSData *data = [self signData:[plaintext dataUsingEncoding:NSUTF8StringEncoding] privateKey:privKey];
+    NSString *ret = base64_encode_data(data);
+    return ret;
 }
 
 #pragma mark - private methods
@@ -406,6 +417,68 @@ static NSData *base64_decode(NSString *str) {
         return nil;
     }
     return keyRef;
+}
+
++ (NSData *)signData:(NSData *)data privateKey:(NSString *)privKey {
+    if (!data || !privKey) {
+        return nil;
+    }
+    SecKeyRef keyRef = [self addPrivateKey:privKey];
+    if (!keyRef) {
+        return nil;
+    }
+    return [self signData:data withKeyRef:keyRef];
+}
+
++ (NSData *)getHashBytes:(NSData *)plainText {
+    CC_SHA1_CTX ctx;
+    uint8_t *hashBytes = NULL;
+    NSData *hash = nil;
+
+    // Malloc a buffer to hold hash.
+    hashBytes = malloc(CC_SHA1_DIGEST_LENGTH * sizeof(uint8_t));
+    memset((void *)hashBytes, 0x0, CC_SHA1_DIGEST_LENGTH);
+    // Initialize the context.
+    CC_SHA1_Init(&ctx);
+    // Perform the hash.
+    CC_SHA1_Update(&ctx, (void *)[plainText bytes], [plainText length]);
+    // Finalize the output.
+    CC_SHA1_Final(hashBytes, &ctx);
+
+    // Build up the SHA1 blob.
+    hash = [NSData dataWithBytes:(const void *)hashBytes length:(NSUInteger)CC_SHA1_DIGEST_LENGTH];
+    if (hashBytes) free(hashBytes);
+
+    return hash;
+}
+
++ (NSData *)signData:(NSData *)data withKeyRef:(SecKeyRef)keyRef {
+
+    NSData *signedHash = nil;
+
+    size_t signedBytesSize = SecKeyGetBlockSize(keyRef);
+    uint8_t *signedBytes = malloc(signedBytesSize * sizeof(uint8_t));  // Malloc a buffer to hold signature.
+    memset((void *)signedBytes, 0x0, signedBytesSize);
+
+    OSStatus status = SecKeyRawSign(keyRef,
+                                kSecPaddingPKCS1SHA1,
+                                (const uint8_t *)[[self getHashBytes:data] bytes],
+                                CC_SHA1_DIGEST_LENGTH,
+                                (uint8_t *)signedBytes,
+                                &signedBytesSize);
+
+    if (status != 0) {
+        NSLog(@"SecKeyEncrypt fail. Error Code: %d", (int)status);
+        return nil;
+    } else {
+        signedHash = [NSData dataWithBytes:(const void *)signedBytes length:(NSUInteger)signedBytesSize];
+    }
+
+    if (signedBytes) {
+        free(signedBytes);
+    }
+    
+    return signedHash;
 }
 
 + (NSData *)stripPrivateKeyHeader:(NSData *)d_key {
