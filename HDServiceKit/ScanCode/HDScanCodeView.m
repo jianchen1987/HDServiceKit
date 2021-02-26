@@ -84,6 +84,9 @@
     [myCode setTitleColor:[UIColor greenColor] forState:UIControlStateNormal];
     [myCode addTarget:self action:@selector(myCodeClicked) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:myCode];
+    if (!self.clickedMyQRCodeBlock) {
+        myCode.hidden = true;
+    }
 }
 
 // 绘制扫描区域

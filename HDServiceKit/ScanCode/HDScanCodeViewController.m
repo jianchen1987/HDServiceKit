@@ -73,9 +73,7 @@
     _scanView.colorRetangleLine = [UIColor whiteColor];
     _scanView.notRecoginitonAreaColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
     _scanView.animationImage = [UIImage imageNamed:@"scanLine" inBundle:[NSBundle hd_ScanCodeResources] compatibleWithTraitCollection:nil];
-    _scanView.clickedMyQRCodeBlock = ^{
-        !weakSelf.clickedMyQRCodeBlock ?: weakSelf.clickedMyQRCodeBlock();
-    };
+    _scanView.clickedMyQRCodeBlock = self.clickedMyQRCodeBlock;
     _scanView.clickedFlashLightBlock = ^(BOOL open) {
         [weakSelf.scanTool openFlashSwitch:open];
     };
@@ -90,7 +88,6 @@
         // 防止连续扫描出结果
         [weakSelf stopSession];
 
-        !weakSelf.resultBlock ?: weakSelf.resultBlock(scanString);
         if (weakSelf.shouldExitAfterResultBlock) {
             if (weakSelf.presentingViewController) {
                 [weakSelf dismissViewControllerAnimated:YES completion:nil];
@@ -102,6 +99,7 @@
                 [weakSelf startSession];
             });
         }
+        !weakSelf.resultBlock ?: weakSelf.resultBlock(scanString);
     };
     _scanTool.ambientLightChangedBlock = ^(float brightness) {
         if (brightness < 0) {
