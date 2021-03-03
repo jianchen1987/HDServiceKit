@@ -28,6 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 用户点击了返回即取消的回调
 @property (nonatomic, copy) void (^userCancelBlock)(void);
+@property (nonatomic, copy) NSString *customerTitle;      ///< 自定义标题
 @end
 
 NS_ASSUME_NONNULL_END

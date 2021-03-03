@@ -117,6 +117,12 @@
     [_scanView startScanAnimation];
 }
 
+#pragma mark - setter
+- (void)setCustomerTitle:(NSString *)customerTitle {
+    _customerTitle = customerTitle;
+    self.hd_navigationItem.title = customerTitle;
+}
+
 #pragma mark - private methods
 - (void)startSession {
     [_scanView startScanAnimation];
