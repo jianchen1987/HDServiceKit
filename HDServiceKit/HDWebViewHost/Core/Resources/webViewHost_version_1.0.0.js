@@ -88,7 +88,9 @@
                 'loginWithPermissions-async-function',
                 'networkRequest-async-function',
                 'enableWebViewGesture-async-function',
-                'setWebViewBackStyle-async-function']
+                'setWebViewBackStyle-async-function',
+                'getCookies-async-function',
+                'startNewPage-async-function-lackCallback']
     };
 }(window);
 

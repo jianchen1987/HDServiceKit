@@ -28,8 +28,47 @@
         @"graduallySetBrightness_": kHDWHResponseMethodOn,
         @"openAppSystemSettingPage": kHDWHResponseMethodOn,
         @"getUserDevice$": kHDWHResponseMethodOn,
-        @"openLocation_": kHDWHResponseMethodOn
+        @"openLocation_": kHDWHResponseMethodOn,
+        @"getCookies_$" : kHDWHResponseMethodOn
     };
+}
+
+- (void)getCookies:(NSDictionary *)params callback:(NSString *)callBackKey {
+    
+    NSString *domain = [params objectForKey:@"domainRegular"];
+    if(!domain || HDIsStringEmpty(domain)) {
+        [self.webViewHost fireCallback:callBackKey actionName:@"getCookies" code:HDWHRespCodeIllegalArg type:HDWHCallbackTypeFail params:nil];
+        return;
+    }
+    
+    if (@available(iOS 12.0, *)) {
+            WKHTTPCookieStore *cookieStore = self.webView.configuration.websiteDataStore.httpCookieStore;
+            [cookieStore getAllCookies:^(NSArray* cookies) {
+                __block NSString *result = @"";
+                [cookies enumerateObjectsUsingBlock:^(NSHTTPCookie * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    HDWHLog(@"%@",obj);
+                    if([obj.domain containsString:domain]) {
+                        result = [result stringByAppendingFormat:@"&%@=%@",obj.name,obj.value];
+                    }
+                }];
+                if([result hasPrefix:@"&"]) {
+                    result = [result substringFromIndex:1];
+                }
+                [self.webViewHost fireCallback:callBackKey
+                                    actionName:@"getCookies"
+                                          code:HDWHRespCodeSuccess
+                                          type:HDWHCallbackTypeSuccess
+                                        params:@{@"cookies":result}];
+            }];
+        }
+    else {
+//            NSHTTPURLResponse *response = (NSHTTPURLResponse *)navigationRsp.response;
+//            NSArray *cookies =[NSHTTPCookie cookiesWithResponseHeaderFields:[response allHeaderFields] forURL:response.URL];
+        [self.webViewHost fireCallback:callBackKey actionName:@"getCookies" code:HDWHRespCodeCommonFailed type:HDWHCallbackTypeFail params:nil];
+        }
+    
+    
+//    HDWHLog(@"dic:%@",params);
 }
 
 // clang-format off

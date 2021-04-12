@@ -89,6 +89,16 @@
                                        @{@"name": @"缓存测试",
                                          @"url": @"https://h5-uat.lifekh.com/mobile-h5/super/app/user/v1/download-app",
                                          @"desc": @"测试"},
+                           @{
+                               @"name": @"柬航测试",
+                                 @"url": @"http://172.16.20.136:9020/",
+                                 @"desc": @"测试"
+                           },
+                           @{
+                               @"name": @"游戏测试",
+                                 @"url": @"https://www.c5game.com/dota.html",
+                                 @"desc": @"测试"
+                           },
                                        nil];
     self.dataSource = dataSource;
 }
