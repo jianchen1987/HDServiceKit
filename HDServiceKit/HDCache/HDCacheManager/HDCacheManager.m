@@ -253,7 +253,7 @@ static pthread_rwlock_t rwLock;
 #pragma mark - getters and setters
 - (void)setNameSpace:(NSString *)nameSpace {
     pthread_rwlock_wrlock(&rwLock);
-    _nameSpace = nameSpace;
+    _nameSpace = [nameSpace copy];
     self.fileStorage.nameSpace = nameSpace;
     pthread_rwlock_unlock(&rwLock);
 }

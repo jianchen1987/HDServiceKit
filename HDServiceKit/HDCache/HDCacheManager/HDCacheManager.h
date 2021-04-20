@@ -19,7 +19,7 @@ extern NSString *const kHDCacheManagerRemoveObjectNotification;  // 触发移除
 /**
  空间，nameSpace以.document结尾则数据保存至Document
  */
-@property (nonatomic, strong) NSString *nameSpace;
+@property (nonatomic, copy) NSString *nameSpace;
 
 /**
  isInDocumentDir 是否在 Document 目录，否则在 Cache 目录
