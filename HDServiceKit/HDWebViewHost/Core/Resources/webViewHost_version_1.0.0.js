@@ -90,7 +90,10 @@
                 'enableWebViewGesture-async-function',
                 'setWebViewBackStyle-async-function',
                 'getCookies-async-function',
-                'startNewPage-async-function-lackCallback']
+                'startNewPage-async-function-lackCallback',
+                'setNavigationBarTitle-async-function-lackCallback',
+                'setNavigationBarColor-async-function-lackCallback',
+                'setNavigationBarStyle-async-function-lackCallback']
     };
 }(window);
 

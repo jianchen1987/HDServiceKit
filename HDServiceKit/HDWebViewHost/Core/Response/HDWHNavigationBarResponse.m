@@ -10,6 +10,8 @@
 #import "HDWebViewHostViewController+Dispatch.h"
 #import "NSBundle+HDWebViewHost.h"
 #import "HDWebViewHostViewController+Callback.h"
+#import <HDUIKit/UIViewController+HDNavigationBar.h>
+#import <HDKitCore/UIColor+HDKitCore.h>
 
 @interface HDWHNavigationBarResponse ()
 /// 以下是 short hand，都是从 webViewHost 上的属性
@@ -22,10 +24,12 @@
     return @{
         @"goBack": kHDWHResponseMethodOn,
         @"setNavRightTitle_": kHDWHResponseMethodOn,
-        @"setNavTitle_": kHDWHResponseMethodOn,
+        @"setNavigationBarTitle_": kHDWHResponseMethodOn,
         @"showRightMenu": kHDWHResponseMethodOn,
         @"hideRightMenu": kHDWHResponseMethodOn,
-        @"setWebViewBackStyle_$": kHDWHResponseMethodOn
+        @"setWebViewBackStyle_$": kHDWHResponseMethodOn,
+        @"setNavigationBarColor_": kHDWHResponseMethodOn,
+        @"setNavigationBarStyle_": kHDWHResponseMethodOn
     };
 }
 
@@ -94,6 +98,18 @@ wh_doc_end;
     self.webViewHost.hd_navigationItem.rightBarButtonItem = rightBarButton;
 }
 
+- (void)setNavigationBarColor:(NSDictionary *)paramsDic {
+    NSString *colorHexStr = [paramsDic objectForKey:@"colorHexStr"];
+    self.webViewHost.hd_navBackgroundColor = [UIColor hd_colorWithHexString:colorHexStr];
+    
+}
+
+- (void)setNavigationBarStyle:(NSDictionary *)paramsDic {
+    NSString *style = [paramsDic objectForKey:@"style"];
+    self.webViewHost.navigationBarStyle = style.integerValue;
+    
+}
+
 // clang-format off
 wh_doc_begin(setNavTitle_, "设置 webview 页面中间的标题")
 wh_doc_code(window.webViewHost.invoke("setNavTitle",{"text": "315大促现场"}))
@@ -101,8 +117,8 @@ wh_doc_param(text, "字符串，整个 ViewController 的标题")
 wh_doc_code_expect("标题栏中间出现设置的文案，’315大促现场‘")
 wh_doc_end;
 // clang-format on
-- (void)setNavTitle:(NSDictionary *)paramDict {
-    NSString *title = [paramDict objectForKey:@"text"];
+- (void)setNavigationBarTitle:(NSDictionary *)paramDict {
+    NSString *title = [paramDict objectForKey:@"title"];
     self.webViewHost.hd_navigationItem.title = title;
 }
 

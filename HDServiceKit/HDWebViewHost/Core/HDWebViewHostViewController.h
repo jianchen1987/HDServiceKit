@@ -75,6 +75,8 @@ FOUNDATION_EXPORT HDWebViewBakcButtonStyle const HDWebViewBakcButtonStyleGoBack;
 /// 主动关闭回调
 @property(nonatomic, copy) void (^closeByUser)(void);
 
+@property (nonatomic, assign) HDViewControllerNavigationBarStyle navigationBarStyle;      ///< 导航栏样式
+
 #pragma mark - 使用缓存渲染界面
 /**
  加载本地 html 资源，支持发送 xhr 请求
@@ -93,5 +95,6 @@ FOUNDATION_EXPORT HDWebViewBakcButtonStyle const HDWebViewBakcButtonStyleGoBack;
  @param baseDomain 为了解决相对路径 发送 xhr 请求的主域名地址，如 https://www.chaosource.com
  */
 - (void)loadIndexFile:(NSString *)fileName inDirectory:(NSURL *)directory domain:(NSString *)baseDomain;
+
 
 @end

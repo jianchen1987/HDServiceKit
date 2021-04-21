@@ -65,15 +65,29 @@ BOOL kGCDWebServer_logging_enabled = false;
     if (self) {
         [self.view addSubview:self.webView];
         self.webView.translatesAutoresizingMaskIntoConstraints = NO;
-
-        [NSLayoutConstraint activateConstraints:@[
-            [self.webView.leftAnchor constraintEqualToAnchor:self.view.leftAnchor],
-            [self.webView.topAnchor constraintEqualToAnchor:self.hd_navigationBar.bottomAnchor],
-            [self.webView.bottomAnchor constraintEqualToAnchor:self.bottomLayoutGuide.topAnchor],
-            [self.webView.rightAnchor constraintEqualToAnchor:self.view.rightAnchor]
-        ]];
+        self.navigationBarStyle = HDViewControllerNavigationBarStyleWhite;
     }
     return self;
+}
+
+- (void)updateViewConstraints {
+    
+    HDViewControllerNavigationBarStyle style = [self hd_preferredNavigationBarStyle];
+    
+    NSMutableArray *constraints = NSMutableArray.new;
+    [constraints addObjectsFromArray:@[
+        [self.webView.bottomAnchor constraintEqualToAnchor:self.bottomLayoutGuide.topAnchor],
+        [self.webView.rightAnchor constraintEqualToAnchor:self.view.rightAnchor],
+        [self.webView.leftAnchor constraintEqualToAnchor:self.view.leftAnchor],
+    ]];
+    if(HDViewControllerNavigationBarStyleHidden == style || HDViewControllerNavigationBarStyleTransparent == style) {
+        [constraints addObject:[self.webView.topAnchor constraintEqualToAnchor:self.view.topAnchor]];
+    } else {
+        [constraints addObject:[self.webView.topAnchor constraintEqualToAnchor:self.hd_navigationBar.bottomAnchor]];
+    }
+    
+    [NSLayoutConstraint activateConstraints:constraints];
+    [super updateViewConstraints];
 }
 
 - (void)viewDidLoad {
@@ -366,9 +380,9 @@ BOOL kGCDWebServer_logging_enabled = false;
     }
     
     //H5页面跳转不一定会触发 didFinishNavigation 回调，在这里重新获取一次
-    [self callNative:@"setNavTitle"
+    [self callNative:@"setNavigationBarTitle"
            parameter:@{
-               @"text": self.webView.title ?: self.pageTitle
+               @"title": self.webView.title ?: self.pageTitle
            }];
 }
 
@@ -420,9 +434,9 @@ BOOL kGCDWebServer_logging_enabled = false;
                    @"text": self.rightActionBarTitle
                }];
     }
-    [self callNative:@"setNavTitle"
+    [self callNative:@"setNavigationBarTitle"
            parameter:@{
-               @"text": self.webView.title ?: self.pageTitle
+               @"title": self.webView.title ?: self.pageTitle
            }];
 
     // 设置发现的后台接口
@@ -567,6 +581,12 @@ BOOL kGCDWebServer_logging_enabled = false;
     self.hd_backButtonImage = image;
 }
 
+- (void)setNavigationBarStyle:(HDViewControllerNavigationBarStyle)navigationBarStyle {
+    _navigationBarStyle = navigationBarStyle;
+    [self forceUpdateNavigationBarStyle];
+    [self.view setNeedsUpdateConstraints];
+}
+
 #pragma mark - getter
 - (WKWebView *)cookieWebview {
     if (![kFakeCookieWebPageURLWithQueryString containsString:@"?"]) {
@@ -630,6 +650,10 @@ BOOL kGCDWebServer_logging_enabled = false;
 }
 
 - (HDViewControllerNavigationBarStyle)hd_preferredNavigationBarStyle {
-    return HDViewControllerNavigationBarStyleWhite;
+    return self.navigationBarStyle;
 }
+- (BOOL)hd_shouldHideNavigationBarBottomShadow {
+    return HDViewControllerNavigationBarStyleTransparent == self.navigationBarStyle;
+}
+
 @end
