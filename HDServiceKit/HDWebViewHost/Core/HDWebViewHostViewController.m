@@ -24,6 +24,7 @@
 #import "HDWebViewHostViewController+Utils.h"
 #import <HDUIKit/UIViewController+HDNavigationBar.h>
 #import "NSBundle+HDWebViewHost.h"
+#import <Masonry/Masonry.h>
 
 // 该 key 为业务方的 key，因为是应用内语言切换，所以不能获取系统语言
 static NSString *const kCurrentLanguageCacheKey = @"kCurrentLanguageCache";
@@ -74,19 +75,30 @@ BOOL kGCDWebServer_logging_enabled = false;
     
     HDViewControllerNavigationBarStyle style = [self hd_preferredNavigationBarStyle];
     
-    NSMutableArray *constraints = NSMutableArray.new;
-    [constraints addObjectsFromArray:@[
-        [self.webView.bottomAnchor constraintEqualToAnchor:self.bottomLayoutGuide.topAnchor],
-        [self.webView.rightAnchor constraintEqualToAnchor:self.view.rightAnchor],
-        [self.webView.leftAnchor constraintEqualToAnchor:self.view.leftAnchor],
-    ]];
-    if(HDViewControllerNavigationBarStyleHidden == style || HDViewControllerNavigationBarStyleTransparent == style) {
-        [constraints addObject:[self.webView.topAnchor constraintEqualToAnchor:self.view.topAnchor]];
-    } else {
-        [constraints addObject:[self.webView.topAnchor constraintEqualToAnchor:self.hd_navigationBar.bottomAnchor]];
-    }
+    [self.webView mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.view.mas_left);
+        make.right.equalTo(self.view.mas_right);
+        make.bottom.equalTo(self.mas_bottomLayoutGuideTop);
+        if(HDViewControllerNavigationBarStyleHidden == style || HDViewControllerNavigationBarStyleTransparent == style) {
+            make.top.equalTo(self.view.mas_top);
+        } else {
+            make.top.equalTo(self.hd_navigationBar.mas_bottom);
+        }
+    }];
     
-    [NSLayoutConstraint activateConstraints:constraints];
+//    NSMutableArray *constraints = NSMutableArray.new;
+//    [constraints addObjectsFromArray:@[
+//        [self.webView.bottomAnchor constraintEqualToAnchor:self.bottomLayoutGuide.topAnchor],
+//        [self.webView.rightAnchor constraintEqualToAnchor:self.view.rightAnchor],
+//        [self.webView.leftAnchor constraintEqualToAnchor:self.view.leftAnchor],
+//    ]];
+//    if(HDViewControllerNavigationBarStyleHidden == style || HDViewControllerNavigationBarStyleTransparent == style) {
+//        [constraints addObject:[self.webView.topAnchor constraintEqualToAnchor:self.view.topAnchor]];
+//    } else {
+//        [constraints addObject:[self.webView.topAnchor constraintEqualToAnchor:self.hd_navigationBar.bottomAnchor]];
+//    }
+//
+//    [NSLayoutConstraint activateConstraints:constraints];
     [super updateViewConstraints];
 }
 
@@ -568,6 +580,7 @@ BOOL kGCDWebServer_logging_enabled = false;
 - (void)setDisableGesture:(BOOL)disableGesture {
     _disableGesture = disableGesture;
     self.hd_interactivePopDisabled = !disableGesture;
+    self.hd_fullScreenPopDisabled = !disableGesture;
 }
 
 - (void)setBackButtonStyle:(HDWebViewBakcButtonStyle)backButtonStyle {
