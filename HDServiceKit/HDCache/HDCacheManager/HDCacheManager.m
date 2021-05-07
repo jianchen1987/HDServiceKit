@@ -14,12 +14,11 @@ NSString *const kHDCacheManagerSetObjectNotification = @"kHDCacheManagerSetObjec
 NSString *const kHDCacheManagerGetObjectNotification = @"kHDCacheManagerGetObjectNotification";
 NSString *const kHDCacheManagerRemoveObjectNotification = @"kHDCacheManagerRemoveObjectNotification";
 
-// 静态全局变量，所以不考虑释放（pthread_rwlock_destroy(&rwLock)）
-static pthread_rwlock_t rwLock;
 @interface HDCacheManager ()
 
 @property (nonatomic, strong) HDCacheStorage *fileStorage;
 @property (nonatomic, strong) NSCache *tmpDatas;
+@property (nonatomic, assign) pthread_rwlock_t rwLock;
 
 @end
 
@@ -32,9 +31,14 @@ static pthread_rwlock_t rwLock;
         instance = self.new;
         instance.nameSpace = @"Data";
         // 初始化锁
+        pthread_rwlock_t rwLock = instance.rwLock;
         pthread_rwlock_init(&rwLock, NULL);
     });
     return instance;
+}
+
+- (void)dealloc {
+    pthread_rwlock_destroy(&_rwLock);
 }
 
 + (instancetype)cacheManagerWithNameSpace:(NSString *)nameSpace {
@@ -42,11 +46,7 @@ static pthread_rwlock_t rwLock;
 }
 
 - (instancetype)initWithNameSpace:(NSString *)nameSpace {
-    if (self = [super init]) {
-        self.nameSpace = nameSpace;
-        self.isInDocumentDir = false;
-    }
-    return self;
+    return [self initWithNameSpace:nameSpace isInDocumentDir:false];
 }
 
 + (instancetype)cacheManagerWithNameSpace:(NSString *)nameSpace isInDocumentDir:(BOOL)isInDocumentDir {
@@ -57,6 +57,7 @@ static pthread_rwlock_t rwLock;
     if (self = [super init]) {
         self.nameSpace = nameSpace;
         self.isInDocumentDir = isInDocumentDir;
+        pthread_rwlock_init(&_rwLock, NULL);
     }
     return self;
 }
@@ -88,7 +89,7 @@ static pthread_rwlock_t rwLock;
         [self removeObjectForKey:aKey];
         return;
     }
-    pthread_rwlock_wrlock(&rwLock);
+    pthread_rwlock_wrlock(&_rwLock);
     [[NSNotificationCenter defaultCenter]
         postNotificationName:kHDCacheManagerSetObjectNotification
                       object:@{kHDCacheManagerObjectKey: @{aKey: aObject}}];
@@ -99,7 +100,7 @@ static pthread_rwlock_t rwLock;
     if (object.storageString) {
         [self.fileStorage setObject:object forKey:aKey];
     }
-    pthread_rwlock_unlock(&rwLock);
+    pthread_rwlock_unlock(&_rwLock);
 }
 
 - (void)setObject:(id)aObject forKey:(NSString *)aKey toDisk:(BOOL)toDisk {
@@ -114,12 +115,12 @@ static pthread_rwlock_t rwLock;
         // 里面有加锁操作
         [self setObject:aObject forKey:aKey];
     } else {
-        pthread_rwlock_wrlock(&rwLock);
+        pthread_rwlock_wrlock(&_rwLock);
         [[NSNotificationCenter defaultCenter]
             postNotificationName:kHDCacheManagerSetObjectNotification
                           object:@{kHDCacheManagerObjectKey: @{aKey: aObject}}];
         [self.tmpDatas setObject:aObject forKey:aKey];
-        pthread_rwlock_unlock(&rwLock);
+        pthread_rwlock_unlock(&_rwLock);
     }
 }
 
@@ -127,12 +128,12 @@ static pthread_rwlock_t rwLock;
     if (!aKey)
         return;
     if (!aObject) {
-        pthread_rwlock_wrlock(&rwLock);
+        pthread_rwlock_wrlock(&_rwLock);
         [self removeObjectForKey:aKey];
-        pthread_rwlock_unlock(&rwLock);
+        pthread_rwlock_unlock(&_rwLock);
         return;
     }
-    pthread_rwlock_wrlock(&rwLock);
+    pthread_rwlock_wrlock(&_rwLock);
     [[NSNotificationCenter defaultCenter]
         postNotificationName:kHDCacheManagerSetObjectNotification
                       object:@{kHDCacheManagerObjectKey: @{aKey: aObject}}];
@@ -143,19 +144,19 @@ static pthread_rwlock_t rwLock;
     if (object.storageString) {
         [self.fileStorage setObject:object forKey:aKey type:HDCacheStorageTypeKeyChain];
     }
-    pthread_rwlock_unlock(&rwLock);
+    pthread_rwlock_unlock(&_rwLock);
 }
 
 - (void)setObjectToAppUserDefaults:(id)aObject forKey:(NSString *)aKey {
     if (!aKey)
         return;
     if (!aObject) {
-        pthread_rwlock_wrlock(&rwLock);
+        pthread_rwlock_wrlock(&_rwLock);
         [self removeObjectForKey:aKey];
-        pthread_rwlock_unlock(&rwLock);
+        pthread_rwlock_unlock(&_rwLock);
         return;
     }
-    pthread_rwlock_wrlock(&rwLock);
+    pthread_rwlock_wrlock(&_rwLock);
     [[NSNotificationCenter defaultCenter]
         postNotificationName:kHDCacheManagerSetObjectNotification
                       object:@{kHDCacheManagerObjectKey: @{aKey: aObject}}];
@@ -165,7 +166,7 @@ static pthread_rwlock_t rwLock;
     if (object.storageString) {
         [self.fileStorage setObject:object forKey:aKey type:HDCacheStorageTypeUserDefaults];
     }
-    pthread_rwlock_unlock(&rwLock);
+    pthread_rwlock_unlock(&_rwLock);
 }
 
 #pragma mark - 获取数据
@@ -174,12 +175,12 @@ static pthread_rwlock_t rwLock;
     if (!aKey) {
         return nil;
     }
-    pthread_rwlock_rdlock(&rwLock);
+    pthread_rwlock_rdlock(&_rwLock);
     id value = [self.tmpDatas objectForKey:aKey] ?: ({
         HDCacheStorageObject *object = [self.fileStorage objectForKey:aKey];
         id returnObject = [object storageObject];
         if (!returnObject) {
-            pthread_rwlock_unlock(&rwLock);
+            pthread_rwlock_unlock(&_rwLock);
             return nil;
         }
         [[NSNotificationCenter defaultCenter]
@@ -189,7 +190,7 @@ static pthread_rwlock_t rwLock;
                           }];
         returnObject;
     });
-    pthread_rwlock_unlock(&rwLock);
+    pthread_rwlock_unlock(&_rwLock);
     return value;
 }
 
@@ -200,7 +201,7 @@ static pthread_rwlock_t rwLock;
         return;
     }
 
-    pthread_rwlock_rdlock(&rwLock);
+    pthread_rwlock_rdlock(&_rwLock);
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
                    ^{
                        id obj = [self objectForKey:aKey];
@@ -209,66 +210,70 @@ static pthread_rwlock_t rwLock;
                                block(obj);
                            });
                    });
-    pthread_rwlock_unlock(&rwLock);
+    pthread_rwlock_unlock(&_rwLock);
 }
 
 #pragma mark -
 - (void)removeObjectForKey:(NSString *)aKey {
     if (!aKey)
         return;
-    pthread_rwlock_wrlock(&rwLock);
+    pthread_rwlock_wrlock(&_rwLock);
     [[NSNotificationCenter defaultCenter]
         postNotificationName:kHDCacheManagerRemoveObjectNotification
                       object:aKey];
     [self.fileStorage removeObjectForKey:aKey];
     [self.tmpDatas removeObjectForKey:aKey];
-    pthread_rwlock_unlock(&rwLock);
+    pthread_rwlock_unlock(&_rwLock);
 }
 
 - (void)removeObjectsWithCompletionBlock:(void (^)(long long folderSize))completionBlock {
-    pthread_rwlock_wrlock(&rwLock);
+    pthread_rwlock_wrlock(&_rwLock);
     [self.fileStorage removeDefaultObjectsWithCompletionBlock:completionBlock];
-    pthread_rwlock_unlock(&rwLock);
+    pthread_rwlock_unlock(&_rwLock);
 }
 
 - (void)removeExpireObjects {
-    pthread_rwlock_wrlock(&rwLock);
+    pthread_rwlock_wrlock(&_rwLock);
     [self.fileStorage removeExpireObjects];
-    pthread_rwlock_unlock(&rwLock);
+    pthread_rwlock_unlock(&_rwLock);
 }
 
 + (void)removeObjectsWithCompletionBlock:
     (void (^)(long long folderSize))completionBlock {
+    pthread_rwlock_t rwLock;
     pthread_rwlock_wrlock(&rwLock);
     [HDCacheStorage removeDefaultObjectsWithCompletionBlock:completionBlock];
     pthread_rwlock_unlock(&rwLock);
+    pthread_rwlock_destroy(&rwLock);
 }
 
 + (void)removeExpireObjects {
+    pthread_rwlock_t rwLock;
     pthread_rwlock_wrlock(&rwLock);
     [HDCacheStorage removeExpireObjects];
     pthread_rwlock_unlock(&rwLock);
+    pthread_rwlock_destroy(&rwLock);
 }
 
 #pragma mark - getters and setters
 - (void)setNameSpace:(NSString *)nameSpace {
-    pthread_rwlock_wrlock(&rwLock);
+    pthread_rwlock_wrlock(&_rwLock);
     _nameSpace = [nameSpace copy];
     self.fileStorage.nameSpace = nameSpace;
-    pthread_rwlock_unlock(&rwLock);
+    pthread_rwlock_unlock(&_rwLock);
 }
 
 - (void)setIsInDocumentDir:(BOOL)isInDocumentDir {
-    pthread_rwlock_wrlock(&rwLock);
+    pthread_rwlock_wrlock(&_rwLock);
     _isInDocumentDir = isInDocumentDir;
     self.fileStorage.isInDocumentDir = isInDocumentDir;
-    pthread_rwlock_unlock(&rwLock);
+    pthread_rwlock_unlock(&_rwLock);
 }
 
 - (void)clearMemory {
-    pthread_rwlock_wrlock(&rwLock);
+    pthread_rwlock_wrlock(&_rwLock);
     [self.tmpDatas removeAllObjects];
     [self.fileStorage clearMemory];
-    pthread_rwlock_unlock(&rwLock);
+    pthread_rwlock_unlock(&_rwLock);
 }
 @end
