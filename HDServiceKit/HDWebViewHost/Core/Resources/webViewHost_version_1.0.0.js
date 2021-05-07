@@ -93,7 +93,8 @@
                 'startNewPage-async-function-lackCallback',
                 'setNavigationBarTitle-async-function-lackCallback',
                 'setNavigationBarColor-async-function-lackCallback',
-                'setNavigationBarStyle-async-function-lackCallback']
+                'setNavigationBarStyle-async-function-lackCallback',
+                'allowsBackForwardNavigationGestures-async-function-lackCallback']
     };
 }(window);
 
