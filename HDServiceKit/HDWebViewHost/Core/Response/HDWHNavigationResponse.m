@@ -125,7 +125,7 @@ wh_doc_end;
     if (self.webViewHost.presentingViewController) {
         [self.webViewHost dismissViewControllerAnimated:YES completion:nil];
     } else {
-        [self.navigationController popViewControllerAnimated:YES];
+        [self.navigationController popViewControllerAnimated:NO];
     }
 }
 @end
