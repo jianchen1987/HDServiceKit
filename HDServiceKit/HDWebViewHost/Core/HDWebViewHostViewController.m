@@ -22,18 +22,16 @@
 #import "HDWebViewHostViewController+Scripts.h"
 #import "HDWebViewHostViewController+Timing.h"
 #import "HDWebViewHostViewController+Utils.h"
-#import <HDUIKit/UIViewController+HDNavigationBar.h>
 #import "NSBundle+HDWebViewHost.h"
+#import <HDUIKit/UIViewController+HDNavigationBar.h>
 #import <Masonry/Masonry.h>
 
 // 该 key 为业务方的 key，因为是应用内语言切换，所以不能获取系统语言
 static NSString *const kCurrentLanguageCacheKey = @"kCurrentLanguageCache";
 static NSTimeInterval const kTimeoutInterval = 60;
 
-HDWebViewBakcButtonStyle const HDWebViewBakcButtonStyleClose = @"close";      ///< 关闭
-HDWebViewBakcButtonStyle const HDWebViewBakcButtonStyleGoBack = @"goBack";    ///< 返回
-
-
+HDWebViewBakcButtonStyle const HDWebViewBakcButtonStyleClose = @"close";    ///< 关闭
+HDWebViewBakcButtonStyle const HDWebViewBakcButtonStyleGoBack = @"goBack";  ///< 返回
 
 @interface HDWebViewHostViewController () <UIScrollViewDelegate, WKUIDelegate, WKScriptMessageHandler>
 @property (nonatomic, strong) WKWebView *webView;
@@ -72,33 +70,33 @@ BOOL kGCDWebServer_logging_enabled = false;
 }
 
 - (void)updateViewConstraints {
-    
+
     HDViewControllerNavigationBarStyle style = [self hd_preferredNavigationBarStyle];
-    
+
     [self.webView mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.view.mas_left);
         make.right.equalTo(self.view.mas_right);
         make.bottom.equalTo(self.mas_bottomLayoutGuideTop);
-        if(HDViewControllerNavigationBarStyleHidden == style || HDViewControllerNavigationBarStyleTransparent == style) {
-            make.top.equalTo(self.view.mas_top);
+        if (HDViewControllerNavigationBarStyleHidden == style || HDViewControllerNavigationBarStyleTransparent == style) {
+            make.top.equalTo(self.mas_topLayoutGuideBottom);
         } else {
             make.top.equalTo(self.hd_navigationBar.mas_bottom);
         }
     }];
-    
-//    NSMutableArray *constraints = NSMutableArray.new;
-//    [constraints addObjectsFromArray:@[
-//        [self.webView.bottomAnchor constraintEqualToAnchor:self.bottomLayoutGuide.topAnchor],
-//        [self.webView.rightAnchor constraintEqualToAnchor:self.view.rightAnchor],
-//        [self.webView.leftAnchor constraintEqualToAnchor:self.view.leftAnchor],
-//    ]];
-//    if(HDViewControllerNavigationBarStyleHidden == style || HDViewControllerNavigationBarStyleTransparent == style) {
-//        [constraints addObject:[self.webView.topAnchor constraintEqualToAnchor:self.view.topAnchor]];
-//    } else {
-//        [constraints addObject:[self.webView.topAnchor constraintEqualToAnchor:self.hd_navigationBar.bottomAnchor]];
-//    }
-//
-//    [NSLayoutConstraint activateConstraints:constraints];
+
+    //    NSMutableArray *constraints = NSMutableArray.new;
+    //    [constraints addObjectsFromArray:@[
+    //        [self.webView.bottomAnchor constraintEqualToAnchor:self.bottomLayoutGuide.topAnchor],
+    //        [self.webView.rightAnchor constraintEqualToAnchor:self.view.rightAnchor],
+    //        [self.webView.leftAnchor constraintEqualToAnchor:self.view.leftAnchor],
+    //    ]];
+    //    if(HDViewControllerNavigationBarStyleHidden == style || HDViewControllerNavigationBarStyleTransparent == style) {
+    //        [constraints addObject:[self.webView.topAnchor constraintEqualToAnchor:self.view.topAnchor]];
+    //    } else {
+    //        [constraints addObject:[self.webView.topAnchor constraintEqualToAnchor:self.hd_navigationBar.bottomAnchor]];
+    //    }
+    //
+    //    [NSLayoutConstraint activateConstraints:constraints];
     [super updateViewConstraints];
 }
 
@@ -125,7 +123,7 @@ BOOL kGCDWebServer_logging_enabled = false;
     if (self.webView.estimatedProgress >= 1.f) {
         [self stopProgressor];
     }
-    if(!self.backButtonStyle || [self.backButtonStyle isEqualToString:@""]) {
+    if (!self.backButtonStyle || [self.backButtonStyle isEqualToString:@""]) {
         self.backButtonStyle = HDWebViewBakcButtonStyleClose;
     }
 }
@@ -250,7 +248,7 @@ BOOL kGCDWebServer_logging_enabled = false;
 
     if (@available(iOS 12.0, *)) {
         NSString *baseAgent = [self.webView valueForKey:@"applicationNameForUserAgent"];
-        if([baseAgent rangeOfString:ua].location == NSNotFound) {
+        if ([baseAgent rangeOfString:ua].location == NSNotFound) {
             NSString *userAgent = [NSString stringWithFormat:@"%@%@", baseAgent, ua];
             [self.webView setValue:userAgent forKey:@"applicationNameForUserAgent"];
         }
@@ -377,8 +375,6 @@ BOOL kGCDWebServer_logging_enabled = false;
         }
         policy = WKNavigationActionPolicyCancel;
     }
-    
-    
 
     // 解决Cookie丢失问题
     NSURLRequest *originalRequest = navigationAction.request;
@@ -390,7 +386,7 @@ BOOL kGCDWebServer_logging_enabled = false;
     } else if (policy == WKNavigationActionPolicyAllow) {
         [self startProgressor];
     }
-    
+
     //H5页面跳转不一定会触发 didFinishNavigation 回调，在这里重新获取一次
     [self callNative:@"setNavigationBarTitle"
            parameter:@{
@@ -405,9 +401,9 @@ BOOL kGCDWebServer_logging_enabled = false;
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(nonnull WKNavigationResponse *)navigationResponse decisionHandler:(nonnull void (^)(WKNavigationResponsePolicy))decisionHandler {
     TIMING_WK_METHOD;
-    
-//    [self getWebViewCookiesWithNavigationResponse:navigationResponse];
-    
+
+    //    [self getWebViewCookiesWithNavigationResponse:navigationResponse];
+
     decisionHandler(WKNavigationResponsePolicyAllow);
 }
 
@@ -525,8 +521,8 @@ BOOL kGCDWebServer_logging_enabled = false;
 #pragma mark - Event
 - (void)hd_backItemClick:(UIBarButtonItem *)sender {
     HDWHLog(@"返回按钮被点击啦！！");
-    if([self.backButtonStyle isEqualToString:HDWebViewBakcButtonStyleGoBack]) {
-        if([self.webView canGoBack]) {
+    if ([self.backButtonStyle isEqualToString:HDWebViewBakcButtonStyleGoBack]) {
+        if ([self.webView canGoBack]) {
             [self.webView goBack];
         } else {
             [self close];
@@ -557,7 +553,7 @@ BOOL kGCDWebServer_logging_enabled = false;
     } else {
         [self.navigationController popViewControllerAnimated:YES];
     }
-    !self.closeByUser?:self.closeByUser();
+    !self.closeByUser ?: self.closeByUser();
 }
 
 #pragma mark - setters
@@ -586,7 +582,7 @@ BOOL kGCDWebServer_logging_enabled = false;
 - (void)setBackButtonStyle:(HDWebViewBakcButtonStyle)backButtonStyle {
     _backButtonStyle = backButtonStyle;
     UIImage *image = nil;
-    if([backButtonStyle isEqualToString:HDWebViewBakcButtonStyleGoBack]) {
+    if ([backButtonStyle isEqualToString:HDWebViewBakcButtonStyleGoBack]) {
         image = [UIImage imageNamed:@"goBack" inBundle:[NSBundle hd_WebViewHostCoreResources] compatibleWithTraitCollection:nil];
     } else {
         image = [UIImage imageNamed:@"close" inBundle:[NSBundle hd_WebViewHostCoreResources] compatibleWithTraitCollection:nil];
