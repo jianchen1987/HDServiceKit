@@ -60,7 +60,7 @@
     } else {
         NSArray *cookArray = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies];
         __block NSString *result = @"";
-        [cookArray enumerateObjectsUsingBlock:^(NSHTTPCookie _Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
+        [cookArray enumerateObjectsUsingBlock:^(NSHTTPCookie *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
             HDWHLog(@"%@", obj);
             if ([obj.domain containsString:domain]) {
                 result = [result stringByAppendingFormat:@"&%@=%@", obj.name, obj.value];
