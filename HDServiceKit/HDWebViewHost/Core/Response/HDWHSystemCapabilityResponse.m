@@ -29,46 +29,71 @@
         @"openAppSystemSettingPage": kHDWHResponseMethodOn,
         @"getUserDevice$": kHDWHResponseMethodOn,
         @"openLocation_": kHDWHResponseMethodOn,
-        @"getCookies_$" : kHDWHResponseMethodOn
+        @"getCookies_$": kHDWHResponseMethodOn,
+        @"clearCookies_": kHDWHResponseMethodOn
     };
 }
 
 - (void)getCookies:(NSDictionary *)params callback:(NSString *)callBackKey {
-    
+
     NSString *domain = [params objectForKey:@"domainRegular"];
-    if(!domain || HDIsStringEmpty(domain)) {
+    if (!domain || HDIsStringEmpty(domain)) {
         [self.webViewHost fireCallback:callBackKey actionName:@"getCookies" code:HDWHRespCodeIllegalArg type:HDWHCallbackTypeFail params:nil];
         return;
     }
-    
-    if (@available(iOS 12.0, *)) {
-            WKHTTPCookieStore *cookieStore = self.webView.configuration.websiteDataStore.httpCookieStore;
-            [cookieStore getAllCookies:^(NSArray* cookies) {
-                __block NSString *result = @"";
-                [cookies enumerateObjectsUsingBlock:^(NSHTTPCookie * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                    HDWHLog(@"%@",obj);
-                    if([obj.domain containsString:domain]) {
-                        result = [result stringByAppendingFormat:@"&%@=%@",obj.name,obj.value];
-                    }
-                }];
-                if([result hasPrefix:@"&"]) {
-                    result = [result substringFromIndex:1];
+
+    if (@available(iOS 11.0, *)) {
+        WKHTTPCookieStore *cookieStore = self.webView.configuration.websiteDataStore.httpCookieStore;
+        [cookieStore getAllCookies:^(NSArray *cookies) {
+            __block NSString *result = @"";
+            [cookies enumerateObjectsUsingBlock:^(NSHTTPCookie *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
+                HDWHLog(@"%@", obj);
+                if ([obj.domain containsString:domain]) {
+                    result = [result stringByAppendingFormat:@"&%@=%@", obj.name, obj.value];
                 }
-                [self.webViewHost fireCallback:callBackKey
-                                    actionName:@"getCookies"
-                                          code:HDWHRespCodeSuccess
-                                          type:HDWHCallbackTypeSuccess
-                                        params:@{@"cookies":result}];
             }];
+            if ([result hasPrefix:@"&"]) {
+                result = [result substringFromIndex:1];
+            }
+            [self.webViewHost fireCallback:callBackKey actionName:@"getCookies" code:HDWHRespCodeSuccess type:HDWHCallbackTypeSuccess params:@{@"cookies": result}];
+        }];
+    } else {
+        NSArray *cookArray = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies];
+        __block NSString *result = @"";
+        [cookArray enumerateObjectsUsingBlock:^(NSHTTPCookie _Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
+            HDWHLog(@"%@", obj);
+            if ([obj.domain containsString:domain]) {
+                result = [result stringByAppendingFormat:@"&%@=%@", obj.name, obj.value];
+            }
+        }];
+        [self.webViewHost fireCallback:callBackKey actionName:@"getCookies" code:HDWHRespCodeSuccess type:HDWHCallbackTypeSuccess params:@{@"cookies": result}];
+    }
+}
+
+- (void)clearCookies:(NSDictionary *)params {
+    NSString *domain = [params objectForKey:@"domainRegular"];
+    if (!domain || HDIsStringEmpty(domain)) {
+        return;
+    }
+    if (@available(iOS 11.0, *)) {
+        WKHTTPCookieStore *cookiesStore = self.webView.configuration.websiteDataStore.httpCookieStore;
+        [cookiesStore getAllCookies:^(NSArray<NSHTTPCookie *> *_Nonnull cookies) {
+            [cookies enumerateObjectsUsingBlock:^(NSHTTPCookie *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
+                if ([obj.domain containsString:domain]) {
+                    [cookiesStore deleteCookie:obj completionHandler:nil];
+                    HDWHLog(@"删除cookies成功! %@", domain);
+                }
+            }];
+        }];
+    } else {
+        NSArray *cookArray = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies];
+        for (NSHTTPCookie *cookie in cookArray) {
+            if ([cookie.domain isEqualToString:domain]) {
+                [[NSHTTPCookieStorage sharedHTTPCookieStorage] deleteCookie:cookie];
+                HDWHLog(@"删除cookies成功! %@", domain);
+            }
         }
-    else {
-//            NSHTTPURLResponse *response = (NSHTTPURLResponse *)navigationRsp.response;
-//            NSArray *cookies =[NSHTTPCookie cookiesWithResponseHeaderFields:[response allHeaderFields] forURL:response.URL];
-        [self.webViewHost fireCallback:callBackKey actionName:@"getCookies" code:HDWHRespCodeCommonFailed type:HDWHCallbackTypeFail params:nil];
-        }
-    
-    
-//    HDWHLog(@"dic:%@",params);
+    }
 }
 
 // clang-format off
@@ -78,7 +103,7 @@ wh_doc_code(window.webViewHost.invoke("makePhoneCall",{"phoneNum": "855987657867
 wh_doc_code_expect("调用系统功能，弹出拨打电话弹窗")
 wh_doc_end;
 // clang-format on
-- (void)makePhoneCall:(NSDictionary *)paramDict callback:(NSString *)callBackKey{
+- (void)makePhoneCall:(NSDictionary *)paramDict callback:(NSString *)callBackKey {
     NSString *phoneNum = [paramDict objectForKey:@"phone"];
     [HDSystemCapabilityUtil makePhoneCall:phoneNum];
     [self.webViewHost fireCallback:callBackKey actionName:@"makePhoneCall" code:HDWHRespCodeSuccess type:HDWHCallbackTypeSuccess params:nil];

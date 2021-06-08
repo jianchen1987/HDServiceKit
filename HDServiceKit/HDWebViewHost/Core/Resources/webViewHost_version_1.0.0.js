@@ -94,7 +94,8 @@
                 'setNavigationBarTitle-async-function-lackCallback',
                 'setNavigationBarColor-async-function-lackCallback',
                 'setNavigationBarStyle-async-function-lackCallback',
-                'allowsBackForwardNavigationGestures-async-function-lackCallback']
+                'allowsBackForwardNavigationGestures-async-function-lackCallback',
+                'clearCookies-async-function-lackCallback']
     };
 }(window);
 

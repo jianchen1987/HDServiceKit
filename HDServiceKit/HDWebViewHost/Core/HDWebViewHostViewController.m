@@ -193,25 +193,6 @@ BOOL kGCDWebServer_logging_enabled = false;
 
 #pragma mark - private methods
 
-//- (void)getWebViewCookiesWithNavigationResponse:(WKNavigationResponse *)navigationRsp{
-//    NSArray *cookies = nil;
-//    if (@available(iOS 12.0, *)) {//iOS11也有这种获取方式，但是我使用的时候iOS11系统可以在response里面直接获取到，只有iOS12获取不到
-//            WKHTTPCookieStore *cookieStore = self.webView.configuration.websiteDataStore.httpCookieStore;
-//            [cookieStore getAllCookies:^(NSArray* cookies) {
-//
-//                [cookies enumerateObjectsUsingBlock:^(NSHTTPCookie * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//                    HDWHLog(@"%@",obj);
-//                }];
-//
-//                HDWHLog(@"1 url:%@ \n cookies:%@",navigationRsp.response.URL.absoluteString,cookies);
-//            }];
-//        }else {
-//            NSHTTPURLResponse *response = (NSHTTPURLResponse *)navigationRsp.response;
-//            NSArray *cookies =[NSHTTPCookie cookiesWithResponseHeaderFields:[response allHeaderFields] forURL:response.URL];
-//            HDWHLog(@"2 cookies:%@",cookies);
-//        }
-//
-//}
 /// 修复打开链接Cookie丢失问题
 /// @param request 请求
 - (NSURLRequest *)fixedRequest:(NSURLRequest *)request {
