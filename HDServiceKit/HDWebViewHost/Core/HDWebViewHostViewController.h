@@ -19,9 +19,11 @@ static NSString *kWebViewHostInvokeResponseEvent = @"kWebViewHostInvokeResponseE
 
 ///返回按钮类型
 typedef NSString *HDWebViewBakcButtonStyle NS_STRING_ENUM;
-FOUNDATION_EXPORT HDWebViewBakcButtonStyle const HDWebViewBakcButtonStyleClose;      ///< 关闭
-FOUNDATION_EXPORT HDWebViewBakcButtonStyle const HDWebViewBakcButtonStyleGoBack;     ///< 返回
+FOUNDATION_EXPORT HDWebViewBakcButtonStyle const HDWebViewBakcButtonStyleClose;   ///< 关闭
+FOUNDATION_EXPORT HDWebViewBakcButtonStyle const HDWebViewBakcButtonStyleGoBack;  ///< 返回
 
+// 刷新通知
+static NSString *kWebViewHostNotificationReload = @"kWebViewHostNotificationReload";
 
 /**
  监听 Response 里的事件；
@@ -56,9 +58,9 @@ FOUNDATION_EXPORT HDWebViewBakcButtonStyle const HDWebViewBakcButtonStyleGoBack;
  */
 @property (nonatomic, assign) BOOL disabledProgressor;
 
-@property (nonatomic, assign) BOOL disableGesture;      ///< 关闭全屏手势
+@property (nonatomic, assign) BOOL disableGesture;  ///< 关闭全屏手势
 
-@property (nonatomic, copy) HDWebViewBakcButtonStyle backButtonStyle;      ///< 返回交互风格
+@property (nonatomic, copy) HDWebViewBakcButtonStyle backButtonStyle;  ///< 返回交互风格
 /**
  取消记住上次浏览历史的特性
  */
@@ -73,9 +75,9 @@ FOUNDATION_EXPORT HDWebViewBakcButtonStyle const HDWebViewBakcButtonStyleGoBack;
 /// 核心的函数分发机制。可以继承
 @property (nonatomic, strong, readonly) HDWHSchemeTaskDelegate *taskDelegate API_AVAILABLE(ios(11.0));
 /// 主动关闭回调
-@property(nonatomic, copy) void (^closeByUser)(void);
+@property (nonatomic, copy) void (^closeByUser)(void);
 
-@property (nonatomic, assign) HDViewControllerNavigationBarStyle navigationBarStyle;      ///< 导航栏样式
+@property (nonatomic, assign) HDViewControllerNavigationBarStyle navigationBarStyle;  ///< 导航栏样式
 
 #pragma mark - 使用缓存渲染界面
 /**
@@ -95,6 +97,5 @@ FOUNDATION_EXPORT HDWebViewBakcButtonStyle const HDWebViewBakcButtonStyleGoBack;
  @param baseDomain 为了解决相对路径 发送 xhr 请求的主域名地址，如 https://www.chaosource.com
  */
 - (void)loadIndexFile:(NSString *)fileName inDirectory:(NSURL *)directory domain:(NSString *)baseDomain;
-
 
 @end

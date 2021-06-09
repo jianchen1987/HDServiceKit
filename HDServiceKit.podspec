@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "HDServiceKit"
-  s.version          = "1.4.3"
+  s.version          = "1.4.4"
   s.summary          = "混沌 iOS 服务"
   s.description      = <<-DESC
                        HDServiceKit 是一系列服务以及能力，用于快速在其他项目使用或者第三方接入
@@ -115,13 +115,13 @@ Pod::Spec.new do |s|
         ss.resource_bundles = {'HDWebViewHostCoreResources' => ['HDServiceKit/HDWebViewHost/Core/Resources/*.*']}
         ss.dependency  'HDUIKit/MainFrame'
         ss.dependency  'HDServiceKit/HDReachability'
-        ss.dependency 'HDUIKit/Components/HDTips'
+        ss.dependency  'HDUIKit/Components/HDTips'
         ss.dependency  'HDServiceKit/SystemCapability'
         ss.dependency  'HDServiceKit/HDDeviceInfo'
         ss.dependency  'HDServiceKit/Location'
         ss.dependency  'HDServiceKit/ScanCode'
         ss.dependency  'HDVendorKit/HDWebImageManager'
-        ss.dependency 'Masonry'
+        ss.dependency  'Masonry'
       end
 
       ss.subspec 'RemoteDebug' do |ss|

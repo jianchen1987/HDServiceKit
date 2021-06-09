@@ -84,19 +84,6 @@ BOOL kGCDWebServer_logging_enabled = false;
         }
     }];
 
-    //    NSMutableArray *constraints = NSMutableArray.new;
-    //    [constraints addObjectsFromArray:@[
-    //        [self.webView.bottomAnchor constraintEqualToAnchor:self.bottomLayoutGuide.topAnchor],
-    //        [self.webView.rightAnchor constraintEqualToAnchor:self.view.rightAnchor],
-    //        [self.webView.leftAnchor constraintEqualToAnchor:self.view.leftAnchor],
-    //    ]];
-    //    if(HDViewControllerNavigationBarStyleHidden == style || HDViewControllerNavigationBarStyleTransparent == style) {
-    //        [constraints addObject:[self.webView.topAnchor constraintEqualToAnchor:self.view.topAnchor]];
-    //    } else {
-    //        [constraints addObject:[self.webView.topAnchor constraintEqualToAnchor:self.hd_navigationBar.bottomAnchor]];
-    //    }
-    //
-    //    [NSLayoutConstraint activateConstraints:constraints];
     [super updateViewConstraints];
 }
 
@@ -105,6 +92,8 @@ BOOL kGCDWebServer_logging_enabled = false;
 
     self.view.backgroundColor = [UIColor whiteColor];
     [self setupProgressor];
+
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(reloadPage:) name:kWebViewHostNotificationReload object:nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -145,6 +134,8 @@ BOOL kGCDWebServer_logging_enabled = false;
 
 - (void)dealloc {
     [self teardownProgressor];
+
+    [NSNotificationCenter.defaultCenter removeObserver:self name:kWebViewHostNotificationReload object:nil];
 
     [_webView.configuration.userContentController removeScriptMessageHandlerForName:kWHScriptHandlerName];
 
@@ -255,6 +246,10 @@ BOOL kGCDWebServer_logging_enabled = false;
         [[NSUserDefaults standardUserDefaults] synchronize];
         [self.webView setValue:ua forKey:@"applicationNameForUserAgent"];
     }
+}
+
+- (void)reloadPage:(NSNotification *)notification {
+    [self.webView reload];
 }
 
 #pragma mark - UI相关
