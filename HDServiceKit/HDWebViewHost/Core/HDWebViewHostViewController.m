@@ -69,6 +69,17 @@ BOOL kGCDWebServer_logging_enabled = false;
     return self;
 }
 
+- (instancetype)initWithScript:(NSString *_Nullable)script {
+    self = [super init];
+    if (self) {
+        self.startupScript = script;
+        [self.view addSubview:self.webView];
+        self.webView.translatesAutoresizingMaskIntoConstraints = NO;
+        self.navigationBarStyle = HDViewControllerNavigationBarStyleWhite;
+    }
+    return self;
+}
+
 - (void)updateViewConstraints {
 
     HDViewControllerNavigationBarStyle style = [self hd_preferredNavigationBarStyle];

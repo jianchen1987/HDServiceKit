@@ -78,6 +78,7 @@ static NSString *kWebViewHostNotificationReload = @"kWebViewHostNotificationRelo
 @property (nonatomic, copy) void (^closeByUser)(void);
 
 @property (nonatomic, assign) HDViewControllerNavigationBarStyle navigationBarStyle;  ///< 导航栏样式
+@property (nonatomic, copy) NSString *startupScript;                                  ///< 启动脚本
 
 #pragma mark - 使用缓存渲染界面
 /**
@@ -97,5 +98,9 @@ static NSString *kWebViewHostNotificationReload = @"kWebViewHostNotificationRelo
  @param baseDomain 为了解决相对路径 发送 xhr 请求的主域名地址，如 https://www.chaosource.com
  */
 - (void)loadIndexFile:(NSString *)fileName inDirectory:(NSURL *)directory domain:(NSString *)baseDomain;
+
+/// 带启动脚本的初始化
+/// @param script 初始化脚本
+- (instancetype)initWithScript:(NSString *_Nullable)script;
 
 @end

@@ -7,9 +7,9 @@
 //
 
 #import "HDWHNavigationResponse.h"
+#import "HDWebViewHostViewController+Callback.h"
 #import "HDWebViewHostViewController.h"
 #import <SafariServices/SafariServices.h>
-#import "HDWebViewHostViewController+Callback.h"
 
 @implementation HDWHNavigationResponse
 
@@ -88,7 +88,8 @@ wh_doc_code_expect("新开一个 webview 打开’https://m.jd.com/‘页面，�
 wh_doc_end;
 // clang-format on
 - (void)startNewPage:(NSDictionary *)paramDict {
-    HDWebViewHostViewController *freshOne = [[self.webViewHost.class alloc] init];
+
+    HDWebViewHostViewController *freshOne = [[self.webViewHost.class alloc] initWithScript:[paramDict objectForKey:@"script"]];
     freshOne.url = [paramDict objectForKey:@"url"];
     freshOne.pageTitle = [paramDict objectForKey:@"title"];
     freshOne.rightActionBarTitle = [paramDict objectForKey:@"actionTitle"];

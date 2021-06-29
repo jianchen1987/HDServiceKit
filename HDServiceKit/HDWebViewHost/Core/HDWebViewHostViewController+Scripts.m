@@ -149,6 +149,13 @@ static NSString *kWebViewHostSource = nil;
         evalJS = [NSString stringWithFormat:@"window.%@ = webkit.messageHandlers.%@;", kWHScriptHandlerName, kWHScriptHandlerName];
         [self.class _addJavaScript:evalJS when:WKUserScriptInjectionTimeAtDocumentStart forKey:@"eliminateDifferences.js"];
     }
+    // 业务注入的启动脚本, 只注入一次，不需要加到kWebViewHostCustomJavscripts
+    if (self.startupScript && ![self.startupScript isEqual:[NSNull null]]) {
+        HDWHLog(@"注入自定义脚本:%@", self.startupScript);
+        WKUserScript *customerInjectScript = [[WKUserScript alloc] initWithSource:self.startupScript injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES];
+        [userContentController addUserScript:customerInjectScript];
+    }
+
     [kWebViewHostCustomJavscripts enumerateObjectsUsingBlock:^(HDWebViewHostCustomJavscript *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
         WKUserScript *cookieScript = [[WKUserScript alloc] initWithSource:obj.script injectionTime:obj.injectionTime forMainFrameOnly:YES];
         [userContentController addUserScript:cookieScript];
