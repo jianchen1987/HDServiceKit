@@ -1,0 +1,14 @@
+/* 
+  Localizable.strings
+  Pods
+
+  Created by seeu on 2020/12/22.
+  
+*/
+
+"refresh_loading" = "重新加载";
+"confirm" = "确认";
+"prompt" = "提示";
+"cancel" = "取消";
+"empty_url" = "地址为空";
+"network_down" = "网络断开了，请检查网络。";

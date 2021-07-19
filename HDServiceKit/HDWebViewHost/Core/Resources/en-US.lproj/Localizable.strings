@@ -1,0 +1,14 @@
+/* 
+  Localizable.strings
+  Pods
+
+  Created by seeu on 2020/12/22.
+  
+*/
+
+"refresh_loading" = "Reload";
+"confirm" = "Confirm";
+"prompt" = "Prompt";
+"cancel" = "Cancel";
+"empty_url" = "The URL is empty";
+"network_down" = "The network is disconnected. Please check the network.";

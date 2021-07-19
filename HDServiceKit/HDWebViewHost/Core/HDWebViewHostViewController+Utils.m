@@ -11,6 +11,9 @@
 #import "HDWebViewHostViewController+Dispatch.h"
 #import "HDWebViewHostViewController+Utils.h"
 
+// 该 key 为业务方的 key，因为是应用内语言切换，所以不能获取系统语言
+static NSString *const kCurrentLanguageCacheKey = @"kCurrentLanguageCache";
+
 NSString *const kHDWHSupportMethodListKey = @"supportMethodList";
 NSString *const kHDWHAppInfoKey = @"appInfo";
 
@@ -124,6 +127,15 @@ static NSString *const kWHRequestItmsApp = @"itms-apps://";
     }];
 
     return pass;
+}
+
+- (NSString *)getCurrentLanguage {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *currentLanguage = [defaults valueForKey:kCurrentLanguageCacheKey];
+    if (!currentLanguage) {
+        currentLanguage = @"en-US";  /// 默认英文
+    }
+    return currentLanguage;
 }
 
 @end

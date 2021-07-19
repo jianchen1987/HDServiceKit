@@ -25,9 +25,13 @@
 #import "NSBundle+HDWebViewHost.h"
 #import <HDUIKit/UIViewController+HDNavigationBar.h>
 #import <Masonry/Masonry.h>
+#import <HDUIKit/UIViewPlaceholder.h>
+#import <HDKitCore/HDCommonDefines.h>
+#import <HDKitCore/NSBundle+HDKitCore.h>
 
-// 该 key 为业务方的 key，因为是应用内语言切换，所以不能获取系统语言
-static NSString *const kCurrentLanguageCacheKey = @"kCurrentLanguageCache";
+#define LocalizableString(key, value) \
+    HDLocalizedStringInBundleForLanguageFromTable([NSBundle hd_bundleInFramework:@"HDServiceKit" bundleName:@"HDWebViewHostCoreResources"], [self getCurrentLanguage], key, value, nil)
+
 static NSTimeInterval const kTimeoutInterval = 60;
 
 HDWebViewBakcButtonStyle const HDWebViewBakcButtonStyleClose = @"close";    ///< 关闭
@@ -219,11 +223,7 @@ BOOL kGCDWebServer_logging_enabled = false;
 
 /// 设置语言
 - (void)updateRequestAcceptLanguage:(NSMutableURLRequest *)request {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString *currentLanguage = [defaults valueForKey:kCurrentLanguageCacheKey];
-    if (!currentLanguage) {
-        currentLanguage = @"en-US";  /// 默认英文
-    }
+    NSString *currentLanguage = [self getCurrentLanguage];
     [request setValue:currentLanguage forHTTPHeaderField:@"Accept-Language"];
 
     NSString *ua = [NSString stringWithFormat:@" %@/%@ AcceptLanguage/%@", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"],
@@ -263,12 +263,29 @@ BOOL kGCDWebServer_logging_enabled = false;
     [self.webView reload];
 }
 
+- (void)showPlacholderViewWithErrorMessage:(NSString *)errorMessage {
+    UIViewPlaceholderViewModel *placeholderViewModel = UIViewPlaceholderViewModel.new;
+    placeholderViewModel.title = errorMessage;
+    placeholderViewModel.image = @"placeholder_network_error";
+    placeholderViewModel.needRefreshBtn = YES;
+    __weak __typeof(self) weakSelf = self;
+    placeholderViewModel.clickOnRefreshButtonHandler = ^{
+        __strong __typeof(weakSelf) self = weakSelf;
+        [self.view hd_removePlaceholderView];
+        [self loadWebPageWithURL];
+    };
+    placeholderViewModel.refreshBtnTitle = LocalizableString(@"refresh_loading", @"重新加载");
+    
+    [self.view hd_showPlaceholderViewWithModel:placeholderViewModel];
+}
+
 #pragma mark - UI相关
 - (void)loadWebPageWithURL {
     NSURL *url = [NSURL URLWithString:self.url];
     if (url == nil) {
         HDWHLog(@"loadUrl is nil，loadUrl = %@", self.url);
-        [self showTextTip:@"地址为空"];
+        [self showTextTip:LocalizableString(@"empty_url", @"地址为空")];
+        [self showPlacholderViewWithErrorMessage:LocalizableString(@"empty_url", @"地址为空")];
         return;
     }
     // 检查网络是否联网
@@ -279,7 +296,8 @@ BOOL kGCDWebServer_logging_enabled = false;
         [self updateRequestAcceptLanguage:mutableRequest];
         [self.webView loadRequest:mutableRequest];
     } else {
-        [self showTextTip:@"网络断开了，请检查网络。" hideAfterDelay:10.f];
+        [self showTextTip:LocalizableString(@"network_down", @"网络断开了，请检查网络。") hideAfterDelay:10.f];
+        [self showPlacholderViewWithErrorMessage:LocalizableString(@"network_down", @"网络断开了，请检查网络。")];
     }
 }
 
@@ -298,8 +316,8 @@ BOOL kGCDWebServer_logging_enabled = false;
 
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler {
 
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"提示" message:message ?: @"" preferredStyle:UIAlertControllerStyleAlert];
-    [alertController addAction:([UIAlertAction actionWithTitle:@"确认"
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:LocalizableString(@"prompt", @"提示") message:message ?: @"" preferredStyle:UIAlertControllerStyleAlert];
+    [alertController addAction:([UIAlertAction actionWithTitle:LocalizableString(@"confirm", @"确认")
                                                          style:UIAlertActionStyleDefault
                                                        handler:^(UIAlertAction *_Nonnull action) {
                                                            completionHandler();
@@ -310,12 +328,12 @@ BOOL kGCDWebServer_logging_enabled = false;
 - (void)webView:(WKWebView *)webView runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL))completionHandler {
     // js 里面的alert实现，如果不实现，网页的alert函数无效
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:message message:nil preferredStyle:UIAlertControllerStyleAlert];
-    [alertController addAction:[UIAlertAction actionWithTitle:@"取消"
+    [alertController addAction:[UIAlertAction actionWithTitle:LocalizableString(@"cancel", @"取消")
                                                         style:UIAlertActionStyleCancel
                                                       handler:^(UIAlertAction *action) {
                                                           completionHandler(NO);
                                                       }]];
-    [alertController addAction:[UIAlertAction actionWithTitle:@"确定"
+    [alertController addAction:[UIAlertAction actionWithTitle:LocalizableString(@"confirm", @"确定")
                                                         style:UIAlertActionStyleDefault
                                                       handler:^(UIAlertAction *action) {
                                                           completionHandler(YES);
@@ -400,6 +418,8 @@ BOOL kGCDWebServer_logging_enabled = false;
 
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation {
     TIMING_WK_METHOD;
+    // 开始加载网页时，将上一次的加载失败页面关闭
+    [self.view hd_removePlaceholderView];
 }
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation {
@@ -447,12 +467,14 @@ BOOL kGCDWebServer_logging_enabled = false;
 - (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error {
     TIMING_WK_METHOD;
     [self stopProgressor];
+    [self showPlacholderViewWithErrorMessage:error.localizedDescription];
 }
 
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error {
     TIMING_WK_METHOD;
     HDWHLog(@"load page error = %@", error);
     [self stopProgressor];
+    [self showPlacholderViewWithErrorMessage:error.localizedDescription];
 }
 
 #pragma mark - WKScriptMessageHandler

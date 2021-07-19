@@ -1,0 +1,14 @@
+/* 
+  Localizable.strings
+  Pods
+
+  Created by seeu on 2020/12/22.
+  
+*/
+
+"refresh_loading" = "ផ្ទុកឡើងវិញ";
+"confirm" = "បញ្ជាក់";
+"prompt" = "ប្រអប់បញ្ចូល";
+"cancel" = "បោះបង់";
+"empty_url" = "URL គឺទទេ";
+"network_down" = "បណ្តាញត្រូវបានផ្តាច់សូមពិនិត្យមើលបណ្តាញ។";

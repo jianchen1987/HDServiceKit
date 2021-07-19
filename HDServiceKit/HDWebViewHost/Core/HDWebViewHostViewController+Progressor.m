@@ -50,7 +50,7 @@
                 [[NSRunLoop currentRunLoop] addTimer:self.clearProgressorTimer forMode:NSRunLoopCommonModes];
             }];
             self.progressorView.hidden = NO;
-            [self.progressorView setProgress:1 animated:YES];
+            [self.progressorView setProgress:1 animated:NO];
             [CATransaction commit];
         } else {
             [self invalidateClearProgressorTimer];

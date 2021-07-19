@@ -43,6 +43,9 @@ UIKIT_EXTERN NSString *const kHDWHAppInfoKey;
 /// @param url 地址
 - (BOOL)isItmsAppsRequest:(NSString *)url;
 
+/// 获取应用内语言
+- (NSString *)getCurrentLanguage;
+
 @end
 
 NS_ASSUME_NONNULL_END
