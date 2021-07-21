@@ -266,7 +266,7 @@ BOOL kGCDWebServer_logging_enabled = false;
 - (void)showPlacholderViewWithErrorMessage:(NSString *)errorMessage {
     UIViewPlaceholderViewModel *placeholderViewModel = UIViewPlaceholderViewModel.new;
     placeholderViewModel.title = errorMessage;
-    placeholderViewModel.image = @"placeholder_network_error";
+    placeholderViewModel.image = @"no_data_placeholder";
     placeholderViewModel.needRefreshBtn = YES;
     __weak __typeof(self) weakSelf = self;
     placeholderViewModel.clickOnRefreshButtonHandler = ^{
@@ -274,7 +274,7 @@ BOOL kGCDWebServer_logging_enabled = false;
         [self.view hd_removePlaceholderView];
         [self loadWebPageWithURL];
     };
-    placeholderViewModel.refreshBtnTitle = LocalizableString(@"refresh_loading", @"重新加载");
+    placeholderViewModel.refreshBtnTitle = LocalizableString(@"refresh_loading", @"刷新");
     
     [self.view hd_showPlaceholderViewWithModel:placeholderViewModel];
 }
