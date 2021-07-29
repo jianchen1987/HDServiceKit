@@ -95,7 +95,8 @@
                 'setNavigationBarColor-async-function-lackCallback',
                 'setNavigationBarStyle-async-function-lackCallback',
                 'allowsBackForwardNavigationGestures-async-function-lackCallback',
-                'clearCookies-async-function-lackCallback']
+                'clearCookies-async-function-lackCallback',
+                'getUserUnreadMsgCount-async-function']
     };
 }(window);
 
