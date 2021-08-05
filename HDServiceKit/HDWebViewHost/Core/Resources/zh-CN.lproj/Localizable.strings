@@ -12,3 +12,10 @@
 "cancel" = "取消";
 "empty_url" = "地址为空";
 "network_down" = "网络断开了，请检查网络。";
+"privacy_photo" = "APP 需要使用您的相册来保存图片.";
+"GoSetting" = "去设置";
+"privacy_download" = "是否允许%@下载文件";
+"btn_allow" = "允许";
+"btn_no" = "否";
+"save_success" = "保存成功";
+"save_failed" = "保存失败";

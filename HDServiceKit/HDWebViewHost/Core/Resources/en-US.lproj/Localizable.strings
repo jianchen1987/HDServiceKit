@@ -12,3 +12,10 @@
 "cancel" = "Cancel";
 "empty_url" = "The URL is empty";
 "network_down" = "The network is disconnected. Please check the network.";
+"privacy_photo" = "APP needs to use your album to store pictures.";
+"GoSetting" = "Setting";
+"privacy_download" = "Whether to allow host:%@ to download files";
+"btn_allow" = "Allow";
+"btn_no" = "No";
+"save_success" = "Successfully saved";
+"save_failed" = "Save failed";

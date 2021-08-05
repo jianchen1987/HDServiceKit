@@ -8,6 +8,7 @@
 
 #import "HDWebViewHostViewController.h"
 #import "HDReachability.h"
+#import "HDSystemCapabilityUtil.h"
 #import "HDWHAppLoggerResponse.h"
 #import "HDWHDebugResponse.h"
 #import "HDWHNavigationBarResponse.h"
@@ -23,11 +24,14 @@
 #import "HDWebViewHostViewController+Timing.h"
 #import "HDWebViewHostViewController+Utils.h"
 #import "NSBundle+HDWebViewHost.h"
-#import <HDUIKit/UIViewController+HDNavigationBar.h>
-#import <Masonry/Masonry.h>
-#import <HDUIKit/UIViewPlaceholder.h>
 #import <HDKitCore/HDCommonDefines.h>
 #import <HDKitCore/NSBundle+HDKitCore.h>
+#import <HDUIKit/NAT.h>
+#import <HDUIKit/UIViewController+HDNavigationBar.h>
+#import <HDUIKit/UIViewPlaceholder.h>
+#import <HDVendorKit/HDWebImageManager.h>
+#import <Masonry/Masonry.h>
+#import <Photos/Photos.h>
 
 #define LocalizableString(key, value) \
     HDLocalizedStringInBundleForLanguageFromTable([NSBundle hd_bundleInFramework:@"HDServiceKit" bundleName:@"HDWebViewHostCoreResources"], [self getCurrentLanguage], key, value, nil)
@@ -275,8 +279,58 @@ BOOL kGCDWebServer_logging_enabled = false;
         [self loadWebPageWithURL];
     };
     placeholderViewModel.refreshBtnTitle = LocalizableString(@"refresh_loading", @"刷新");
-    
+
     [self.view hd_showPlaceholderViewWithModel:placeholderViewModel];
+}
+
+- (void)showDownloadWarningWithRequest:(NSURLRequest *)request {
+    __weak __typeof(self) weakSelf = self;
+    NSURL *oriUrl = [NSURL URLWithString:self.url];
+    [NAT showAlertWithMessage:[NSString stringWithFormat:LocalizableString(@"privacy_download", @"是否允许%@下载文件"), oriUrl.host]
+        confirmButtonTitle:LocalizableString(@"btn_allow", @"Allow")
+        confirmButtonHandler:^(HDAlertView *_Nonnull alertView, HDAlertViewButton *_Nonnull button) {
+            __strong __typeof(weakSelf) strongSelf = weakSelf;
+            [alertView dismiss];
+            [strongSelf downloadFileWithRequest:request];
+        }
+        cancelButtonTitle:LocalizableString(@"btn_no", @"No")
+        cancelButtonHandler:^(HDAlertView *_Nonnull alertView, HDAlertViewButton *_Nonnull button) {
+            [alertView dismiss];
+        }];
+}
+
+- (void)downloadFileWithRequest:(NSURLRequest *)request {
+    [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
+        if (PHAuthorizationStatusAuthorized == status) {
+            [HDWebImageManager downloadImageWithURL:request.URL.absoluteString
+                                           progress:nil
+                                          completed:^(UIImage *_Nullable image, NSData *_Nullable data, NSError *_Nullable error, BOOL finished) {
+                                              UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+                                          }];
+        } else {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [NAT showAlertWithMessage:LocalizableString(@"privacy_photo", @"APP needs to use your album to store photos.")
+                              buttonTitle:LocalizableString(@"GoSetting", @"去设置")
+                                  handler:^(HDAlertView *_Nonnull alertView, HDAlertViewButton *_Nonnull button) {
+                                      [alertView dismiss];
+                                      [HDSystemCapabilityUtil openAppSystemSettingPage];
+                                  }];
+            });
+        }
+    }];
+}
+
+#pragma mark - save pic delegate
+- (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
+    if (!error) {
+        [NAT showToastWithTitle:LocalizableString(@"save_success", @"保存成功")
+                        content:@""
+                           type:HDTopToastTypeSuccess];
+    } else {
+        [NAT showToastWithTitle:LocalizableString(@"save_failed", @"保存失败")
+                        content:error.localizedDescription
+                           type:HDTopToastTypeError];
+    }
 }
 
 #pragma mark - UI相关
@@ -370,6 +424,9 @@ BOOL kGCDWebServer_logging_enabled = false;
             // Fallback on earlier versions
             [[UIApplication sharedApplication] openURL:[request URL]];
         }
+        policy = WKNavigationActionPolicyCancel;
+    } else if ([self isBase64DataRequest:rurl]) {
+        [self showDownloadWarningWithRequest:request];
         policy = WKNavigationActionPolicyCancel;
     } else if ([self isExternalSchemeRequest:rurl]) {  // 非 http，https 协议的请求，走默认逻辑，容许广告页面之间唤起响应的 App
         if (@available(iOS 10.0, *)) {

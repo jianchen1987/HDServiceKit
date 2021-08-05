@@ -39,6 +39,8 @@ UIKIT_EXTERN NSString *const kHDWHAppInfoKey;
 /// @param url 地址
 - (BOOL)isExternalSchemeRequest:(NSString *)url;
 
+- (BOOL)isBase64DataRequest:(NSString *)url;
+
 /// 是否 itunes 相关请求
 /// @param url 地址
 - (BOOL)isItmsAppsRequest:(NSString *)url;

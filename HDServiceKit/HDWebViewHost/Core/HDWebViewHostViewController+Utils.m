@@ -129,6 +129,20 @@ static NSString *const kWHRequestItmsApp = @"itms-apps://";
     return pass;
 }
 
+- (BOOL)isBase64DataRequest:(NSString *)url {
+    NSArray<NSString *> *prefixs = @[@"data:image/png;base64"];
+    BOOL __block external = NO;
+
+    [prefixs enumerateObjectsUsingBlock:^(NSString *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
+        if ([url hasPrefix:obj]) {
+            external = YES;
+            *stop = YES;
+        }
+    }];
+
+    return external;
+}
+
 - (NSString *)getCurrentLanguage {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *currentLanguage = [defaults valueForKey:kCurrentLanguageCacheKey];
