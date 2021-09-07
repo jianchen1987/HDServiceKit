@@ -126,7 +126,20 @@ wh_doc_end;
     if (self.webViewHost.presentingViewController) {
         [self.webViewHost dismissViewControllerAnimated:YES completion:nil];
     } else {
-        [self.navigationController popViewControllerAnimated:NO];
+        if (self.navigationController.viewControllers.count > 0) {
+            if ([self.navigationController.viewControllers.lastObject isKindOfClass:self.webViewHost.class]) {
+                [self.navigationController popViewControllerAnimated:NO];
+            }else{
+                for (UIViewController *childVC in [self.navigationController.viewControllers reverseObjectEnumerator]) {
+                    if ([childVC isKindOfClass:self.webViewHost.class]) {
+                        [childVC removeFromParentViewController];
+                        return;
+                    }
+                }
+            }
+        }else{
+            [self.navigationController popViewControllerAnimated:NO];
+        }
     }
 }
 @end
