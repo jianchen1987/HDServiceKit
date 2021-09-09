@@ -524,14 +524,18 @@ BOOL kGCDWebServer_logging_enabled = false;
 - (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error {
     TIMING_WK_METHOD;
     [self stopProgressor];
-    [self showPlacholderViewWithErrorMessage:error.localizedDescription];
+    if (error.code != NSURLErrorCancelled) {
+        [self showPlacholderViewWithErrorMessage:error.localizedDescription];
+    }
 }
 
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error {
     TIMING_WK_METHOD;
     HDWHLog(@"load page error = %@", error);
     [self stopProgressor];
-    [self showPlacholderViewWithErrorMessage:error.localizedDescription];
+    if (error.code != NSURLErrorCancelled) {
+        [self showPlacholderViewWithErrorMessage:error.localizedDescription];
+    }
 }
 
 #pragma mark - WKScriptMessageHandler
