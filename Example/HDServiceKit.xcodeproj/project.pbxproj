@@ -263,7 +263,6 @@
 			children = (
 				956762FC241881BD00374171 /* Controller */,
 				95676305241881BD00374171 /* Model */,
-				95676308241881BD00374171 /* View */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -309,13 +308,6 @@
 				95676307241881BD00374171 /* ExampleItem.m */,
 			);
 			path = Model;
-			sourceTree = "<group>";
-		};
-		95676308241881BD00374171 /* View */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = View;
 			sourceTree = "<group>";
 		};
 		9567630D2418825900374171 /* H5 */ = {
