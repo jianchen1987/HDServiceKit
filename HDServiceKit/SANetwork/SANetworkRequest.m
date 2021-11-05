@@ -24,6 +24,12 @@
         self.baseURI = @"http://japi.juhe.cn";
         self.requestMethod = HDRequestMethodPOST;
 
+        NSDateFormatter *fmt = [[NSDateFormatter alloc] init];
+        [fmt setDateFormat:@"mmss"];
+        [fmt setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]];
+        NSString *dateStr = [fmt stringFromDate:NSDate.date];
+        self.requestTm = [dateStr stringByAppendingFormat:@"%05d", arc4random() % 100000];
+
         // 检查数据正确性，保证缓存有用的内容
         /*
         self.cacheHandler.shouldWriteCacheBlock = ^BOOL(HDNetworkResponse *_Nonnull response) {
@@ -132,7 +138,7 @@
     [fmt setDateFormat:@"yyyyMMddHHmmss"];
     [fmt setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]];
     NSString *requestTm = [fmt stringFromDate:NSDate.date];
-    requestTm = [requestTm stringByAppendingFormat:@"%04d",arc4random() % 10000];
+    requestTm = [requestTm stringByAppendingFormat:@"%04d", arc4random() % 10000];
     NSString *deviceId = HDDeviceInfo.getUniqueId;
     NSMutableDictionary<NSString *, NSString *> *headerFieldsDict = [NSMutableDictionary dictionaryWithDictionary:@{
         @"requestTm": requestTm,
@@ -140,12 +146,12 @@
         @"deviceId": deviceId,
         @"signVer": @"1.0",
         @"sign": [self getSignatureWithRequestTime:requestTm deviceId:deviceId],
-//        @"type": self.cipherMode == SANetworkRequestCipherModeMD5 ? @"md5" : @"rsa",
+        //        @"type": self.cipherMode == SANetworkRequestCipherModeMD5 ? @"md5" : @"rsa",
         @"Accept-Language": HDIsStringNotEmpty(self.acceptLanguage) ? self.acceptLanguage : HDDeviceInfo.getDeviceLanguage,
         @"appVersion": HDIsStringNotEmpty(self.appVersion) ? self.appVersion : HDDeviceInfo.appVersion,
         @"channel": HDIsStringNotEmpty(self.channel) ? self.channel : @"AppStore",
         @"appId": HDIsStringNotEmpty(self.appID) ? self.appID : @"SuperApp",
-        @"appNo":HDIsStringNotEmpty(self.appNo) ? self.appNo : @"11",
+        @"appNo": HDIsStringNotEmpty(self.appNo) ? self.appNo : @"11",
         @"projectName": HDIsStringNotEmpty(self.projectName) ? self.projectName : @"SuperApp",
         @"Content-Type": @"application/json",
     }];
