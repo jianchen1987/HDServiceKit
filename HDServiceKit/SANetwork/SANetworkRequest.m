@@ -23,29 +23,6 @@
     if (self = [super init]) {
         self.baseURI = @"http://japi.juhe.cn";
         self.requestMethod = HDRequestMethodPOST;
-
-        NSDateFormatter *fmt = [[NSDateFormatter alloc] init];
-        [fmt setDateFormat:@"mmss"];
-        [fmt setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]];
-        NSString *dateStr = [fmt stringFromDate:NSDate.date];
-        self.requestTm = [dateStr stringByAppendingFormat:@"%05d", arc4random() % 100000];
-
-        // 检查数据正确性，保证缓存有用的内容
-        /*
-        self.cacheHandler.shouldWriteCacheBlock = ^BOOL(HDNetworkResponse *_Nonnull response) {
-            HDRspModel *rspModel = response.extraData;
-            return [rspModel.code isEqualToString:SAResponseTypeSuccess];
-        };
-        */
-
-        // 是否使用缓存，比如判断时间间隔
-        /*
-        self.cacheHandler.shouldReadCacheBlock = ^BOOL(HDNetworkResponse *_Nonnull response) {
-            HDRspModel *rspModel = response.extraData;
-            NSTimeInterval minus = NSDate.date.timeIntervalSince1970 - rspModel.timeStamp;
-            return minus < 60;
-        };
-        */
     }
     return self;
 }

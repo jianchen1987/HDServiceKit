@@ -16,6 +16,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface HDNetworkRequest : NSObject
 
 #pragma - 网络请求数据
+/** 请求唯一ID */
+@property (nonatomic, copy, readonly) NSString *traceId;
+/** 请求开始时间，用于记录请求过程耗时*/
+@property (nonatomic, assign, readonly) NSTimeInterval startTime;
 
 /** 请求方法类型 */
 @property (nonatomic, assign) HDRequestMethod requestMethod;

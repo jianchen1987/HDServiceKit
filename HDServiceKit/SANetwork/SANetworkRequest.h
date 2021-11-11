@@ -17,8 +17,6 @@ typedef NS_ENUM(NSInteger, SANetworkRequestCipherMode) {
 
 @interface SANetworkRequest : HDNetworkRequest
 
-@property (nonatomic, copy) NSString *requestTm;  ///< 请求流水
-
 /** app id，默认 SuperApp */
 @property (nonatomic, copy, nullable) NSString *appID;
 /** appNo，
@@ -65,6 +63,13 @@ typedef NS_ENUM(NSInteger, SANetworkRequestCipherMode) {
 /** 会话 accessToken */
 @property (nonatomic, copy) NSString *accessToken;
 
+/** 是否需要登录，默认开启，如果需要，会自动添加用户名参数 */
+@property (nonatomic, assign) BOOL isNeedLogin;
+
+/** 额外数据，如果需要的话可以设置 */
+@property (nonatomic, strong, nullable) id extraData;
+
+#pragma mark - 重试参数
 /** 请求重试次数，默认 0，即不重试，交由业务控制 */
 @property (nonatomic, assign) NSInteger retryCount;
 
@@ -73,12 +78,6 @@ typedef NS_ENUM(NSInteger, SANetworkRequestCipherMode) {
 
 /** 重试间隔是否步进，默认否，即随着失败次数增加，重试间隔加长，如 1 -> 3 -> 9 */
 @property (nonatomic, assign) BOOL isRetryProgressive;
-
-/** 是否需要登录，默认开启，如果需要，会自动添加用户名参数 */
-@property (nonatomic, assign) BOOL isNeedLogin;
-
-/** 额外数据，如果需要的话可以设置 */
-@property (nonatomic, strong, nullable) id extraData;
 
 @end
 
