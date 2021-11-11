@@ -131,7 +131,7 @@
         if (retryConfig.remainingRetryCount > 0) {
             BOOL shouldRetry = retryConfig.shouldRetryBlock ? retryConfig.shouldRetryBlock(wrappedResponse) : YES;
             if (shouldRetry) {
-                [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%.4fs]外部判断应该重试，还剩：%zd 次", oriRequest.traceId, [NSDate.new timeIntervalSince1970] - oriRequest.startTime, retryConfig.remainingRetryCount]];
+                [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%.4fs]异常码:[(%ld)%@]外部判断应该重试，还剩：%zd 次", oriRequest.traceId, [NSDate.new timeIntervalSince1970] - oriRequest.startTime, error.code, error.localizedDescription, retryConfig.remainingRetryCount]];
                 int64_t delay;
                 if (retryConfig.isRetryProgressive) {
                     delay = (int64_t)(retryConfig.retryInterval * pow(2, 2 - retryConfig.maxRetryCount));
