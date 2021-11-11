@@ -106,7 +106,7 @@
         HDNetworkResponse *wrappedResponse = [HDNetworkResponse responseWithSessionTask:task responseObject:responseObject error:error];
         // 请求成功，直接返回，无需重试
         if (!error) {
-            [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%.4fs]请求成功，无需重试，直接返回", oriRequest.traceId, [NSDate.new timeIntervalSince1970] - oriRequest.startTime]];
+            //            [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%.4fs]请求成功，无需重试，直接返回", oriRequest.traceId, [NSDate.new timeIntervalSince1970] - oriRequest.startTime]];
             !completion ?: completion(wrappedResponse);
             return;
         }
@@ -129,7 +129,7 @@
         }
 
         if (retryConfig.remainingRetryCount > 0) {
-            BOOL shouldRetry = retryConfig.shouldRetryBlock && retryConfig.shouldRetryBlock(wrappedResponse);
+            BOOL shouldRetry = retryConfig.shouldRetryBlock ? retryConfig.shouldRetryBlock(wrappedResponse) : YES;
             if (shouldRetry) {
                 [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%.4fs]外部判断应该重试，还剩：%zd 次", oriRequest.traceId, [NSDate.new timeIntervalSince1970] - oriRequest.startTime, retryConfig.remainingRetryCount]];
                 int64_t delay;

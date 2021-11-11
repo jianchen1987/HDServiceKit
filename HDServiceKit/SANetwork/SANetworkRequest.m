@@ -107,6 +107,22 @@
     return extraParams;
 }
 
+#pragma mark - setter
+- (void)setRetryCount:(NSInteger)retryCount {
+    _retryCount = retryCount;
+    self.retryConfig.maxRetryCount = retryCount;
+}
+
+- (void)setRetryInterval:(NSTimeInterval)retryInterval {
+    _retryInterval = retryInterval;
+    self.retryConfig.retryInterval = retryInterval;
+}
+
+- (void)setIsRetryProgressive:(BOOL)isRetryProgressive {
+    _isRetryProgressive = isRetryProgressive;
+    self.retryConfig.isRetryProgressive = isRetryProgressive;
+}
+
 #pragma mark - override
 - (AFHTTPRequestSerializer *)requestSerializer {
     AFJSONRequestSerializer *serializer = [AFJSONRequestSerializer new];
