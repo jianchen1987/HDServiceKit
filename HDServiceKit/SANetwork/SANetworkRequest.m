@@ -32,8 +32,7 @@
 - (NSString *)getSignatureWithRequestTime:(NSString *)requestTime deviceId:(NSString *)deviceId {
 
     NSMutableDictionary *finalParams = [NSMutableDictionary dictionary];
-    [finalParams addEntriesFromDictionary:self.requestParameter];
-    [finalParams addEntriesFromDictionary:self.extraParams];
+    [finalParams addEntriesFromDictionary:[self hd_preprocessParameter:self.requestParameter]];
     [finalParams addEntriesFromDictionary:@{@"requestTm": requestTime,
                                             @"deviceId": deviceId}];
 
@@ -99,12 +98,8 @@
     return jsonStr;
 }
 
-- (NSDictionary *)extraParams {
-    NSMutableDictionary *extraParams = [NSMutableDictionary dictionaryWithCapacity:2];
-    if (self.isNeedLogin && HDIsStringNotEmpty(self.userName)) {
-        extraParams[@"loginName"] = self.userName;
-    }
-    return extraParams;
+- (NSDictionary<NSString *, NSString *> *)sa_preprocessHeaderFields:(NSDictionary<NSString *, NSString *> *)headerFields {
+    return headerFields;
 }
 
 #pragma mark - setter
@@ -135,22 +130,21 @@
     NSString *deviceId = HDDeviceInfo.getUniqueId;
     NSMutableDictionary<NSString *, NSString *> *headerFieldsDict = [NSMutableDictionary dictionaryWithDictionary:@{
         @"requestTm": requestTm,
-        @"termTyp": @"IOS",
         @"deviceId": deviceId,
         @"signVer": @"1.0",
-        @"sign": [self getSignatureWithRequestTime:requestTm deviceId:deviceId],
-        //        @"type": self.cipherMode == SANetworkRequestCipherModeMD5 ? @"md5" : @"rsa",
-        @"Accept-Language": HDIsStringNotEmpty(self.acceptLanguage) ? self.acceptLanguage : HDDeviceInfo.getDeviceLanguage,
-        @"appVersion": HDIsStringNotEmpty(self.appVersion) ? self.appVersion : HDDeviceInfo.appVersion,
-        @"channel": HDIsStringNotEmpty(self.channel) ? self.channel : @"AppStore",
-        @"appId": HDIsStringNotEmpty(self.appID) ? self.appID : @"SuperApp",
-        @"appNo": HDIsStringNotEmpty(self.appNo) ? self.appNo : @"11",
-        @"projectName": HDIsStringNotEmpty(self.projectName) ? self.projectName : @"SuperApp",
         @"Content-Type": @"application/json",
     }];
-    if (self.isNeedLogin && HDIsStringNotEmpty(self.accessToken)) {
-        headerFieldsDict[@"accessToken"] = self.accessToken;
+    [headerFieldsDict addEntriesFromDictionary:[self sa_preprocessHeaderFields:headerFieldsDict]];
+    if ([self respondsToSelector:@selector(sa_customSignatureProcess)]) {
+        [headerFieldsDict addEntriesFromDictionary:@{
+            @"sign": [self sa_customSignatureProcess]
+        }];
+    } else {
+        [headerFieldsDict addEntriesFromDictionary:@{
+            @"sign": [self getSignatureWithRequestTime:requestTm deviceId:deviceId]
+        }];
     }
+
     [headerFieldsDict enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull key, NSString *_Nonnull obj, BOOL *_Nonnull stop) {
         [serializer setValue:obj forHTTPHeaderField:key];
     }];
@@ -168,11 +162,5 @@
     [types addObject:@"text/javascript"];
     serializer.acceptableContentTypes = types;
     return serializer;
-}
-
-- (NSDictionary *)hd_preprocessParameter:(NSDictionary *)parameter {
-    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:parameter ?: @{}];
-    [params addEntriesFromDictionary:self.extraParams];
-    return params;
 }
 @end

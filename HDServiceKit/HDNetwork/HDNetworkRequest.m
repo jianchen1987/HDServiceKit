@@ -363,19 +363,27 @@
 
     NSURL *baseURL = [NSURL URLWithString:self.baseURI];
     NSString *URLString = [NSURL URLWithString:self.requestURI relativeToURL:baseURL].absoluteString;
-    if ([self respondsToSelector:@selector(hd_preprocessURLString:)]) {
-        URLString = [self hd_preprocessURLString:URLString];
-    }
+    URLString = [self hd_preprocessURLString:URLString];
     return URLString;
 }
 
 - (id)validRequestParameter {
 
     id parameter = self.requestParameter;
-    if ([self respondsToSelector:@selector(hd_preprocessParameter:)]) {
-        parameter = [self hd_preprocessParameter:parameter];
-    }
+    parameter = [self hd_preprocessParameter:parameter];
     return parameter;
+}
+
+/// 预处理请求参数，默认不做任何处理
+/// @param parameter 原始请求参数
+- (nullable NSDictionary *)hd_preprocessParameter:(nullable NSDictionary *)parameter {
+    return parameter;
+}
+
+/// 预处理请求URL，默认不做任何处理
+/// @param URLString 原始请求URL
+- (NSString *)hd_preprocessURLString:(NSString *)URLString {
+    return URLString;
 }
 
 #pragma mark - getter

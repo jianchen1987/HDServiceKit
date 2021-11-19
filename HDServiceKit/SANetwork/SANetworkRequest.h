@@ -17,37 +17,6 @@ typedef NS_ENUM(NSInteger, SANetworkRequestCipherMode) {
 
 @interface SANetworkRequest : HDNetworkRequest
 
-/** app id，默认 SuperApp */
-@property (nonatomic, copy, nullable) NSString *appID;
-/** appNo，
- 超A用户端：
-10:超级APP-Android端
-11:超级APP-iOS端
-
-外卖商户端：
-14:外卖商户APP-Android端
-15:外卖商户APP-iOS端
-
-外卖骑手端：
-16:外卖骑手APP-Android端
-17:外卖骑手APP-iOS端 */
-@property (nonatomic, copy, nullable) NSString *appNo;
-
-/** 应用名，默认 SuperApp */
-@property (nonatomic, copy, nullable) NSString *projectName;
-
-/** 用户名 */
-@property (nonatomic, copy, nullable) NSString *userName;
-
-/** 渠道，默认 AppStore */
-@property (nonatomic, copy, nullable) NSString *channel;
-
-/** 语言，为空将默认使用系统语言 */
-@property (nonatomic, copy, nullable) NSString *acceptLanguage;
-
-/** APP 版本，默认传当前工程版本 */
-@property (nonatomic, copy) NSString *appVersion;
-
 /// 加密类型
 @property (nonatomic, assign) SANetworkRequestCipherMode cipherMode;
 
@@ -60,15 +29,6 @@ typedef NS_ENUM(NSInteger, SANetworkRequestCipherMode) {
 /** RSA 方案使用的公钥 pem 或者 der 文件路径（与公钥字符串二选一） */
 @property (nonatomic, copy, nullable) NSString *rsaPublicKeyFile;
 
-/** 会话 accessToken */
-@property (nonatomic, copy) NSString *accessToken;
-
-/** 是否需要登录，默认开启，如果需要，会自动添加用户名参数 */
-@property (nonatomic, assign) BOOL isNeedLogin;
-
-/** 额外数据，如果需要的话可以设置 */
-@property (nonatomic, strong, nullable) id extraData;
-
 #pragma mark - 重试参数
 /** 请求重试次数，默认 0，即不重试，交由业务控制 */
 @property (nonatomic, assign) NSInteger retryCount;
@@ -78,6 +38,18 @@ typedef NS_ENUM(NSInteger, SANetworkRequestCipherMode) {
 
 /** 重试间隔是否步进，默认否，即随着失败次数增加，重试间隔加长，如 1 -> 3 -> 9 */
 @property (nonatomic, assign) BOOL isRetryProgressive;
+
+@end
+
+@interface SANetworkRequest (SA_RequestHeaderFieldInterceptor)
+/** 预处理请求头*/
+- (NSDictionary<NSString *, NSString *> *)sa_preprocessHeaderFields:(NSDictionary<NSString *, NSString *> *)headerFields;
+
+@end
+
+@interface SANetworkRequest (SA_RequestSignInterceptor)
+/** 自定义签名算法*/
+- (NSString *)sa_customSignatureProcess;
 
 @end
 
