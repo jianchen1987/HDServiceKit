@@ -103,4 +103,7 @@ static NSString *kWebViewHostNotificationReload = @"kWebViewHostNotificationRelo
 /// @param script 初始化脚本
 - (instancetype)initWithScript:(NSString *_Nullable)script;
 
+/// 关闭容器
+- (void)close;
+
 @end
