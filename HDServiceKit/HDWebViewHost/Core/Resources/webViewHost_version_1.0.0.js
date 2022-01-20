@@ -97,7 +97,8 @@
                 'allowsBackForwardNavigationGestures-async-function-lackCallback',
                 'clearCookies-async-function-lackCallback',
                 'getUserUnreadMsgCount-async-function',
-                'getShippingAddress-async-function']
+                'getShippingAddress-async-function',
+                'applePay-sync-function']
     };
 }(window);
 
