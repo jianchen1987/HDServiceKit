@@ -38,6 +38,7 @@
     [self.dataSource addObject:[ExampleItem itemWithDesc:@"RSA加解密" routeURL:@"superapp://DemoTarget/rsaCipherViewController"]];
     [self.dataSource addObject:[ExampleItem itemWithDesc:@"使用 SANetworkRequest，使用 md5 或者 RSA加密逻辑" routeURL:@"superapp://DemoTarget/sa_networkViewController"]];
     [self.dataSource addObject:[ExampleItem itemWithDesc:@"使用CMNetworkRequest，重定向了成功、失败逻辑，返回数据中根据实际业务需求插入额外数据，业务请求返回码不是 00000 统一触发失败回调，而不再是默认的网络错误只走失败回调，还扩充了错误类型" routeURL:@"superapp://DemoTarget/cm_networkViewController"]];
+    [self.dataSource addObject:[ExampleItem itemWithDesc:@"传声筒测试" routeURL:@"superapp://DemoTarget/helloPlatform"]];
 }
 
 - (void)setupUI {

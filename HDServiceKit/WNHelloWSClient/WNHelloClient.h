@@ -5,6 +5,7 @@
 //  Created by seeu on 2022/3/17.
 //
 
+#import "WNHelloDefines.h"
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN

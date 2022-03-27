@@ -294,6 +294,34 @@ static NSString *const HDServiceKit_VERSION = @"1.5.11";
 #import "HDDeviceInfo.h"
 #endif
 
+#if __has_include("WNHelloDefines.h")
+#import "WNHelloDefines.h"
+#endif
+
+#if __has_include("WNHelloWebSocketClient.h")
+#import "WNHelloWebSocketClient.h"
+#endif
+
+#if __has_include("WNHelloClient.h")
+#import "WNHelloClient.h"
+#endif
+
+#if __has_include("WNHelloDownloadMsg.h")
+#import "WNHelloDownloadMsg.h"
+#endif
+
+#if __has_include("WNHelloAckMsg.h")
+#import "WNHelloAckMsg.h"
+#endif
+
+#if __has_include("WNHelloUploadMsg.h")
+#import "WNHelloUploadMsg.h"
+#endif
+
+#if __has_include("WNHelloBaseMsg.h")
+#import "WNHelloBaseMsg.h"
+#endif
+
 #if __has_include("HDScanCodeViewController.h")
 #import "HDScanCodeViewController.h"
 #endif

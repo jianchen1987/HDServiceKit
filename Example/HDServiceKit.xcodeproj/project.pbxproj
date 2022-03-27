@@ -46,6 +46,7 @@
 		959AB0C4242B6C7500883616 /* CMNetworkRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 959AB0C3242B6C7500883616 /* CMNetworkRequest.m */; };
 		959AB0C7242B6C8400883616 /* HDNetworkResponse+CM.m in Sources */ = {isa = PBXBuildFile; fileRef = 959AB0C6242B6C8400883616 /* HDNetworkResponse+CM.m */; };
 		959AB0CB242B6EF000883616 /* SANetworkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 959AB0CA242B6EF000883616 /* SANetworkViewController.m */; };
+		E817A24427EB394F001B6C0F /* HDHelloPlatformViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E817A24327EB394F001B6C0F /* HDHelloPlatformViewController.m */; };
 		F10A14B383EBDDDE371FB108 /* Pods_HDServiceKit_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8BF9A6FFAAB58CBA3D4B355 /* Pods_HDServiceKit_Example.framework */; };
 /* End PBXBuildFile section */
 
@@ -128,6 +129,8 @@
 		959AEAEA2413F99100D3E3AE /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
 		A8DE880A4F8F41BE837802F6 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		CAD66B6F8B2A50BCA944DB23 /* Pods-HDServiceKit_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HDServiceKit_Example.release.xcconfig"; path = "Target Support Files/Pods-HDServiceKit_Example/Pods-HDServiceKit_Example.release.xcconfig"; sourceTree = "<group>"; };
+		E817A24227EB394F001B6C0F /* HDHelloPlatformViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HDHelloPlatformViewController.h; sourceTree = "<group>"; };
+		E817A24327EB394F001B6C0F /* HDHelloPlatformViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HDHelloPlatformViewController.m; sourceTree = "<group>"; };
 		EBE048FB0E1198CF51F01965 /* Pods-HDServiceKit_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HDServiceKit_Tests.release.xcconfig"; path = "Target Support Files/Pods-HDServiceKit_Tests/Pods-HDServiceKit_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		F8BF9A6FFAAB58CBA3D4B355 /* Pods_HDServiceKit_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HDServiceKit_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -297,6 +300,8 @@
 				956762EC2417850C00374171 /* HDCallBackExample.m */,
 				959AB08424291FDA00883616 /* HDRSACipherViewController.h */,
 				959AB08524291FDA00883616 /* HDRSACipherViewController.m */,
+				E817A24227EB394F001B6C0F /* HDHelloPlatformViewController.h */,
+				E817A24327EB394F001B6C0F /* HDHelloPlatformViewController.m */,
 			);
 			path = Demo;
 			sourceTree = "<group>";
@@ -596,6 +601,7 @@
 				959AB0C7242B6C8400883616 /* HDNetworkResponse+CM.m in Sources */,
 				959AB0CB242B6EF000883616 /* SANetworkViewController.m in Sources */,
 				959AB0952429F74000883616 /* HDRspModel.m in Sources */,
+				E817A24427EB394F001B6C0F /* HDHelloPlatformViewController.m in Sources */,
 				959AB08A2429E20500883616 /* CMNetworkViewController.m in Sources */,
 				956762ED2417850C00374171 /* HDCallBackExample.m in Sources */,
 				959AB0C4242B6C7500883616 /* CMNetworkRequest.m in Sources */,
