@@ -7,7 +7,7 @@
 
 #import "WNHelloDefines.h"
 #import <Foundation/Foundation.h>
-#import <HDKitCore/HDLog.h>
+#import <HDKitCore/HDKitCore.h>
 #import <YYModel/YYModel.h>
 
 NS_ASSUME_NONNULL_BEGIN

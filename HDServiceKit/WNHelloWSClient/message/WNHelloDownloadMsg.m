@@ -9,4 +9,12 @@
 
 @implementation WNHelloDownloadMsg
 
+- (instancetype)initWithMessage:(NSString *)text {
+    self = [super initWithMessage:text];
+    if (self) {
+        self.messageID = [self.data objectForKey:@"messageID"];
+    }
+    return self;
+}
+
 @end

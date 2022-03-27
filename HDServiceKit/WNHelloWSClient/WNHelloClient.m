@@ -8,10 +8,15 @@
 #import "WNHelloClient.h"
 #import "HDDeviceInfo.h"
 #import "WNHelloAckMsg.h"
+#import "WNHelloConnectedMsg.h"
 #import "WNHelloDownloadMsg.h"
-#import <HDKitCore/HDLog.h>
+#import "WNHelloLoginMsg.h"
+#import <HDKitCore/HDKitCore.h>
 #import <HDKitCore/WNApp.h>
 #import <SocketRocket/SocketRocket.h>
+
+WNHelloEvent const WNHelloEventDataMessage = @"event.dataMsg";        ///< 数据消息
+WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通知
 
 @interface WNHelloClient () <SRWebSocketDelegate>
 ///< ws 服务
@@ -23,6 +28,9 @@
 @property (nonatomic, strong) WNApp *app;
 ///< 当前用户
 @property (nonatomic, copy) NSString *currentUser;
+
+///< 订阅者
+@property (nonatomic, strong) NSMutableDictionary<NSString *, NSMutableArray<id<WMHelloClientListenerDelegate>> *> *listeners;
 
 @end
 
@@ -69,14 +77,26 @@
 
 /// 订阅消息
 /// @param listener 接收者
-/// @param type 订阅类型
-- (void)addListener:(id<WMHelloClientDelegate>)listener forMsgType:(WNMessageType)type {
+/// @param event 订阅事件
+- (void)addListener:(id<WMHelloClientListenerDelegate>)listener forEvent:(WNHelloEvent)event {
+    NSMutableArray<id<WMHelloClientListenerDelegate>> *tmp = [self.listeners objectForKey:event];
+    if (tmp.count) {
+        [tmp addObject:listener];
+    } else {
+        tmp = [[NSMutableArray alloc] initWithCapacity:5];
+        [tmp addObject:listener];
+        [self.listeners setObject:tmp forKey:event];
+    }
 }
 
 /// 取消订阅
 /// @param listener 订阅者
-/// @param type 订阅类型
-- (void)removeListener:(id<WMHelloClientDelegate>)listener forMsgType:(WNMessageType)type {
+/// @param event 订阅事件
+- (void)removeListener:(id<WMHelloClientListenerDelegate>)listener forEvent:(nonnull WNHelloEvent)event {
+    NSMutableArray<id<WMHelloClientListenerDelegate>> *tmp = [self.listeners objectForKey:event];
+    if (tmp.count) {
+        [tmp removeObject:listener];
+    }
 }
 
 /// 强制重连
@@ -101,6 +121,11 @@
     if (self.socket.readyState != SR_OPEN) {
         return;
     }
+
+    if (HDIsStringEmpty(messageId)) {
+        return;
+    }
+
     WNHelloAckMsg *ack = [[WNHelloAckMsg alloc] initWithMessageID:messageId];
     [self.socket sendString:[ack toString] error:nil];
 }
@@ -115,34 +140,62 @@
     WNHelloDownloadMsg *downloadMsg = [[WNHelloDownloadMsg alloc] initWithMessage:string];
 
     if ([downloadMsg.msgType isEqualToString:WNHelloMessageTypeConnectd]) {
+        WNHelloConnectedMsg *msg = [[WNHelloConnectedMsg alloc] initWithMessage:string];
+        HDLog(@"连接成功!\nsid:%@\npingInterval:%f\npingTimeout:%f", msg.sid, msg.pingInterval, msg.pingTimeout);
+
+        if (self.timer) {
+            [self.timer invalidate];
+            self.timer = nil;
+        }
+        // 根据配置初始化定时器
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:msg.pingInterval target:self selector:@selector(sendPing) userInfo:nil repeats:YES];
 
         HDLog(@"send:40/worker/send?userId=%@&appid=%@&deviceId=%@", self.currentUser, self.app.appId, [HDDeviceInfo getUniqueId]);
         [self.socket sendString:[NSString stringWithFormat:@"40/worker/send?userId=%@&appid=%@&deviceId=%@", self.currentUser, self.app.appId, [HDDeviceInfo getUniqueId]] error:nil];
     } else if ([downloadMsg.msgType isEqualToString:WNHelloMessageTypeReady]) {
         //发送心跳
-        self.timer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(sendPing) userInfo:nil repeats:YES];
         [self.timer fire];
     } else if ([downloadMsg.msgType isEqualToString:WNHelloMessageTypeLogin]) {
         // 已登录
-    } else if ([downloadMsg.msgType isEqualToString:WNHelloMessageTypeMessage]) {
+        WNHelloLoginMsg *msg = [[WNHelloLoginMsg alloc] initWithMessage:string];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(loginSuccess:)]) {
+            [self.delegate loginSuccess:msg.token];
+        }
+        [self sendAckWithMessageId:msg.messageID];
+    } else if ([downloadMsg.msgType isEqualToString:WNHelloMessageTypeDataMessage]) {
         // 有消息
+        [self sendAckWithMessageId:downloadMsg.messageID];
+
+        NSMutableArray<id<WMHelloClientListenerDelegate>> *tmp = [self.listeners objectForKey:WNHelloEventDataMessage];
+        for (int i = 0; i < tmp.count; i++) {
+            id<WMHelloClientListenerDelegate> listener = tmp[i];
+            if (listener && [listener respondsToSelector:@selector(didReciveMessage:forEvent:)]) {
+                [listener didReciveMessage:downloadMsg forEvent:WNHelloEventDataMessage];
+            }
+        }
     }
-}
-- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessageWithData:(NSData *)data {
-    HDLog(@"收到服务端数据:%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error {
-    HDLog(@"异常:[%d]%@", error.code, error.localizedDescription);
+    HDLog(@"异常:[%zd]%@", error.code, error.localizedDescription);
     [self.timer invalidate];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(helloClientError:)]) {
+        [self.delegate helloClientError:error];
+    }
 }
 - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(nullable NSString *)reason wasClean:(BOOL)wasClean {
     HDLog(@"连接关闭:%@", reason);
     [self.timer invalidate];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(helloClientClosedWithReason:)]) {
+        [self.delegate helloClientClosedWithReason:reason];
+    }
 }
 
-- (void)webSocket:(SRWebSocket *)webSocket didReceivePong:(nullable NSData *)pongData {
-    HDLog(@"收到服务端pong:%@", [[NSString alloc] initWithData:pongData encoding:NSUTF8StringEncoding]);
+- (NSMutableDictionary<NSString *, NSArray<id<WMHelloClientListenerDelegate>> *> *)listeners {
+    if (!_listeners) {
+        _listeners = [[NSMutableDictionary alloc] initWithCapacity:10];
+    }
+    return _listeners;
 }
 
 @end

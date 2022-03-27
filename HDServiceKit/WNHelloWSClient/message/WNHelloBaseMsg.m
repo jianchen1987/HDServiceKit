@@ -6,7 +6,6 @@
 //
 
 #import "WNHelloBaseMsg.h"
-#import <YYModel/YYModel.h>
 
 @implementation WNHelloBaseMsg
 - (instancetype)initWithMessage:(NSString *)text {

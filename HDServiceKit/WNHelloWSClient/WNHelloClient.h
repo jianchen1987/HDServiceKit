@@ -10,15 +10,25 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSUInteger, WNMessageType) {
-    WNMessageTypeRemoteNotification,
-    WNMessageTypeInAppMessage
-};
+typedef NSString *WNHelloEvent NS_STRING_ENUM;
+FOUNDATION_EXPORT WNHelloEvent const WNHelloEventDataMessage;   ///< 数据消息
+FOUNDATION_EXPORT WNHelloEvent const WNHelloEventNotification;  ///< 通知
 
-@protocol WMHelloClientDelegate <NSObject>
+@protocol WMHelloClientListenerDelegate <NSObject>
 
 @optional
-- (void)didReciveMessage:(id)message;
+- (void)didReciveMessage:(id)message forEvent:(WNHelloEvent)type;
+
+@end
+
+@protocol WNHelloClientDelegate <NSObject>
+
+@required
+- (void)loginSuccess:(NSString *)deviceToken;
+
+@optional
+- (void)helloClientError:(NSError *)error;
+- (void)helloClientClosedWithReason:(NSString *_Nullable)reason;
 
 @end
 
@@ -29,6 +39,9 @@ typedef NS_ENUM(NSUInteger, WNMessageType) {
 - (instancetype)init __attribute__((unavailable("Use +[WNHelloClient sharedClient] instead.")));
 
 + (instancetype)sharedClient;
+
+///< 代理
+@property (nonatomic, assign) id<WNHelloClientDelegate> delegate;
 
 /// 初始化sdk
 /// @param app 参数
@@ -46,12 +59,12 @@ typedef NS_ENUM(NSUInteger, WNMessageType) {
 /// 订阅消息
 /// @param listener 接收者
 /// @param type 订阅类型
-- (void)addListener:(id<WMHelloClientDelegate>)listener forMsgType:(WNMessageType)type;
+- (void)addListener:(id<WMHelloClientListenerDelegate>)listener forEvent:(WNHelloEvent)type;
 
 /// 取消订阅
 /// @param listener 订阅者
 /// @param type 订阅类型
-- (void)removeListener:(id<WMHelloClientDelegate>)listener forMsgType:(WNMessageType)type;
+- (void)removeListener:(id<WMHelloClientListenerDelegate>)listener forEvent:(WNHelloEvent)type;
 
 /// 强制重连
 - (void)reconnect;

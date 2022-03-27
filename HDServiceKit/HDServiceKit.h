@@ -306,6 +306,10 @@ static NSString *const HDServiceKit_VERSION = @"1.5.11";
 #import "WNHelloClient.h"
 #endif
 
+#if __has_include("WNHelloConnectedMsg.h")
+#import "WNHelloConnectedMsg.h"
+#endif
+
 #if __has_include("WNHelloDownloadMsg.h")
 #import "WNHelloDownloadMsg.h"
 #endif
@@ -314,8 +318,16 @@ static NSString *const HDServiceKit_VERSION = @"1.5.11";
 #import "WNHelloAckMsg.h"
 #endif
 
+#if __has_include("WNHelloLoginMsg.h")
+#import "WNHelloLoginMsg.h"
+#endif
+
 #if __has_include("WNHelloUploadMsg.h")
 #import "WNHelloUploadMsg.h"
+#endif
+
+#if __has_include("WNHelloDataMsg.h")
+#import "WNHelloDataMsg.h"
 #endif
 
 #if __has_include("WNHelloBaseMsg.h")

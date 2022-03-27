@@ -36,6 +36,7 @@ Pod::Spec.new do |s|
     
     s.subspec 'WNHelloWebSocketClient' do |ss|
        ss.source_files = 'HDServiceKit/WNHelloWSClient/**/*'
+       ss.dependency 'HDKitCore/Core'
        ss.dependency 'HDKitCore/WNApp'
        ss.dependency 'SocketRocket'
        ss.dependency 'YYModel', '~> 1.0.4'
