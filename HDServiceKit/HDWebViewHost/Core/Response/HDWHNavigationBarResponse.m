@@ -7,15 +7,15 @@
 //
 
 #import "HDWHNavigationBarResponse.h"
+#import "HDWebViewHostViewController+Callback.h"
 #import "HDWebViewHostViewController+Dispatch.h"
 #import "NSBundle+HDWebViewHost.h"
-#import "HDWebViewHostViewController+Callback.h"
+#import <HDKitCore/HDKitCore.h>
 #import <HDUIKit/UIViewController+HDNavigationBar.h>
-#import <HDKitCore/UIColor+HDKitCore.h>
 
 @interface HDWHNavigationBarResponse ()
 /// 以下是 short hand，都是从 webViewHost 上的属性
-@property (nonatomic, copy) NSString *rightActionBarTitle;
+//@property (nonatomic, copy) NSString *rightActionBarTitle;
 @end
 
 @implementation HDWHNavigationBarResponse
@@ -23,7 +23,7 @@
 + (NSDictionary<NSString *, NSString *> *)supportActionList {
     return @{
         @"goBack": kHDWHResponseMethodOn,
-        @"setNavRightTitle_": kHDWHResponseMethodOn,
+        @"addNavRightButton_": kHDWHResponseMethodOn,
         @"setNavigationBarTitle_": kHDWHResponseMethodOn,
         @"showRightMenu": kHDWHResponseMethodOn,
         @"hideRightMenu": kHDWHResponseMethodOn,
@@ -35,7 +35,7 @@
 
 - (void)setWebViewBackStyle:(NSDictionary *)paramDict callback:(NSString *)callBackKey {
     NSString *style = paramDict[@"style"];
-    if(!style || !([style isEqualToString:HDWebViewBakcButtonStyleGoBack] || [style isEqualToString:HDWebViewBakcButtonStyleClose])) {
+    if (!style || !([style isEqualToString:HDWebViewBakcButtonStyleGoBack] || [style isEqualToString:HDWebViewBakcButtonStyleClose])) {
         [self.webViewHost fireCallback:callBackKey actionName:@"setWebViewBackStyle" code:HDWHRespCodeIllegalArg type:HDWHCallbackTypeFail params:@{}];
         return;
     }
@@ -76,38 +76,57 @@ wh_doc_end;
 
 #pragma mark - nav
 // clang-format off
-wh_doc_begin(setNavRightTitle_, "h5 页面的返回，如果可以返回到上一个 h5 页面则返回上一个 h5，否则退出 webview 页面")
-wh_doc_code(window.webViewHost.on('navigationBar.rightButton.onclick',function(p){alert('你点击了'+ p.text +'按钮')});window.webViewHost.invoke("setNavRightTitle",{"text":"发射"}))
-wh_doc_param(text, "字符串，右上角按钮的文案")
+wh_doc_begin(addNavRightButton_, "设置一个导航栏右边的按钮")
+wh_doc_code(window.webViewHost.on('navigationBar.rightButton.onclick',function(p){alert('你点击了'+ p.text +'按钮')});window.webViewHost.invoke("addNavRightButton",{"text":"发射"}))
+wh_doc_param(title, "字符串，右上角按钮的文案")
+wh_doc_param(imageBase64, "字符串，右上角按钮的图片")
+wh_doc_param(titleColor, "字符串，右上角按钮的文案颜色(#123123)")
 wh_doc_code_expect("右上角出现一个’发射‘按钮，点击这个按钮，会触发 h5 对右上角按钮的监听。表现：弹出 alert，文案是’你点击了发射按钮‘。")
 wh_doc_end;
 // clang-format on
-- (void)setNavRightTitle:(NSDictionary *)paramDict {
-    NSString *title = [paramDict objectForKey:@"text"];
-    self.rightActionBarTitle = title;
-    UIBarButtonItem *rightBarButton = nil;
-    if (self.rightActionBarTitle.length > 0) {
-        UIButton *rightBtn = [UIButton new];
-        [rightBtn setTitle:self.rightActionBarTitle forState:UIControlStateNormal];
-        [rightBtn setTitleColor:HDWHColorFromRGB(0x333333) forState:UIControlStateNormal];
-        [rightBtn addTarget:self action:@selector(menuButtonClickedHandler:) forControlEvents:UIControlEventTouchUpInside];
-        [rightBtn sizeToFit];
+- (void)addNavRightButton:(NSDictionary *)paramDict {
+    NSString *title = [paramDict objectForKey:@"title"];
+    NSString *iconBase64 = [paramDict objectForKey:@"imageBase64"];
+    NSString *titleColor = [paramDict objectForKey:@"titleColor"];
+    NSString *identify = [paramDict objectForKey:@"id"];
 
-        rightBarButton = [[UIBarButtonItem alloc] initWithCustomView:rightBtn];
+    if (HDIsStringEmpty(title) && HDIsStringEmpty(iconBase64)) {
+        HDLog(@"参数不合法!");
+        return;
     }
-    self.webViewHost.hd_navigationItem.rightBarButtonItem = rightBarButton;
+
+    UIButton *rightBtn = [UIButton new];
+    if (HDIsStringNotEmpty(title)) {
+        [rightBtn setTitle:title forState:UIControlStateNormal];
+        [rightBtn setTitleColor:HDIsStringNotEmpty(titleColor) ? [UIColor hd_colorWithHexString:titleColor] : HDWHColorFromRGB(0x333333) forState:UIControlStateNormal];
+    }
+
+    if (HDIsStringNotEmpty(iconBase64)) {
+        NSArray<NSString *> *base64Arr = [iconBase64 componentsSeparatedByString:@","];  // 去掉base64格式前面的 data:image/png;base64
+        UIImage *image = [UIImage imageWithData:[[NSData alloc] initWithBase64EncodedString:base64Arr.lastObject options:NSDataBase64DecodingIgnoreUnknownCharacters]];
+        [rightBtn setImage:image forState:UIControlStateNormal];
+    }
+    rightBtn.tag = identify.integerValue;
+    [rightBtn addTarget:self action:@selector(menuButtonClickedHandler:) forControlEvents:UIControlEventTouchUpInside];
+    [rightBtn sizeToFit];
+
+    UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithCustomView:rightBtn];
+    ;
+
+    NSMutableArray<UIBarButtonItem *> *items = [[NSMutableArray alloc] initWithArray:self.webViewHost.hd_navigationItem.rightBarButtonItems];
+    [items addObject:rightBarButton];
+
+    self.webViewHost.hd_navigationItem.rightBarButtonItems = items;
 }
 
 - (void)setNavigationBarColor:(NSDictionary *)paramsDic {
     NSString *colorHexStr = [paramsDic objectForKey:@"colorHexStr"];
     self.webViewHost.hd_navBackgroundColor = [UIColor hd_colorWithHexString:colorHexStr];
-    
 }
 
 - (void)setNavigationBarStyle:(NSDictionary *)paramsDic {
     NSString *style = [paramsDic objectForKey:@"style"];
     self.webViewHost.navigationBarStyle = style.integerValue;
-    
 }
 
 // clang-format off
@@ -152,7 +171,7 @@ wh_doc_end;
 #pragma mark - event response
 - (void)menuButtonClickedHandler:(UIButton *)button {
     HDWHLog(@"菜单按钮被点击");
-    [self fire:@"navigationBar.rightButton.onclick" param:@{@"text": self.rightActionBarTitle}];
+    [self fire:@"navigationBar.rightButton.onclick" param:@{@"id": [NSString stringWithFormat:@"%zd", button.tag]}];
 }
 
 @end
