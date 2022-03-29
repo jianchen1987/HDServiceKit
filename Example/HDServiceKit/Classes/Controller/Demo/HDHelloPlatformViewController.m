@@ -11,7 +11,7 @@
 #import <HDServiceKit/WNHelloClient.h>
 #import <UserNotifications/UserNotifications.h>
 
-@interface HDHelloPlatformViewController () <WNHelloClientDelegate, WMHelloClientListenerDelegate>
+@interface HDHelloPlatformViewController () <WNHelloClientDelegate, WMHelloClientListenerDelegate, UNUserNotificationCenterDelegate>
 
 @end
 
@@ -25,11 +25,27 @@
     [btn addTarget:self action:@selector(clickOnConnect) forControlEvents:UIControlEventTouchUpInside];
 
     [self.view addSubview:btn];
+
+    [UNUserNotificationCenter currentNotificationCenter].delegate = self;
+    UNAuthorizationOptions authOptions = UNAuthorizationOptionAlert | UNAuthorizationOptionSound | UNAuthorizationOptionBadge;
+    [UNUserNotificationCenter.currentNotificationCenter requestAuthorizationWithOptions:authOptions
+                                                                      completionHandler:^(BOOL granted, NSError *_Nullable error){
+
+                                                                      }];
 }
 
 - (void)updateViewConstraints {
 
     [super updateViewConstraints];
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler {
+
+    completionHandler();
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
+    completionHandler(UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionSound);
 }
 
 - (void)clickOnConnect {
@@ -62,10 +78,10 @@
     // 角标 （我这里测试的角标无效，暂时没找到原因）
     content.badge = @1;
     // 多少秒后发送,可以将固定的日期转化为时间
-    NSTimeInterval time = [[NSDate dateWithTimeIntervalSinceNow:1] timeIntervalSinceNow];
+    NSTimeInterval time = [[NSDate dateWithTimeIntervalSinceNow:5] timeIntervalSinceNow];
     //        NSTimeInterval time = 10;
     // repeats，是否重复，如果重复的话时间必须大于60s，要不会报错
-    UNTimeIntervalNotificationTrigger *trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:time repeats:NO];
+    //    UNTimeIntervalNotificationTrigger *trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:time repeats:NO];
 
     /*
      //如果想重复可以使用这个,按日期
@@ -78,11 +94,11 @@
      */
     // 添加通知的标识符，可以用于移除，更新等操作
     NSString *identifier = @"noticeId";
-    UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:identifier content:content trigger:trigger];
+    UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:identifier content:content trigger:nil];
 
     [center addNotificationRequest:request
              withCompletionHandler:^(NSError *_Nullable error) {
-                 NSLog(@"成功添加推送");
+                 HDLog(@"成功添加推送");
              }];
 }
 
