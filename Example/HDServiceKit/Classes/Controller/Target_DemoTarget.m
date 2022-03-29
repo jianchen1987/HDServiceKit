@@ -9,6 +9,7 @@
 #import "Target_DemoTarget.h"
 #import "CMNetworkViewController.h"
 #import "HDH5ViewController.h"
+#import "HDHelloPlatformViewController.h"
 #import "HDRSACipherViewController.h"
 #import "HDScanCodeViewController.h"
 #import "SANetworkViewController.h"
@@ -37,6 +38,11 @@
 
 - (UIViewController *)_Action(cm_networkViewController):(NSDictionary *)params {
     CMNetworkViewController *vc = [CMNetworkViewController new];
+    return vc;
+}
+
+- (UIViewController *)_Action(helloPlatform):(NSDictionary *)params {
+    HDHelloPlatformViewController *vc = [HDHelloPlatformViewController new];
     return vc;
 }
 

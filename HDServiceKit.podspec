@@ -33,6 +33,15 @@ Pod::Spec.new do |s|
 
     s.frameworks       = 'Foundation', 'UIKit'
     s.source_files     = 'HDServiceKit/HDServiceKit.h'
+    
+    s.subspec 'WNHelloWebSocketClient' do |ss|
+       ss.source_files = 'HDServiceKit/WNHelloWSClient/**/*'
+       ss.dependency 'HDKitCore/Core'
+       ss.dependency 'HDKitCore/WNApp'
+       ss.dependency 'SocketRocket'
+       ss.dependency 'YYModel', '~> 1.0.4'
+       ss.dependency 'HDServiceKit/HDDeviceInfo'
+    end
 
     s.subspec 'HDCache' do |ss|
       ss.libraries = 'pthread'
