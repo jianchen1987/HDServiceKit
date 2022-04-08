@@ -13,8 +13,8 @@
 - (instancetype)initWithMessage:(NSString *)text {
     self = [super initWithMessage:text];
     if (self) {
-        self.token = [self.data objectForKey:@"token"];
-        self.expiredTime = [[self.data objectForKey:@"expiredTime"] integerValue] * 1.0;
+        self.token = [self.messageContent objectForKey:@"token"];
+        self.expiredTime = [[self.messageContent objectForKey:@"expiredTime"] integerValue] * 1.0;
     }
 
     return self;

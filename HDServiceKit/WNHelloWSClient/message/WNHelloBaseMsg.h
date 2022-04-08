@@ -12,7 +12,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol WNHelloMessageDelegate <NSObject>
+@protocol WNHelloMessageProtocol <NSObject>
 
 @required
 - (instancetype)initWithMessage:(NSString *)text;
@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 /// 消息基类
-@interface WNHelloBaseMsg : NSObject <WNHelloMessageDelegate>
+@interface WNHelloBaseMsg : NSObject <WNHelloMessageProtocol>
 
 ///< 消息类型指令
 @property (nonatomic, copy) NSString *command;
@@ -31,8 +31,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *msgType;
 ///< 参数
 @property (nonatomic, strong) NSDictionary *data;
+///< 发送时间
+@property (nonatomic, copy) NSString *sendTime;
+///< 校验值
+@property (nonatomic, copy) NSString *checksum;
 
+// 解析
 - (instancetype)initWithMessage:(NSString *)text;
+// 组装
 - (NSString *_Nullable)toString;
 
 @end

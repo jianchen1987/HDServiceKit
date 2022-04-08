@@ -53,10 +53,7 @@
 
     WNHelloClient *client = [WNHelloClient sharedClient];
     [client initWithApp:app];
-    [client signInWithUserId:@"855088127127"
-                  completion:^(NSString *_Nonnull deviceToken, NSError *_Nonnull error) {
-                      HDLog(@"登陆成功");
-                  }];
+    [client signInWithUserId:@"855088127127"];
     client.delegate = self;
     [client addListener:self forEvent:WNHelloEventDataMessage];
 }

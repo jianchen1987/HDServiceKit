@@ -13,6 +13,7 @@
 #import "WNHelloLoginMsg.h"
 #import <HDKitCore/HDKitCore.h>
 #import <HDKitCore/WNApp.h>
+#import <HDVendorKit/WNFMDBManager.h>
 #import <SocketRocket/SocketRocket.h>
 
 WNHelloEvent const WNHelloEventDataMessage = @"event.dataMsg";        ///< 数据消息
@@ -31,6 +32,9 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
 
 ///< 订阅者
 @property (nonatomic, strong) NSMutableDictionary<NSString *, NSMutableArray<id<WMHelloClientListenerDelegate>> *> *listeners;
+
+///< 数据库
+@property (nonatomic, strong) WNFMDBManager *dbManager;
 
 @end
 
@@ -59,12 +63,20 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
 /// 登陆
 /// @param userId 用户id
 /// @param completion 成功回调
-- (void)signInWithUserId:(NSString *)userId completion:(void (^)(NSString *deviceToken, NSError *error))completion {
+- (void)signInWithUserId:(NSString *)userId {
     if (self.socket && self.socket.readyState == SR_OPEN) {
         [self.socket close];
         self.socket = nil;
     }
     self.currentUser = userId;
+
+    NSString *filePath = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches/com.wownow.helloWebSocket"];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:filePath isDirectory:NULL]) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:filePath withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    filePath = [filePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.db", userId]];
+    self.dbManager = [[WNFMDBManager alloc] initWithPath:filePath];
+
     self.socket = [[SRWebSocket alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"wss://hello-sit.lifekh.com/hello-worker/?userId=%@&appid=%@&deviceId=%@&EIO=3&transport=websocket", userId, self.app.appId, [HDDeviceInfo getUniqueId]]]];
     self.socket.delegate = self;
     [self.socket open];
@@ -101,10 +113,16 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
 
 /// 强制重连
 - (void)reconnect {
+    if (HDIsStringNotEmpty(self.currentUser)) {
+        [self signInWithUserId:self.currentUser];
+    }
 }
 
 /// 断开连接
 - (void)disConnect {
+    [self.socket closeWithCode:200 reason:@"enter background"];
+    [self.timer invalidate];
+    self.timer = nil;
 }
 
 #pragma mark - private methods
@@ -113,7 +131,6 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
     if (self.socket.readyState != SR_OPEN) {
         return;
     }
-    HDLog(@"send ping: 2");
     [self.socket sendString:@"2" error:nil];
 }
 
@@ -165,6 +182,18 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
     } else if ([downloadMsg.msgType isEqualToString:WNHelloMessageTypeDataMessage]) {
         // 有消息
         [self sendAckWithMessageId:downloadMsg.messageID];
+
+        NSArray<id<WNHelloClientDelegate>> *result = [self.dbManager searchWithObject:downloadMsg];
+        if (result.count) {
+            HDLog(@"重复消息:%@", downloadMsg.messageID);
+            return;
+        } else {
+            if ([self.dbManager insertObject:downloadMsg]) {
+                HDLog(@"入库成功");
+            } else {
+                HDLog(@"入库失败");
+            }
+        }
 
         NSMutableArray<id<WMHelloClientListenerDelegate>> *tmp = [self.listeners objectForKey:WNHelloEventDataMessage];
         for (int i = 0; i < tmp.count; i++) {

@@ -50,7 +50,7 @@ FOUNDATION_EXPORT WNHelloEvent const WNHelloEventNotification;  ///< 通知
 /// 登陆
 /// @param userId 用户id
 /// @param completion 成功回调
-- (void)signInWithUserId:(NSString *)userId completion:(void (^)(NSString *deviceToken, NSError *error))completion;
+- (void)signInWithUserId:(NSString *)userId;
 
 /// 登出
 /// @param userId 用户id
