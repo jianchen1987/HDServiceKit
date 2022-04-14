@@ -13,6 +13,11 @@
 
 @implementation WNHelloAckMsg
 
++ (instancetype)ackMessageWithId:(NSString *_Nonnull)messageId {
+    WNHelloAckMsg *msg = [[WNHelloAckMsg alloc] initWithMessageID:messageId];
+    return msg;
+}
+
 - (instancetype)initWithMessageID:(NSString *)messageId {
     self = [super init];
     if (self) {
@@ -28,7 +33,6 @@
 - (NSString *)toString {
     NSDictionary *dic = @{@"messageId": self.messageID};
     NSString *str = [NSString stringWithFormat:@"%@%@,[\"%@\", %@]", self.command, self.nameSpace, self.msgType, [dic yy_modelToJSONString]];
-    HDLog(@"ack:%@", str);
     return str;
 }
 

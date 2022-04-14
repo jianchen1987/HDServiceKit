@@ -9,8 +9,10 @@
 #import "HDDeviceInfo.h"
 #import "WNHelloAckMsg.h"
 #import "WNHelloConnectedMsg.h"
+#import "WNHelloDisconnectMsg.h"
 #import "WNHelloDownloadMsg.h"
 #import "WNHelloLoginMsg.h"
+#import "WNHelloReportDeviceInfoMsg.h"
 #import <HDKitCore/HDKitCore.h>
 #import <HDKitCore/WNApp.h>
 #import <HDVendorKit/WNFMDBManager.h>
@@ -27,6 +29,8 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
 
 ///< 应用配置
 @property (nonatomic, strong) WNApp *app;
+///< 主机地址
+@property (nonatomic, copy) NSString *host;
 ///< 当前用户
 @property (nonatomic, copy) NSString *currentUser;
 
@@ -56,8 +60,9 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
 }
 /// 初始化sdk
 /// @param app 参数
-- (void)initWithApp:(WNApp *)app {
+- (void)initWithApp:(WNApp *)app host:(NSString *_Nonnull)host {
     self.app = app;
+    self.host = [host copy];
 }
 
 /// 登陆
@@ -77,7 +82,7 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
     filePath = [filePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.db", userId]];
     self.dbManager = [[WNFMDBManager alloc] initWithPath:filePath];
 
-    self.socket = [[SRWebSocket alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"wss://hello-sit.lifekh.com/hello-worker/?userId=%@&appid=%@&deviceId=%@&EIO=3&transport=websocket", userId, self.app.appId, [HDDeviceInfo getUniqueId]]]];
+    self.socket = [[SRWebSocket alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/?userId=%@&appid=%@&deviceId=%@&EIO=3&transport=websocket", self.host, userId, self.app.appId, [HDDeviceInfo getUniqueId]]]];
     self.socket.delegate = self;
     [self.socket open];
 }
@@ -85,6 +90,12 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
 /// 登出
 /// @param userId 用户id
 - (void)signOutWithUserId:(NSString *)userId {
+    [self sendMessage:[WNHelloDisconnectMsg disconnectWithReason:@"sign out"]];
+    [self.socket closeWithCode:200 reason:@"sign out"];
+    [self.timer invalidate];
+    self.timer = nil;
+
+    self.currentUser = @"";
 }
 
 /// 订阅消息
@@ -120,6 +131,8 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
 
 /// 断开连接
 - (void)disConnect {
+    [self sendMessage:[WNHelloDisconnectMsg disconnectWithReason:@"enter background"]];
+
     [self.socket closeWithCode:200 reason:@"enter background"];
     [self.timer invalidate];
     self.timer = nil;
@@ -134,22 +147,20 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
     [self.socket sendString:@"2" error:nil];
 }
 
-- (void)sendAckWithMessageId:(NSString *)messageId {
+- (void)sendMessage:(id<WNHelloMessageProtocol>)msg {
     if (self.socket.readyState != SR_OPEN) {
         return;
     }
 
-    if (HDIsStringEmpty(messageId)) {
-        return;
+    if (msg && [msg respondsToSelector:@selector(toString)]) {
+        HDLog(@"发送消息:%@", [msg toString]);
+        [self.socket sendString:[msg toString] error:nil];
     }
-
-    WNHelloAckMsg *ack = [[WNHelloAckMsg alloc] initWithMessageID:messageId];
-    [self.socket sendString:[ack toString] error:nil];
 }
 
 #pragma mark - Delegate
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
-    HDLog(@"连接建立啦！wss://hello-sit.lifekh.com/hello-worker/?userId=%@&appid=%@&deviceId=%@&EIO=3&transport=websocket", self.currentUser, self.app.appId, [HDDeviceInfo getUniqueId]);
+    //    HDLog(@"连接建立啦！%@/?userId=%@&appid=%@&deviceId=%@&EIO=3&transport=websocket", self.host, self.currentUser, self.app.appId, [HDDeviceInfo getUniqueId]);
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessageWithString:(NSString *)string {
@@ -158,7 +169,7 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
 
     if ([downloadMsg.msgType isEqualToString:WNHelloMessageTypeConnectd]) {
         WNHelloConnectedMsg *msg = [[WNHelloConnectedMsg alloc] initWithMessage:string];
-        HDLog(@"连接成功!\nsid:%@\npingInterval:%f\npingTimeout:%f", msg.sid, msg.pingInterval, msg.pingTimeout);
+        //        HDLog(@"连接成功!\nsid:%@\npingInterval:%f\npingTimeout:%f", msg.sid, msg.pingInterval, msg.pingTimeout);
 
         if (self.timer) {
             [self.timer invalidate];
@@ -166,8 +177,8 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
         }
         // 根据配置初始化定时器
         self.timer = [NSTimer scheduledTimerWithTimeInterval:msg.pingInterval target:self selector:@selector(sendPing) userInfo:nil repeats:YES];
-
-        HDLog(@"send:40/worker/send?userId=%@&appid=%@&deviceId=%@", self.currentUser, self.app.appId, [HDDeviceInfo getUniqueId]);
+        [[NSRunLoop currentRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
+        //        HDLog(@"send:40/worker/send?userId=%@&appid=%@&deviceId=%@", self.currentUser, self.app.appId, [HDDeviceInfo getUniqueId]);
         [self.socket sendString:[NSString stringWithFormat:@"40/worker/send?userId=%@&appid=%@&deviceId=%@", self.currentUser, self.app.appId, [HDDeviceInfo getUniqueId]] error:nil];
     } else if ([downloadMsg.msgType isEqualToString:WNHelloMessageTypeReady]) {
         //发送心跳
@@ -178,10 +189,13 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
         if (self.delegate && [self.delegate respondsToSelector:@selector(loginSuccess:)]) {
             [self.delegate loginSuccess:msg.token];
         }
-        [self sendAckWithMessageId:msg.messageID];
+        [self sendMessage:[WNHelloAckMsg ackMessageWithId:msg.messageID]];
+    } else if ([downloadMsg.msgType isEqualToString:WNHelloMessageTypeReportDeviceInfo]) {
+        // 上报设备信息
+        [self sendMessage:[WNHelloReportDeviceInfoMsg new]];
     } else if ([downloadMsg.msgType isEqualToString:WNHelloMessageTypeDataMessage]) {
         // 有消息
-        [self sendAckWithMessageId:downloadMsg.messageID];
+        [self sendMessage:[WNHelloAckMsg ackMessageWithId:downloadMsg.messageID]];
 
         NSArray<id<WNHelloClientDelegate>> *result = [self.dbManager searchWithObject:downloadMsg];
         if (result.count) {

@@ -45,7 +45,7 @@ FOUNDATION_EXPORT WNHelloEvent const WNHelloEventNotification;  ///< 通知
 
 /// 初始化sdk
 /// @param app 参数
-- (void)initWithApp:(WNApp *)app;
+- (void)initWithApp:(WNApp *)app host:(NSString *_Nonnull)host;
 
 /// 登陆
 /// @param userId 用户id

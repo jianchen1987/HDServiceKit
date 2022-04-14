@@ -12,7 +12,7 @@
 #import <UIKit/UIKit.h>
 
 /// 版本号
-static NSString *const HDServiceKit_VERSION = @"1.6.1";
+static NSString *const HDServiceKit_VERSION = @"1.6.2";
 
 #if __has_include("HDWHViewControllerPreRender.h")
 #import "HDWHViewControllerPreRender.h"
@@ -314,6 +314,10 @@ static NSString *const HDServiceKit_VERSION = @"1.6.1";
 #import "WNHelloDownloadMsg.h"
 #endif
 
+#if __has_include("WNHelloReportDeviceInfoMsg.h")
+#import "WNHelloReportDeviceInfoMsg.h"
+#endif
+
 #if __has_include("WNHelloAckMsg.h")
 #import "WNHelloAckMsg.h"
 #endif
@@ -328,6 +332,10 @@ static NSString *const HDServiceKit_VERSION = @"1.6.1";
 
 #if __has_include("WNHelloDataMsg.h")
 #import "WNHelloDataMsg.h"
+#endif
+
+#if __has_include("WNHelloDisconnectMsg.h")
+#import "WNHelloDisconnectMsg.h"
 #endif
 
 #if __has_include("WNHelloBaseMsg.h")

@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface WNHelloAckMsg : WNHelloUploadMsg
 
 - (instancetype)initWithMessageID:(NSString *)messageId;
++ (instancetype)ackMessageWithId:(NSString *_Nonnull)messageId;
 
 ///< 消息Id
 @property (nonatomic, copy, readonly) NSString *messageID;

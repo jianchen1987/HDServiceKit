@@ -7,6 +7,7 @@
 //
 
 #import "HDHelloPlatformViewController.h"
+#import "RSACipher.h"
 #import <HDKitCore/WNApp.h>
 #import <HDServiceKit/WNHelloClient.h>
 #import <UserNotifications/UserNotifications.h>
@@ -49,13 +50,44 @@
 }
 
 - (void)clickOnConnect {
-    WNApp *app = [WNApp appWithAppId:@"16EuLXnkwc2J8" secrectKey:@"" privateKey:@""];
+    //    WNApp *app = [WNApp appWithAppId:@"16EuLXnkwc2J8" secrectKey:@"" privateKey:@""];
+    //
+    //    WNHelloClient *client = [WNHelloClient sharedClient];
+    //    [client initWithApp:app host:@"wss://hello-sit.lifekh.com/hello-worker"];
+    //    [client signInWithUserId:@"855088127127"];
+    //    client.delegate = self;
+    //    [client addListener:self forEvent:WNHelloEventDataMessage];
 
-    WNHelloClient *client = [WNHelloClient sharedClient];
-    [client initWithApp:app];
-    [client signInWithUserId:@"855088127127"];
-    client.delegate = self;
-    [client addListener:self forEvent:WNHelloEventDataMessage];
+    NSString *platformPubKey = @"MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBALyV5bMSDCS5lGARPtAAknmOqrpB9/QQnfpA8ivFB2wo60M7Dej/Fl6kPO+NVaq72j4NEDXHNk9qXSGVe0wJ8DsCAwEAAQ==";
+    NSString *platformPriKey = @"MIIBVAIBADANBgkqhkiG9w0BAQEFAASCAT4wggE6AgEAAkEAvJXlsxIMJLmUYBE+0ACSeY6qukH39BCd+kDyK8UHbCjrQzsN6P8WXqQ8741VqrvaPg0QNcc2T2pdIZV7TAnwOwIDAQABAkAFtMdpfq9NYSwjKAJtisbj1LRHxH07LlGJY/Ov7VtHI3x+Pv8Iey/5f7MsbWyTiybQZI2ZAX9UY43QTncx1ewBAiEA6/WHMDKLsPEa+uCb9pN84ftVovGpG30JeVjiFolHyjsCIQDMmlK/s1LvFgzZuzXr8K5VqCO9nx5y4X91rpZIMP4SAQIgK5q4+9grZmx37uq5B60jw+MdZTpBZPoLWShqx31hDecCIBHJ8RvduX40CpX7ouqKmH22CrV32ive0zgmH8bTC6QBAiEAwbvUZVFvWV1XncEa3JwxZdufTLuH+gsuUGmsj+89UrA=";
+
+    NSString *userPubKey = @"MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAJvXMePnzcYZ8QCy5kru4I+MFuInYoKszArMsoXULmoUXuvjffQeEce9iU9TD1PF7wCYBnf31CuPJH3He2sV0rsCAwEAAQ==";
+    NSString *userPriKey = @"MIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEAm9cx4+fNxhnxALLmSu7gj4wW4idigqzMCsyyhdQuahRe6+N99B4Rx72JT1MPU8XvAJgGd/fUK48kfcd7axXSuwIDAQABAkA+va+fUsbcl7sYje37gxqzkDHyUOrvM0ReoLTK/nbFS9Wr4BHEfJk/utBlJHhJxSs0Cih8lFbY5Kbn7/gUzyFRAiEA52r5k3u0OYaTTbwPzG+fW/zTVs37+Xe9jKTQ3QJaaUMCIQCsZQWIWnzJW6luWUgyGAj93bsnOvDKEfKGe+ryTwI9KQIhAIn3nRPwjGI/eVK+7CxV4AxXjygRZkg0uy0+lcctv/lBAiAOVWPtX2CquUVQGHpJN/hfazUpYNwuYOmiRuFU/j64aQIhAMQI3pLeAHrHAK45O3ju666/Bh71kz61Y567734qgESl";
+
+    NSDictionary *data = @{
+        @"abc": @123,
+        @"ccc": @"faw奥术大师大所大所大所大所大"
+    };
+
+    HDLog(@"平台公钥:%@", platformPubKey);
+    HDLog(@"平台私钥:%@", platformPriKey);
+
+    HDLog(@"用户公钥:%@", userPubKey);
+    HDLog(@"用户私钥:%@", userPriKey);
+
+    HDLog(@"实验数据:%@", [data yy_modelToJSONString]);
+
+    NSString *serectText = [RSACipher encrypt:[data yy_modelToJSONString] publicKey:platformPubKey];
+    NSString *signature = [RSACipher signText:[data yy_modelToJSONString] privateKey:userPriKey];
+
+    HDLog(@"用户发送密文:%@", serectText);
+    HDLog(@"用户发送签名:%@", signature);
+
+    NSString *plainText = [RSACipher decrypt:serectText privateKey:platformPriKey];
+    HDLog(@"服务端解密明文:%@", plainText);
+
+    //    BOOL result = [RSACipher veriryData:[data yy_modelToJSONString] signature:signature publicKey:userPubKey];
+    //    HDLog(@"验签结果:%@", result ? @"通过" : @"不通过");
 }
 
 - (void)didReciveMessage:(id)message forEvent:(WNHelloEvent)type {
