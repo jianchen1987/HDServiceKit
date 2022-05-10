@@ -162,7 +162,10 @@
 /// @param info 信息
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<UIImagePickerControllerInfoKey, id> *)info {
     UIImage *image = info[UIImagePickerControllerOriginalImage];
-    [self dismissViewControllerAnimated:YES completion:nil];
-    [_scanTool scanImageQRCode:image];
+    __weak typeof(self) weakSelf = self;
+    [self dismissViewControllerAnimated:YES
+                             completion:^{
+                                 [weakSelf.scanTool scanImageQRCode:image];
+                             }];
 }
 @end
