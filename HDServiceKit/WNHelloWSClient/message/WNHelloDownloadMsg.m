@@ -6,6 +6,7 @@
 //
 
 #import "WNHelloDownloadMsg.h"
+#import <FMDB/FMDB.h>
 
 @implementation WNHelloDownloadMsg
 
@@ -14,6 +15,19 @@
     if (self) {
         self.messageID = [self.data objectForKey:@"messageID"];
         self.messageContent = [self.data objectForKey:@"messageContent"];
+    }
+    return self;
+}
+
+- (instancetype)initWithResultSet:(FMResultSet *)rs {
+    self = [super init];
+    if (self) {
+        self.command = [rs stringForColumn:@"command"];
+        self.nameSpace = [rs stringForColumn:@"name_space"];
+        self.msgType = [rs stringForColumn:@"msg_type"];
+        self.data = [NSJSONSerialization JSONObjectWithData:[[rs stringForColumn:@"data"] dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil];
+        self.sendTime = [rs stringForColumn:@"send_time"];
+        self.messageID = [rs stringForColumn:@"message_id"];
     }
     return self;
 }

@@ -31,7 +31,7 @@
             NSString *temp = [text substringFromIndex:self.command.length + self.nameSpace.length + 1];
             NSArray *array = [NSJSONSerialization JSONObjectWithData:[temp dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil];
             self.msgType = array.firstObject;
-            self.data = array.lastObject;
+            self.data = [array.lastObject isKindOfClass:NSDictionary.class] ? array.lastObject : @{};
         }
     }
 

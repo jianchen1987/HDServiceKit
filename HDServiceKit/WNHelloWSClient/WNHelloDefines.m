@@ -16,3 +16,4 @@ WNHelloMessageType const WNHelloMessageTypeAck = @"send-callback";              
 WNHelloMessageType const WNHelloMessageTypeDataMessage = @"event-message";              //数据消息
 WNHelloMessageType const WNHelloMessageTypeDisconnect = @"receive-disconnect-event";    ///< 关闭连接
 WNHelloMessageType const WNHelloMessageTypeReportDeviceInfo = @"report-device-status";  // 上报设备信息
+WNHelloMessageType const WNHelloMessageTypeKickedOutByRemote = @"system-offline";       ///< 被远端踢下线

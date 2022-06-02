@@ -90,6 +90,11 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
 /// 登出
 /// @param userId 用户id
 - (void)signOutWithUserId:(NSString *)userId {
+
+    if (self.socket.readyState != SR_OPEN) {
+        return;
+    }
+
     [self sendMessage:[WNHelloDisconnectMsg disconnectWithReason:@"sign out"]];
     [self.socket closeWithCode:200 reason:@"sign out"];
     [self.timer invalidate];
@@ -131,6 +136,11 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
 
 /// 断开连接
 - (void)disConnect {
+
+    if (self.socket.readyState != SR_OPEN) {
+        return;
+    }
+
     [self sendMessage:[WNHelloDisconnectMsg disconnectWithReason:@"enter background"]];
 
     [self.socket closeWithCode:200 reason:@"enter background"];
@@ -169,7 +179,6 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
 
     if ([downloadMsg.msgType isEqualToString:WNHelloMessageTypeConnectd]) {
         WNHelloConnectedMsg *msg = [[WNHelloConnectedMsg alloc] initWithMessage:string];
-        //        HDLog(@"连接成功!\nsid:%@\npingInterval:%f\npingTimeout:%f", msg.sid, msg.pingInterval, msg.pingTimeout);
 
         if (self.timer) {
             [self.timer invalidate];
@@ -178,8 +187,8 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
         // 根据配置初始化定时器
         self.timer = [NSTimer scheduledTimerWithTimeInterval:msg.pingInterval target:self selector:@selector(sendPing) userInfo:nil repeats:YES];
         [[NSRunLoop currentRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
-        //        HDLog(@"send:40/worker/send?userId=%@&appid=%@&deviceId=%@", self.currentUser, self.app.appId, [HDDeviceInfo getUniqueId]);
         [self.socket sendString:[NSString stringWithFormat:@"40/worker/send?userId=%@&appid=%@&deviceId=%@", self.currentUser, self.app.appId, [HDDeviceInfo getUniqueId]] error:nil];
+
     } else if ([downloadMsg.msgType isEqualToString:WNHelloMessageTypeReady]) {
         //发送心跳
         [self.timer fire];
@@ -190,9 +199,17 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
             [self.delegate loginSuccess:msg.token];
         }
         [self sendMessage:[WNHelloAckMsg ackMessageWithId:msg.messageID]];
+
     } else if ([downloadMsg.msgType isEqualToString:WNHelloMessageTypeReportDeviceInfo]) {
         // 上报设备信息
         [self sendMessage:[WNHelloReportDeviceInfoMsg new]];
+
+    } else if ([downloadMsg.msgType isEqualToString:WNHelloMessageTypeKickedOutByRemote]) {
+        // 被远端踢下线，不需要重新连接
+        [self.socket closeWithCode:300 reason:@"KICK by remote"];
+        [self.timer invalidate];
+        self.timer = nil;
+
     } else if ([downloadMsg.msgType isEqualToString:WNHelloMessageTypeDataMessage]) {
         // 有消息
         [self sendMessage:[WNHelloAckMsg ackMessageWithId:downloadMsg.messageID]];
@@ -227,7 +244,7 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
     }
 }
 - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(nullable NSString *)reason wasClean:(BOOL)wasClean {
-    HDLog(@"连接关闭:%@", reason);
+    HDLog(@"连接关闭:(%d)%@", code, reason);
     [self.timer invalidate];
     if (self.delegate && [self.delegate respondsToSelector:@selector(helloClientClosedWithReason:)]) {
         [self.delegate helloClientClosedWithReason:reason];
