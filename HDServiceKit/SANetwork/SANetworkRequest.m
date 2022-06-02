@@ -153,14 +153,18 @@
 }
 
 - (AFHTTPResponseSerializer *)responseSerializer {
-    AFHTTPResponseSerializer *serializer = [AFJSONResponseSerializer serializer];
-    NSMutableSet *types = [NSMutableSet set];
-    [types addObject:@"text/html"];
-    [types addObject:@"text/plain"];
-    [types addObject:@"application/json"];
-    [types addObject:@"text/json"];
-    [types addObject:@"text/javascript"];
-    serializer.acceptableContentTypes = types;
+    static AFHTTPResponseSerializer *serializer = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        serializer = [AFJSONResponseSerializer serializer];
+        NSMutableSet *types = [NSMutableSet set];
+        [types addObject:@"text/html"];
+        [types addObject:@"text/plain"];
+        [types addObject:@"application/json"];
+        [types addObject:@"text/json"];
+        [types addObject:@"text/javascript"];
+        serializer.acceptableContentTypes = types;
+    });
     return serializer;
 }
 @end
