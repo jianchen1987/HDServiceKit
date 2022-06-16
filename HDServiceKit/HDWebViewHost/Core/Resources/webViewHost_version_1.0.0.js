@@ -99,7 +99,8 @@
                 'getUserUnreadMsgCount-async-function',
                 'getShippingAddress-async-function',
                 'applePay-sync-function',
-                'addNavRightButton-async-function-lackCallback']
+                'addNavRightButton-async-function-lackCallback',
+                'signout-async-function-lackCallback']
     };
 }(window);
 
