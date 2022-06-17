@@ -100,7 +100,7 @@
                 'getShippingAddress-async-function',
                 'applePay-sync-function',
                 'addNavRightButton-async-function-lackCallback',
-                'signout-async-function-lackCallback']
+                'signOut-async-function-lackCallback']
     };
 }(window);
 
