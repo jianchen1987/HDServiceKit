@@ -219,8 +219,8 @@ BOOL kGCDWebServer_logging_enabled = false;
         [mDict setValuesForKeysWithDictionary:dict];
         fixedRequest.allHTTPHeaderFields = mDict;
     }
-    fixedRequest.cachePolicy = NSURLRequestReloadRevalidatingCacheData;
-    fixedRequest.timeoutInterval = kTimeoutInterval;
+    //    fixedRequest.cachePolicy = NSURLRequestReloadIgnoringCacheData;
+    //    fixedRequest.timeoutInterval = kTimeoutInterval;
     [self updateRequestAcceptLanguage:fixedRequest];
     return fixedRequest;
 }
@@ -345,7 +345,7 @@ BOOL kGCDWebServer_logging_enabled = false;
     // 检查网络是否联网
     HDReachability *reachability = [HDReachability reachabilityForInternetConnection];
     if ([reachability isReachable]) {
-        NSMutableURLRequest *mutableRequest = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:kTimeoutInterval];
+        NSMutableURLRequest *mutableRequest = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:kTimeoutInterval];
         [self mark:kWebViewHostTimingLoadRequest];
         [self updateRequestAcceptLanguage:mutableRequest];
         [self.webView loadRequest:mutableRequest];

@@ -18,11 +18,17 @@
 
 @implementation HDScanCodeViewController
 
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.shouldExitAfterResultBlock = YES;
+        self.scanIntervalBetweenResult = 1;
+    }
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    self.shouldExitAfterResultBlock = YES;
-    self.scanIntervalBetweenResult = 1;
 
     [self setup];
 }
@@ -92,7 +98,7 @@
             if (weakSelf.presentingViewController) {
                 [weakSelf dismissViewControllerAnimated:YES completion:nil];
             } else {
-                [weakSelf.navigationController popViewControllerAnimated:YES];
+                [weakSelf.navigationController popViewControllerAnimated:NO];
             }
         } else {
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(weakSelf.scanIntervalBetweenResult * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
