@@ -558,7 +558,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/bin/bash\n# 获取版本号，不传则自动获取\n# versionNumber=\"$MARKETING_VERSION\"\n# 生成头文件\npython ../HeaderFileGenerator.py\n";
+			shellScript = "#!/bin/bash\n# 获取版本号，不传则自动获取\n# versionNumber=\"$MARKETING_VERSION\"\n# 生成头文件\npython3 ../HeaderFileGenerator.py\n";
 		};
 		F4F3D22BB721371E10E45B27 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

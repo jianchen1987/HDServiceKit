@@ -8,6 +8,7 @@
 
 #import "HDNetworkManager.h"
 #import "HDNetworkRequest+Internal.h"
+#import "HDNetworkSessionConfigurationManager.h"
 #import <HDKitCore/HDLog.h>
 #import <pthread/pthread.h>
 
@@ -311,7 +312,7 @@
         static AFHTTPSessionManager *defaultManager = nil;
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
-            defaultManager = [AFHTTPSessionManager new];
+            defaultManager = [[AFHTTPSessionManager alloc] initWithSessionConfiguration:[HDNetworkSessionConfigurationManager sharedManager].defaultSessionConfiguration];
             defaultManager.completionQueue = dispatch_queue_create("com.hdnetwork.completionqueue", DISPATCH_QUEUE_CONCURRENT);
         });
         manager = defaultManager;

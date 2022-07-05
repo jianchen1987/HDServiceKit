@@ -12,7 +12,7 @@
 #import <UIKit/UIKit.h>
 
 /// 版本号
-static NSString *const HDServiceKit_VERSION = @"1.6.9";
+static NSString *const HDServiceKit_VERSION = @"1.6.10";
 
 #if __has_include("HDWHViewControllerPreRender.h")
 #import "HDWHViewControllerPreRender.h"
@@ -284,6 +284,10 @@ static NSString *const HDServiceKit_VERSION = @"1.6.9";
 
 #if __has_include("HDNetworkManager.h")
 #import "HDNetworkManager.h"
+#endif
+
+#if __has_include("HDNetworkSessionConfigurationManager.h")
+#import "HDNetworkSessionConfigurationManager.h"
 #endif
 
 #if __has_include("HDReachability.h")

@@ -13,6 +13,7 @@
 #import "HDNetworkManager.h"
 #import "HDNetworkRequest.h"
 #import "HDNetworkResponse.h"
+#import "HDNetworkSessionConfigurationManager.h"
 #import <Foundation/Foundation.h>
 
 #endif /* HDNetwork_h */
