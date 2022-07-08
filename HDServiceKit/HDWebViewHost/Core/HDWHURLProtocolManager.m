@@ -33,12 +33,12 @@
     self.protocolClass = protocolClass;
 }
 
-- (void)hd_registerScheme {
+- (void)hd_registerSchemeAndProtocol {
     if (!self.protocolClass) return;
     [NSURLProtocol hd_registerSchemeList:self.schemeList protocolClass:self.protocolClass];
 }
 
-- (void)hd_unregisterScheme {
+- (void)hd_unregisterSchemeAndProtocol {
     if (!self.protocolClass) return;
     [NSURLProtocol hd_unregisterSchemeList:self.schemeList protocolClass:self.protocolClass];
 }
