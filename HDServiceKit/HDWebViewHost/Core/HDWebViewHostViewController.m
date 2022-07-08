@@ -32,6 +32,8 @@
 #import <HDVendorKit/HDWebImageManager.h>
 #import <Masonry/Masonry.h>
 #import <Photos/Photos.h>
+#import "NSURLProtocol+HDWebViewHost.h"
+#import "HDWHURLProtocolManager.h"
 
 #define LocalizableString(key, value) \
     HDLocalizedStringInBundleForLanguageFromTable([NSBundle hd_bundleInFramework:@"HDServiceKit" bundleName:@"HDWebViewHostCoreResources"], [self getCurrentLanguage], key, value, nil)
@@ -104,6 +106,16 @@ BOOL kGCDWebServer_logging_enabled = false;
     }];
 
     [super updateViewConstraints];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [[HDWHURLProtocolManager sharedManager] hd_registerSchemeAndProtocol];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [[HDWHURLProtocolManager sharedManager] hd_unregisterSchemeAndProtocol];
 }
 
 - (void)viewDidLoad {
