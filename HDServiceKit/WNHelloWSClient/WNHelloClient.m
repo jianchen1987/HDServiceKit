@@ -185,7 +185,7 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
             self.timer = nil;
         }
         // 根据配置初始化定时器
-        self.timer = [NSTimer scheduledTimerWithTimeInterval:msg.pingInterval target:self selector:@selector(sendPing) userInfo:nil repeats:YES];
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:floor(msg.pingInterval / 3.0 * 2.0) target:self selector:@selector(sendPing) userInfo:nil repeats:YES];
         [[NSRunLoop currentRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
         [self.socket sendString:[NSString stringWithFormat:@"40/worker/send?userId=%@&appid=%@&deviceId=%@", self.currentUser, self.app.appId, [HDDeviceInfo getUniqueId]] error:nil];
 
