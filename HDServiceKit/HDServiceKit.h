@@ -34,10 +34,6 @@ static NSString *const HDServiceKit_VERSION = @"1.6.12";
 #import "HDWebViewHostViewController+Extend.h"
 #endif
 
-#if __has_include("HDWHURLProtocolManager.h")
-#import "HDWHURLProtocolManager.h"
-#endif
-
 #if __has_include("HDWebViewHostViewController+Callback.h")
 #import "HDWebViewHostViewController+Callback.h"
 #endif
@@ -136,10 +132,6 @@ static NSString *const HDServiceKit_VERSION = @"1.6.12";
 
 #if __has_include("NSObject+HDWebViewHost.h")
 #import "NSObject+HDWebViewHost.h"
-#endif
-
-#if __has_include("NSURLProtocol+HDWebViewHost.h")
-#import "NSURLProtocol+HDWebViewHost.h"
 #endif
 
 #if __has_include("NSBundle+HDWebViewHost.h")
@@ -292,6 +284,10 @@ static NSString *const HDServiceKit_VERSION = @"1.6.12";
 
 #if __has_include("HDNetworkManager.h")
 #import "HDNetworkManager.h"
+#endif
+
+#if __has_include("HDNetworkSessionConfigurationManager.h")
+#import "HDNetworkSessionConfigurationManager.h"
 #endif
 
 #if __has_include("HDReachability.h")
