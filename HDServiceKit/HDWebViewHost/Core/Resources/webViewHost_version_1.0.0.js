@@ -101,7 +101,9 @@
                 'applePay-sync-function',
                 'addNavRightButton-async-function-lackCallback',
                 'signOut-async-function-lackCallback',
-                'reginerYumnowNotifications-async-function']
+                'reginerYumnowNotifications-async-function',
+                'voiceRecord-async-function',
+        ]
     };
 }(window);
 
