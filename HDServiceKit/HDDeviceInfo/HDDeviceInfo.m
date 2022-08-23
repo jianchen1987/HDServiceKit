@@ -42,19 +42,22 @@ NSString *const kUUIDServiceName = @"com.chaosource.keychain";
 @implementation HDDeviceInfo
 
 + (nonnull NSString *)getUniqueId {
-    UICKeyChainStore *keyChainStore = [UICKeyChainStore keyChainStoreWithService:kUUIDServiceName];
-    NSString *strUUID = [[NSString alloc] initWithData:[keyChainStore dataForKey:kUUIDCacheKey] encoding:NSUTF8StringEncoding];
+    static NSString *strUUID;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        UICKeyChainStore *keyChainStore = [UICKeyChainStore keyChainStoreWithService:kUUIDServiceName];
+        strUUID = [[NSString alloc] initWithData:[keyChainStore dataForKey:kUUIDCacheKey] encoding:NSUTF8StringEncoding];
 
-    // 首次执行该方法时，uuid为空
-    if ([strUUID isEqualToString:@""] || !strUUID) {
+        // 首次执行该方法时，uuid为空
+        if ([strUUID isEqualToString:@""] || !strUUID) {
 
-        // 生成一个uuid的方法
-        CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
-        strUUID = (NSString *)CFBridgingRelease(CFUUIDCreateString(kCFAllocatorDefault, uuidRef));
-
-        // 将该uuid保存到keychain
-        [keyChainStore setData:[strUUID dataUsingEncoding:NSUTF8StringEncoding] forKey:kUUIDCacheKey];
-    }
+            // 生成一个uuid的方法
+            CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
+            strUUID = (NSString *)CFBridgingRelease(CFUUIDCreateString(kCFAllocatorDefault, uuidRef));
+            // 将该uuid保存到keychain
+            [keyChainStore setData:[strUUID dataUsingEncoding:NSUTF8StringEncoding] forKey:kUUIDCacheKey];
+        }
+    });
     return strUUID;
 }
 
