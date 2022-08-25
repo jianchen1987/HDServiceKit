@@ -20,10 +20,14 @@ NSString *const HDCachePrivateAESNameSpace = @"com.vipay.cache.document";
 @implementation NSData (HDCache)
 
 - (NSString *)hdCache_AESKey {
-    HDCacheManager *cacheManager =
-        [[HDCacheManager alloc] initWithNameSpace:HDCachePrivateAESNameSpace];
-    NSString *key = [cacheManager objectForKey:HDCachePrivateAESKey];
-    return key ?: HDCachePublicAESKey;
+    static HDCacheManager *cacheManager;
+    static dispatch_once_t onceToken;
+    static NSString *key;
+    dispatch_once(&onceToken, ^{
+        cacheManager = [[HDCacheManager alloc] initWithNameSpace:HDCachePrivateAESNameSpace];
+        key = [cacheManager objectForKey:HDCachePrivateAESKey] ?: HDCachePublicAESKey;
+    });
+    return key;
 }
 
 - (NSData *)hdCache_AESEncrypt {
