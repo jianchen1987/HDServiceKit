@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "HDServiceKit"
-  s.version          = "1.6.17"
+  s.version          = "1.6.18"
   s.summary          = "混沌 iOS 服务"
   s.description      = <<-DESC
                        HDServiceKit 是一系列服务以及能力，用于快速在其他项目使用或者第三方接入
@@ -147,7 +147,7 @@ Pod::Spec.new do |s|
       end
 
       ss.subspec 'Preloader' do |ss|
-        ss.source_files = 'HDServiceKit/HDWebViewHost/Preloader/*/*'
+        ss.source_files = 'HDServiceKit/HDWebViewHost/Preloader/*/*.{h,m}'
         ss.resource_bundles = {'HDWebViewHostPreloaderResources' => ['HDServiceKit/HDWebViewHost/Preloader/html/*.*']}
         ss.dependency  'HDServiceKit/HDWebViewHost/Core'
       end
