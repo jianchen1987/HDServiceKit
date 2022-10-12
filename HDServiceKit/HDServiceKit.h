@@ -12,7 +12,7 @@
 #import <UIKit/UIKit.h>
 
 /// 版本号
-static NSString *const HDServiceKit_VERSION = @"1.6.18";
+static NSString *const HDServiceKit_VERSION = @"1.6.19";
 
 #if __has_include("HDWHViewControllerPreRender.h")
 #import "HDWHViewControllerPreRender.h"
