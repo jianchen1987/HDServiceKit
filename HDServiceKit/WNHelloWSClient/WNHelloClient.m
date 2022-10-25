@@ -174,7 +174,7 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessageWithString:(NSString *)string {
-    HDLog(@"收到服务端消息:%@", string);
+    
     WNHelloDownloadMsg *downloadMsg = [[WNHelloDownloadMsg alloc] initWithMessage:string];
 
     if ([downloadMsg.msgType isEqualToString:WNHelloMessageTypeConnectd]) {
@@ -233,6 +233,8 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
                 [listener didReciveMessage:downloadMsg forEvent:WNHelloEventDataMessage];
             }
         }
+    } else {
+        HDLog(@"收到服务端消息:%@", string);
     }
 }
 
