@@ -234,7 +234,7 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
             }
         }
     } else {
-        HDLog(@"收到服务端消息:%@", string);
+//        HDLog(@"收到服务端消息:%@", string);
     }
 }
 
