@@ -8,6 +8,7 @@
 
 #import "HDLocationManager.h"
 #import "HDLocationConverter.h"
+#import <HDKitCore/HDLog.h>
 
 NSString *const kNotificationNameLocationPermissionChanged = @"kLocationManagerNotificationNameLocationPermissionChanged";
 NSString *const kNotificationNameLocationChanged = @"kLocationManagerNotificationNameLocationChanged";
@@ -114,6 +115,10 @@ NSString *const kLocationPermissionChangedUserInfoKey = @"kLocationManagerLocati
             }
         }
     }
+}
+
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+    HDLog(@"获取定位失败--%@",error);
 }
 
 - (void)converLocations:(NSArray<CLLocation *> *)locations {
