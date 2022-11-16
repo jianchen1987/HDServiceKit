@@ -103,7 +103,7 @@
                 'signOut-async-function-lackCallback',
                 'reginerYumnowNotifications-async-function',
                 'voiceRecord-async-function',
-                'goToAppSystemSetting-async-function-lackCallback',
+                'goToAppSystemSetting-async-function',
         ]
     };
 }(window);
