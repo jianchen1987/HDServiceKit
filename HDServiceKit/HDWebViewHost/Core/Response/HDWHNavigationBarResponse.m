@@ -138,7 +138,7 @@ wh_doc_end;
 // clang-format on
 - (void)setNavigationBarTitle:(NSDictionary *)paramDict {
     NSString *title = [paramDict objectForKey:@"title"];
-    self.webViewHost.hd_navigationItem.title = title;
+    if(title.length) self.webViewHost.hd_navigationItem.title = title;
 }
 
 // clang-format off
