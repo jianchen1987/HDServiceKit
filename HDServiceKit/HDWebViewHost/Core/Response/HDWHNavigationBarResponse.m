@@ -89,6 +89,8 @@ wh_doc_end;
     NSString *iconBase64 = [paramDict objectForKey:@"imageBase64"];
     NSString *titleColor = [paramDict objectForKey:@"titleColor"];
     NSString *identify = [paramDict objectForKey:@"id"];
+    
+    
 
     if (HDIsStringEmpty(title) && HDIsStringEmpty(iconBase64)) {
         HDLog(@"参数不合法!");
@@ -102,22 +104,47 @@ wh_doc_end;
     }
 
     if (HDIsStringNotEmpty(iconBase64)) {
+        CGFloat imageWidth = [[paramDict objectForKey:@"imageWidth"] doubleValue];
+        CGFloat imageHeigh = [[paramDict objectForKey:@"imageHeight"] doubleValue];
+        
         NSArray<NSString *> *base64Arr = [iconBase64 componentsSeparatedByString:@","];  // 去掉base64格式前面的 data:image/png;base64
         UIImage *image = [UIImage imageWithData:[[NSData alloc] initWithBase64EncodedString:base64Arr.lastObject options:NSDataBase64DecodingIgnoreUnknownCharacters]];
+        HDLog(@"%@",NSStringFromCGSize(image.size));
+        
+        CGFloat maxImageHeight = 30;
+        if(image.size.height >= maxImageHeight){
+            if(imageWidth > 0 && imageHeigh > 0) {
+                image = [self imageWithOriginalImage:image withScaleSize:CGSizeMake(maxImageHeight, maxImageHeight / imageWidth * imageHeigh)];
+            }else{
+                image = [self imageWithOriginalImage:image withScaleSize:CGSizeMake(maxImageHeight, maxImageHeight)];
+            }
+        }
+
         [rightBtn setImage:image forState:UIControlStateNormal];
+        rightBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 4, 0, 4);
     }
     rightBtn.tag = identify.integerValue;
     [rightBtn addTarget:self action:@selector(menuButtonClickedHandler:) forControlEvents:UIControlEventTouchUpInside];
     [rightBtn sizeToFit];
 
     UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithCustomView:rightBtn];
-    ;
 
     NSMutableArray<UIBarButtonItem *> *items = [[NSMutableArray alloc] initWithArray:self.webViewHost.hd_navigationItem.rightBarButtonItems];
     [items addObject:rightBarButton];
-
+    
     self.webViewHost.hd_navigationItem.rightBarButtonItems = items;
 }
+
+#pragma mark - imageWithOriginalImage: withScaleSize: 将图片重新按照一定的尺寸绘制出来
+- (UIImage *)imageWithOriginalImage:(UIImage *)originalImage withScaleSize:(CGSize)size {
+    UIGraphicsBeginImageContext(size);
+    [originalImage drawInRect:CGRectMake(0, 0, size.width, size.height)];
+    UIImage * image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return image;
+}
+
 
 - (void)setNavigationBarColor:(NSDictionary *)paramsDic {
     NSString *colorHexStr = [paramsDic objectForKey:@"colorHexStr"];
