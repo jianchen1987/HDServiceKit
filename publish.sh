@@ -34,7 +34,7 @@ echo "提交及推送代码、tags 结束\n"
 
 echo "开始发布 $filename 版本 $version 到 Chaos"
 # 清除缓存
-pod cache clean --all
+#pod cache clean --all
 
 pod repo push Chaos "${podspec_name}" --allow-warnings --verbose --sources=https://github.com/CocoaPods/Specs.git,ssh://git@code.kh-super.net:7999/mob/chaos-specs.git
 echo "发布 $filename 版本 $version 到 Chaos 结束\n"
