@@ -368,8 +368,13 @@ BOOL kGCDWebServer_logging_enabled = false;
     return nil;
 }
 
+// 提示框
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler {
-
+    if ([self.navigationController visibleViewController] != self){
+        completionHandler();
+        return;
+    }
+    
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:LocalizableString(@"prompt", @"提示") message:message ?: @"" preferredStyle:UIAlertControllerStyleAlert];
     [alertController addAction:([UIAlertAction actionWithTitle:LocalizableString(@"confirm", @"确认")
                                                          style:UIAlertActionStyleDefault
@@ -379,7 +384,12 @@ BOOL kGCDWebServer_logging_enabled = false;
     [self presentViewController:alertController animated:YES completion:nil];
 }
 
+// 确认框
 - (void)webView:(WKWebView *)webView runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL))completionHandler {
+    if ([self.navigationController visibleViewController] != self){
+        completionHandler(NO);
+        return;
+    }
     // js 里面的alert实现，如果不实现，网页的alert函数无效
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:message message:nil preferredStyle:UIAlertControllerStyleAlert];
     [alertController addAction:[UIAlertAction actionWithTitle:LocalizableString(@"cancel", @"取消")
@@ -392,10 +402,8 @@ BOOL kGCDWebServer_logging_enabled = false;
                                                       handler:^(UIAlertAction *action) {
                                                           completionHandler(YES);
                                                       }]];
-    [self presentViewController:alertController
-                       animated:YES
-                     completion:^{
-                     }];
+    
+    [self presentViewController:alertController animated:YES completion:nil];
 }
 
 #pragma mark - WKNavigationDelegate
