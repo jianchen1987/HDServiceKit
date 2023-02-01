@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "HDServiceKit"
-  s.version          = "1.6.29"
+  s.version          = "1.6.30"
   s.summary          = "混沌 iOS 服务"
   s.description      = <<-DESC
                        HDServiceKit 是一系列服务以及能力，用于快速在其他项目使用或者第三方接入
@@ -106,7 +106,6 @@ Pod::Spec.new do |s|
       ss.source_files = 'HDServiceKit/HDNetwork', 'HDServiceKit/HDNetwork/*/*'
       ss.dependency 'AFNetworking', '~>4.0'
       ss.dependency 'YYCache', '~>1.0.4'
-      ss.dependency 'HDKitCore/HDLog'
     end
 
     s.subspec 'SANetwork' do |ss|

@@ -6,7 +6,6 @@
 //
 
 #import "HDNetworkSessionConfigurationManager.h"
-#import <HDKitCore/HDLog.h>
 #import <objc/runtime.h>
 
 @interface HDNetworkSessionConfigurationManager ()
