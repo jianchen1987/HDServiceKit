@@ -9,7 +9,6 @@
 #import "HDNetworkManager.h"
 #import "HDNetworkRequest+Internal.h"
 #import "HDNetworkSessionConfigurationManager.h"
-#import <HDKitCore/HDLog.h>
 #import <pthread/pthread.h>
 
 #define HDNM_TASKRECORD_LOCK(...)     \
@@ -183,7 +182,7 @@
         return;
     }
 #ifdef DEBUG
-    HDLog(@"%@", message);
+    NSLog(@"%@", message);
 #endif
 }
 
