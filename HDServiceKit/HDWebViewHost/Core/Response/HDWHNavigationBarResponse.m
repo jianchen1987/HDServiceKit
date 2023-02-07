@@ -137,11 +137,11 @@ wh_doc_end;
 
 #pragma mark - imageWithOriginalImage: withScaleSize: 将图片重新按照一定的尺寸绘制出来
 - (UIImage *)imageWithOriginalImage:(UIImage *)originalImage withScaleSize:(CGSize)size {
-    UIGraphicsBeginImageContext(size);
+//    UIGraphicsBeginImageContext(size);
+    UIGraphicsBeginImageContextWithOptions(size, NO, [UIScreen mainScreen].scale);
     [originalImage drawInRect:CGRectMake(0, 0, size.width, size.height)];
     UIImage * image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-    
     return image;
 }
 
