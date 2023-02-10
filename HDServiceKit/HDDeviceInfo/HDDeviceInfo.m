@@ -276,9 +276,26 @@ NSString *const kUUIDServiceName = @"com.chaosource.keychain";
     NSString *networkType = @"";
     if ([info respondsToSelector:@selector(currentRadioAccessTechnology)]) {
         NSString *currentStatus = info.currentRadioAccessTechnology;
-        NSArray *network2G = @[CTRadioAccessTechnologyGPRS, CTRadioAccessTechnologyEdge, CTRadioAccessTechnologyCDMA1x];
-        NSArray *network3G = @[CTRadioAccessTechnologyWCDMA, CTRadioAccessTechnologyHSDPA, CTRadioAccessTechnologyHSUPA, CTRadioAccessTechnologyCDMAEVDORev0, CTRadioAccessTechnologyCDMAEVDORevA, CTRadioAccessTechnologyCDMAEVDORevB, CTRadioAccessTechnologyeHRPD];
+        NSArray *network2G = @[CTRadioAccessTechnologyGPRS,
+                               CTRadioAccessTechnologyEdge,
+                               CTRadioAccessTechnologyCDMA1x];
+        
+        NSArray *network3G = @[CTRadioAccessTechnologyWCDMA,
+                               CTRadioAccessTechnologyHSDPA,
+                               CTRadioAccessTechnologyHSUPA,
+                               CTRadioAccessTechnologyCDMAEVDORev0,
+                               CTRadioAccessTechnologyCDMAEVDORevA,
+                               CTRadioAccessTechnologyCDMAEVDORevB,
+                               CTRadioAccessTechnologyeHRPD];
+        
         NSArray *network4G = @[CTRadioAccessTechnologyLTE];
+        
+        NSArray *network5G = @[];
+        
+        if(@available(iOS 14.1, *)) {
+            network5G = @[CTRadioAccessTechnologyNR,
+                          CTRadioAccessTechnologyNRNSA];
+        }
 
         if ([network2G containsObject:currentStatus]) {
             networkType = @"2g";
@@ -286,6 +303,8 @@ NSString *const kUUIDServiceName = @"com.chaosource.keychain";
             networkType = @"3g";
         } else if ([network4G containsObject:currentStatus]) {
             networkType = @"4g";
+        } else if ([network5G containsObject:currentStatus]) {
+            networkType = @"5g";
         } else {
             networkType = @"unknown";
         }
