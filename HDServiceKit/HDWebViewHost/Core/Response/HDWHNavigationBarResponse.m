@@ -111,7 +111,7 @@ wh_doc_end;
         UIImage *image = [UIImage imageWithData:[[NSData alloc] initWithBase64EncodedString:base64Arr.lastObject options:NSDataBase64DecodingIgnoreUnknownCharacters]];
         HDLog(@"%@",NSStringFromCGSize(image.size));
         
-        CGFloat maxImageHeight = 30;
+        CGFloat maxImageHeight = 24;
         if(image.size.height >= maxImageHeight){
             if(imageWidth > 0 && imageHeigh > 0) {
                 image = [self imageWithOriginalImage:image withScaleSize:CGSizeMake(maxImageHeight, maxImageHeight / imageWidth * imageHeigh)];
