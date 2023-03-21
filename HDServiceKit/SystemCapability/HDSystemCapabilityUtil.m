@@ -29,7 +29,7 @@ static NSOperationQueue *_queue;
     phoneNum = [phoneNum stringByReplacingOccurrencesOfString:@"+" withString:@""];
     phoneNum = [phoneNum stringByReplacingOccurrencesOfString:@"-" withString:@""];
     if([phoneNum hasPrefix:@"855"]) {
-        phoneNum = [phoneNum stringByReplacingOccurrencesOfString:@"855" withString:@""];
+        phoneNum = [phoneNum substringFromIndex:3];
         if(![phoneNum hasPrefix:@"0"]) {
             // 按需求方要求，去掉855 补0
             phoneNum = [@"0" stringByAppendingString:phoneNum];
