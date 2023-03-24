@@ -96,7 +96,7 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
     }
 
     [self sendMessage:[WNHelloDisconnectMsg disconnectWithReason:@"sign out"]];
-    [self.socket closeWithCode:200 reason:@"sign out"];
+    [self.socket close];
     [self.timer invalidate];
     self.timer = nil;
 
@@ -143,7 +143,7 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
 
     [self sendMessage:[WNHelloDisconnectMsg disconnectWithReason:@"enter background"]];
 
-    [self.socket closeWithCode:200 reason:@"enter background"];
+    [self.socket close];
     [self.timer invalidate];
     self.timer = nil;
 }
@@ -206,7 +206,7 @@ WNHelloEvent const WNHelloEventNotification = @"event.notification";  ///< 通�
 
     } else if ([downloadMsg.msgType isEqualToString:WNHelloMessageTypeKickedOutByRemote]) {
         // 被远端踢下线，不需要重新连接
-        [self.socket closeWithCode:300 reason:@"KICK by remote"];
+        [self.socket close];
         [self.timer invalidate];
         self.timer = nil;
 
