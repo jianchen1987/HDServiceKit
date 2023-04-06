@@ -31,6 +31,7 @@
     [super viewDidLoad];
 
     [self setup];
+    self.hd_interactivePopDisabled = YES;
 }
 
 - (void)dealloc {
