@@ -104,6 +104,7 @@
                 'reginerYumnowNotifications-async-function',
                 'voiceRecord-async-function',
                 'goToAppSystemSetting-async-function',
+                'ocr-async-function',
         ]
     };
 }(window);
