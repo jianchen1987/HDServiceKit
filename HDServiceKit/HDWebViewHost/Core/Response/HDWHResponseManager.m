@@ -61,6 +61,9 @@
             [HDFileUtil removeFileOrDirectory:file];
         }
 #endif
+        //跟踪webViewHost销毁时，清除缓存记录
+        [NSNotificationCenter.defaultCenter addObserver:kResponeManger selector:@selector(webViewHostDealloc:) name:@"kNotificationNameWebViewHostDealloc" object:nil];
+        
     });
 
     return kResponeManger;
@@ -83,21 +86,35 @@
     }
 
     id<HDWebViewHostProtocol> vc = nil;
+    NSMutableDictionary *mDic = nil;
+    
     // 逆序遍历，让后添加的 Response 能够覆盖内置的方法；
     for (NSInteger i = self.customResponseClasses.count - 1; i >= 0; i--) {
         Class responseClass = [self.customResponseClasses objectAtIndex:i];
         if ([responseClass isSupportedActionSignature:signature]) {
+            
+            NSString *key = NSStringFromClass(responseClass);
             // 先判断是否可以响应，再决定初始化。
             if (webViewHost) {
-                NSString *key = NSStringFromClass(responseClass);
-                vc = [self.responseClassObjs objectForKey:key];
-                if (vc == nil) {
+                //判断有没有当前vc的缓存
+                NSString *mDicKey = [NSString stringWithFormat:@"%p",webViewHost];
+                
+                mDic = [self.responseClassObjs objectForKey:mDicKey];
+                if(mDic) { //有缓存
+                    if([mDic objectForKey:key]) { //缓存有这个responseClass;
+                        vc = [mDic objectForKey:key];
+                    }else{ //缓存没有这个responseClass;
+                        vc = [[responseClass alloc] initWithWebViewHost:webViewHost];
+                        [mDic setObject:vc forKey:key];
+                        [self.responseClassObjs setObject:mDic forKey:mDicKey];
+                    }
+                }else{ //没缓存
+                    mDic = NSMutableDictionary.new;
                     vc = [[responseClass alloc] initWithWebViewHost:webViewHost];
-                    // 缓存住
-                    [self.responseClassObjs setObject:vc forKey:key];
-                } else {
-                    vc = [vc initWithWebViewHost:webViewHost];
+                    [mDic setObject:vc forKey:key];
+                    [self.responseClassObjs setObject:mDic forKey:mDicKey];
                 }
+                
             } else {
                 vc = [responseClass new];
             }
@@ -154,6 +171,13 @@ static pthread_mutex_t lock;
 }
 
 #endif
+
+#pragma mark - Notification
+//处理webhost销毁后，清理缓存
+- (void)webViewHostDealloc:(NSNotification *)noti {
+    NSString *mDicKey = [NSString stringWithFormat:@"%p",noti.object];
+    [self.responseClassObjs removeObjectForKey:mDicKey];
+}
 
 - (void)dealloc {
     // 清理 response

@@ -163,6 +163,10 @@ BOOL kGCDWebServer_logging_enabled = false;
     [_webView stopLoading];
     [_webView removeFromSuperview];
     _webView = nil;
+    
+    //发送通知告诉HDWHResponseManager清除缓存记录
+    [NSNotificationCenter.defaultCenter postNotificationName:@"kNotificationNameWebViewHostDealloc" object:self];
+    
     HDWHLog(@"HDWebViewHostViewController dealloc");
 }
 
