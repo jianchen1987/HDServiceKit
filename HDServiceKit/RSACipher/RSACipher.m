@@ -246,6 +246,9 @@ static NSData *base64_decode(NSString *str) {
                   forKey:(__bridge id)
                              kSecReturnPersistentRef];
 
+    [publicKey setObject:(__bridge id)kSecAttrAccessibleAlwaysThisDeviceOnly
+                  forKey:(__bridge id)kSecAttrAccessible];
+    
     CFTypeRef persistKey = nil;
     OSStatus status = SecItemAdd((__bridge CFDictionaryRef)publicKey, &persistKey);
     if (persistKey != nil) {
@@ -395,6 +398,9 @@ static NSData *base64_decode(NSString *str) {
     [privateKey setObject:[NSNumber numberWithBool:YES]
                    forKey:(__bridge id)
                               kSecReturnPersistentRef];
+    
+    [privateKey setObject:(__bridge id)kSecAttrAccessibleAlwaysThisDeviceOnly
+                   forKey:(__bridge id)kSecAttrAccessible];
 
     CFTypeRef persistKey = nil;
     OSStatus status = SecItemAdd((__bridge CFDictionaryRef)privateKey, &persistKey);
