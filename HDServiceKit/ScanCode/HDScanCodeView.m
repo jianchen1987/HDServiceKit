@@ -30,7 +30,7 @@
 @property (nonatomic, assign) BOOL isAnimating;
 
 /// 手电筒开关
-@property (nonatomic, strong) UIButton *flashBtn;
+//@property (nonatomic, strong) UIButton *flashBtn;
 /**
  闪光灯开关的状态
  */
@@ -103,9 +103,9 @@
     [self addSubview:self.flashButton];
     [self addSubview:self.photoButton];
     
-    self.flashButton.frame = CGRectMake(60, self.frame.size.height - self.flashButton.frame.size.height - 40, self.flashButton.frame.size.width, self.flashButton.frame.size.height);
+    self.flashButton.frame = CGRectMake(60, self.frame.size.height - self.flashButton.frame.size.height - 40 - kiPhoneXSeriesSafeBottomHeight, self.flashButton.frame.size.width, self.flashButton.frame.size.height);
     
-    self.photoButton.frame = CGRectMake(self.frame.size.width - self.photoButton.frame.size.width - 60, self.frame.size.height - self.photoButton.frame.size.height - 40, self.photoButton.frame.size.width, self.photoButton.frame.size.height);
+    self.photoButton.frame = CGRectMake(self.frame.size.width - self.photoButton.frame.size.width - 60, self.frame.size.height - self.photoButton.frame.size.height - 40 - kiPhoneXSeriesSafeBottomHeight, self.photoButton.frame.size.width, self.photoButton.frame.size.height);
 }
 
 // 绘制扫描区域
@@ -280,22 +280,22 @@
     self.handlingView = nil;
 }
 
-- (void)flashBtnClicked:(UIButton *)flashBtn {
-    if (self.clickedFlashLightBlock != nil) {
-        self.flashOpen = !self.flashOpen;
-        self.clickedFlashLightBlock(self.flashOpen);
-    }
-}
+//- (void)flashBtnClicked:(UIButton *)flashBtn {
+//    if (self.clickedFlashLightBlock != nil) {
+//        self.flashOpen = !self.flashOpen;
+//        self.clickedFlashLightBlock(self.flashOpen);
+//    }
+//}
 
-- (void)showFlashSwitch:(BOOL)show {
-    if (show == YES) {
-        self.flashBtn.hidden = NO;
-        [self addSubview:self.flashBtn];
-    } else {
-        self.flashBtn.hidden = YES;
-        [self.flashBtn removeFromSuperview];
-    }
-}
+//- (void)showFlashSwitch:(BOOL)show {
+//    if (show == YES) {
+//        self.flashBtn.hidden = NO;
+//        [self addSubview:self.flashBtn];
+//    } else {
+//        self.flashBtn.hidden = YES;
+//        [self.flashBtn removeFromSuperview];
+//    }
+//}
 
 #pragma mark-- Getter
 
@@ -333,15 +333,15 @@
     return _handlingView;
 }
 
-- (UIButton *)flashBtn {
-    if (_flashBtn == nil) {
-        _flashBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
-        [_flashBtn setImage:[UIImage imageNamed:@"scanFlashlight" inBundle:[NSBundle hd_ScanCodeResources] compatibleWithTraitCollection:nil] forState:UIControlStateNormal];
-        [_flashBtn addTarget:self action:@selector(flashBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
-        _flashBtn.center = CGPointMake(self.frame.size.width / 2.0, self.scanRetangleRect.origin.y + self.scanRetangleRect.size.height + 40);
-    }
-    return _flashBtn;
-}
+//- (UIButton *)flashBtn {
+//    if (_flashBtn == nil) {
+//        _flashBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
+//        [_flashBtn setImage:[UIImage imageNamed:@"scanFlashlight" inBundle:[NSBundle hd_ScanCodeResources] compatibleWithTraitCollection:nil] forState:UIControlStateNormal];
+//        [_flashBtn addTarget:self action:@selector(flashBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
+//        _flashBtn.center = CGPointMake(self.frame.size.width / 2.0, self.scanRetangleRect.origin.y + self.scanRetangleRect.size.height + 40);
+//    }
+//    return _flashBtn;
+//}
 
 - (UILabel *)tipsLabel {
     if(!_tipsLabel) {
@@ -367,8 +367,11 @@
         [btn setImage:[UIImage imageNamed:@"icon_scan_open" inBundle:[NSBundle hd_ScanCodeResources] compatibleWithTraitCollection:nil] forState:UIControlStateNormal];
         [btn setImage:[UIImage imageNamed:@"icon_scan_close" inBundle:[NSBundle hd_ScanCodeResources] compatibleWithTraitCollection:nil] forState:UIControlStateSelected];
         [btn addTouchUpInsideHandler:^(UIButton * _Nonnull btn) {
-                    btn.selected = !btn.selected;
-                }];
+            if (self.clickedFlashLightBlock != nil) {
+                btn.selected = !btn.selected;
+                self.clickedFlashLightBlock(btn.selected);
+            }
+        }];
 
         _flashButton = btn;
         [btn sizeToFit];
@@ -385,9 +388,11 @@
         btn.titleLabel.font = [UIFont systemFontOfSize:16];
         [btn setTitle:@"从相册选取" forState:UIControlStateNormal];
         [btn setImage:[UIImage imageNamed:@"icon_scan_photo" inBundle:[NSBundle hd_ScanCodeResources] compatibleWithTraitCollection:nil] forState:UIControlStateNormal];
+        @HDWeakify(self);
         [btn addTouchUpInsideHandler:^(UIButton * _Nonnull btn) {
-//                    btn.selected = !btn.selected;
-                }];
+            @HDStrongify(self);
+            !self.clickedPhotoButtonBlock?: self.clickedPhotoButtonBlock();
+        }];
 
         _photoButton = btn;
         [btn sizeToFit];

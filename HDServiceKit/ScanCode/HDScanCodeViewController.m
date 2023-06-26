@@ -84,6 +84,10 @@
     _scanView.clickedFlashLightBlock = ^(BOOL open) {
         [weakSelf.scanTool openFlashSwitch:open];
     };
+    
+    _scanView.clickedPhotoButtonBlock = ^{
+        [weakSelf photoButtonClickedHandler];
+    };
     [self.view addSubview:_scanView];
 
     // 初始化扫描工具
@@ -108,17 +112,17 @@
         }
         !weakSelf.resultBlock ?: weakSelf.resultBlock(scanString);
     };
-    _scanTool.ambientLightChangedBlock = ^(float brightness) {
-        if (brightness < 0) {
-            // 环境太暗，显示闪光灯开关按钮
-            [weakSelf.scanView showFlashSwitch:YES];
-        } else if (brightness > 0) {
-            // 环境亮度可以,且闪光灯处于关闭状态时，隐藏闪光灯开关
-            if (!weakSelf.scanTool.flashOpen) {
-                [weakSelf.scanView showFlashSwitch:NO];
-            }
-        }
-    };
+//    _scanTool.ambientLightChangedBlock = ^(float brightness) {
+//        if (brightness < 0) {
+//            // 环境太暗，显示闪光灯开关按钮
+//            [weakSelf.scanView showFlashSwitch:YES];
+//        } else if (brightness > 0) {
+//            // 环境亮度可以,且闪光灯处于关闭状态时，隐藏闪光灯开关
+//            if (!weakSelf.scanTool.flashOpen) {
+//                [weakSelf.scanView showFlashSwitch:NO];
+//            }
+//        }
+//    };
 
     [_scanTool sessionStartRunning];
     [_scanView startScanAnimation];
@@ -139,7 +143,7 @@
 - (void)stopSession {
     [_scanView stopScanAnimation];
     [_scanView finishedHandle];
-    [_scanView showFlashSwitch:NO];
+//    [_scanView showFlashSwitch:NO];
     [_scanTool sessionStopRunning];
 }
 
@@ -148,7 +152,7 @@
     if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
         UIImagePickerController *_imagePickerController = [[UIImagePickerController alloc] init];
         _imagePickerController.delegate = self;
-        _imagePickerController.allowsEditing = YES;
+//        _imagePickerController.allowsEditing = YES;
         _imagePickerController.modalPresentationStyle = UIModalPresentationFullScreen;
         _imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
         [self presentViewController:_imagePickerController animated:YES completion:nil];
