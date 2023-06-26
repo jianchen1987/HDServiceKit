@@ -91,6 +91,8 @@ Pod::Spec.new do |s|
     s.subspec 'ScanCode' do |ss|
       ss.source_files = 'HDServiceKit/ScanCode'
       ss.dependency  'HDUIKit/MainFrame'
+      ss.dependency  'HDUIKit/Components/HDUIButton'
+      ss.dependency  'HDKitCore/Core'
       ss.resource_bundles = {'HDScanCodeResources' => ['HDServiceKit/ScanCode/Resources/*.*']}
     end
 

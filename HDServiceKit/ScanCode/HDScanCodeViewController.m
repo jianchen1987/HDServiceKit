@@ -58,13 +58,13 @@
 }
 
 - (void)setup {
-    UIButton *photoBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [photoBtn setImage:[UIImage imageNamed:@"photo_library" inBundle:[NSBundle hd_ScanCodeResources] compatibleWithTraitCollection:nil] forState:UIControlStateNormal];
-    [photoBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [photoBtn addTarget:self action:@selector(photoButtonClickedHandler) forControlEvents:UIControlEventTouchUpInside];
+//    UIButton *photoBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+//    [photoBtn setImage:[UIImage imageNamed:@"photo_library" inBundle:[NSBundle hd_ScanCodeResources] compatibleWithTraitCollection:nil] forState:UIControlStateNormal];
+//    [photoBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+//    [photoBtn addTarget:self action:@selector(photoButtonClickedHandler) forControlEvents:UIControlEventTouchUpInside];
     self.hd_navigationItem.title = @"扫一扫";
-    [photoBtn sizeToFit];
-    self.hd_navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:photoBtn];
+//    [photoBtn sizeToFit];
+//    self.hd_navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:photoBtn];
 
     // 输出流视图
     UIView *preview = [[UIView alloc] initWithFrame:self.view.bounds];

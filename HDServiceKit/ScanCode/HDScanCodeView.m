@@ -7,7 +7,8 @@
 
 #import "HDScanCodeView.h"
 #import "NSBundle+HDScanCode.h"
-
+#import <HDUIKit/HDUIButton.h>
+#import <HDKitCore/HDCommonDefines.h>
 @interface HDScanCodeView ()
 
 /// 动画线条
@@ -35,6 +36,13 @@
  */
 @property (nonatomic, assign) BOOL flashOpen;
 
+/// 新手电筒按钮
+@property (nonatomic, strong) HDUIButton *flashButton;
+/// 相册按钮
+@property (nonatomic, strong) HDUIButton *photoButton;
+/// 提示文言
+@property (nonatomic, strong) UILabel *tipsLabel;
+
 @end
 
 @implementation HDScanCodeView
@@ -50,8 +58,10 @@
         const CGFloat screenWidth = MIN(CGRectGetWidth(frame), CGRectGetHeight(frame));
         const CGFloat scanAreaWidth = scanAreaWidth2ScreenWidth * screenWidth;
 
-        _scanRetangleRect = CGRectMake((screenWidth - scanAreaWidth) * 0.5, (CGRectGetHeight(frame) - scanAreaWidth) * 0.5, scanAreaWidth, scanAreaWidth);
+//        _scanRetangleRect = CGRectMake((screenWidth - scanAreaWidth) * 0.5, (CGRectGetHeight(frame) - scanAreaWidth) * 0.5, scanAreaWidth, scanAreaWidth);
 
+        _scanRetangleRect = CGRectMake((screenWidth - scanAreaWidth) * 0.5, kNavigationBarH + 98, scanAreaWidth, scanAreaWidth);
+        
         _photoframeAngleW = 20;
         _photoframeAngleH = 20;
         _colorAngle = [UIColor greenColor];
@@ -87,6 +97,15 @@
     if (!self.clickedMyQRCodeBlock) {
         myCode.hidden = true;
     }
+    
+    [self addSubview:self.tipsLabel];
+    
+    [self addSubview:self.flashButton];
+    [self addSubview:self.photoButton];
+    
+    self.flashButton.frame = CGRectMake(60, self.frame.size.height - self.flashButton.frame.size.height - 40, self.flashButton.frame.size.width, self.flashButton.frame.size.height);
+    
+    self.photoButton.frame = CGRectMake(self.frame.size.width - self.photoButton.frame.size.width - 60, self.frame.size.height - self.photoButton.frame.size.height - 40, self.photoButton.frame.size.width, self.photoButton.frame.size.height);
 }
 
 // 绘制扫描区域
@@ -322,6 +341,58 @@
         _flashBtn.center = CGPointMake(self.frame.size.width / 2.0, self.scanRetangleRect.origin.y + self.scanRetangleRect.size.height + 40);
     }
     return _flashBtn;
+}
+
+- (UILabel *)tipsLabel {
+    if(!_tipsLabel) {
+        _tipsLabel = UILabel.new;
+        _tipsLabel.text = @"Put QR Code with in frame to scan";
+        _tipsLabel.textColor = UIColor.whiteColor;
+        _tipsLabel.font = [UIFont systemFontOfSize:14];
+        _tipsLabel.textAlignment = NSTextAlignmentCenter;
+        _tipsLabel.frame = CGRectMake(12, self.scanRetangleRect.origin.y + self.scanRetangleRect.size.height + 38, self.frame.size.width - 12 *2, 20);
+    }
+    return _tipsLabel;
+}
+
+- (HDUIButton *)flashButton {
+    if(!_flashButton) {
+        HDUIButton *btn = HDUIButton.new;
+        btn.imagePosition = HDUIButtonImagePositionTop;
+        btn.spacingBetweenImageAndTitle = 10;
+        [btn setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
+        btn.titleLabel.font = [UIFont systemFontOfSize:16];
+        [btn setTitle:@"打开手电筒" forState:UIControlStateNormal];
+        [btn setTitle:@"关闭手电筒" forState:UIControlStateSelected];
+        [btn setImage:[UIImage imageNamed:@"icon_scan_open" inBundle:[NSBundle hd_ScanCodeResources] compatibleWithTraitCollection:nil] forState:UIControlStateNormal];
+        [btn setImage:[UIImage imageNamed:@"icon_scan_close" inBundle:[NSBundle hd_ScanCodeResources] compatibleWithTraitCollection:nil] forState:UIControlStateSelected];
+        [btn addTouchUpInsideHandler:^(UIButton * _Nonnull btn) {
+                    btn.selected = !btn.selected;
+                }];
+
+        _flashButton = btn;
+        [btn sizeToFit];
+    }
+    return _flashButton;
+}
+
+- (HDUIButton *)photoButton {
+    if(!_photoButton) {
+        HDUIButton *btn = HDUIButton.new;
+        btn.imagePosition = HDUIButtonImagePositionTop;
+        btn.spacingBetweenImageAndTitle = 10;
+        [btn setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
+        btn.titleLabel.font = [UIFont systemFontOfSize:16];
+        [btn setTitle:@"从相册选取" forState:UIControlStateNormal];
+        [btn setImage:[UIImage imageNamed:@"icon_scan_photo" inBundle:[NSBundle hd_ScanCodeResources] compatibleWithTraitCollection:nil] forState:UIControlStateNormal];
+        [btn addTouchUpInsideHandler:^(UIButton * _Nonnull btn) {
+//                    btn.selected = !btn.selected;
+                }];
+
+        _photoButton = btn;
+        [btn sizeToFit];
+    }
+    return _photoButton;
 }
 
 - (void)dealloc {
