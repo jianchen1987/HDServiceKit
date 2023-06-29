@@ -147,7 +147,10 @@ HDLocalizedStringInBundleForLanguageFromTable([NSBundle hd_bundleInFramework:@"H
 
 - (void)startRunning {
     if(![self.session isRunning]){
-        [self.session startRunning];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [self.session startRunning];
+        });
+
     }
     if(self.qrCodesButtonArray.count){//移除上一次的标记
         [self.qrCodesButtonArray enumerateObjectsUsingBlock:^(UIButton *button, NSUInteger idx, BOOL *stop) {
@@ -168,7 +171,11 @@ HDLocalizedStringInBundleForLanguageFromTable([NSBundle hd_bundleInFramework:@"H
     __weak __typeof(self) weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
         __strong __typeof(weakSelf) strongSelf = weakSelf;
-        [self.session stopRunning];
+        if([self.session isRunning]){
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                [self.session stopRunning];
+            });
+        }
         [self stopScanAnimation];
     });
 }
