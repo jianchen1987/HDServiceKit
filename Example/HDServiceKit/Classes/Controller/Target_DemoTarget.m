@@ -13,6 +13,7 @@
 #import "HDRSACipherViewController.h"
 #import "HDScanCodeViewController.h"
 #import "SANetworkViewController.h"
+#import "HDScanMoreCodeViewController.h"
 #import <objc/runtime.h>
 
 @implementation _Target (DemoTarget)
@@ -23,6 +24,11 @@
 
 - (UIViewController *)_Action(scanCodeViewController):(NSDictionary *)params {
     HDScanCodeViewController *vc = [HDScanCodeViewController new];
+    return vc;
+}
+
+- (UIViewController *)_Action(scanMoreCodeViewController):(NSDictionary *)params {
+    HDScanMoreCodeViewController *vc = [HDScanMoreCodeViewController new];
     return vc;
 }
 

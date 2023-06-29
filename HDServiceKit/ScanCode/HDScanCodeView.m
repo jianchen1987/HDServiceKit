@@ -9,6 +9,11 @@
 #import "NSBundle+HDScanCode.h"
 #import <HDUIKit/HDUIButton.h>
 #import <HDKitCore/HDCommonDefines.h>
+#import <HDKitCore/NSBundle+HDKitCore.h>
+
+#define LocalizableString(key, value) \
+    HDLocalizedStringInBundleForLanguageFromTable([NSBundle hd_bundleInFramework:@"HDServiceKit" bundleName:@"HDScanCodeResources"], [self getCurrentLanguage], key, value, nil)
+
 @interface HDScanCodeView ()
 
 /// 动画线条
@@ -103,7 +108,7 @@
     [self addSubview:self.flashButton];
     [self addSubview:self.photoButton];
     
-    self.flashButton.frame = CGRectMake(60, self.frame.size.height - self.flashButton.frame.size.height - 40 - kiPhoneXSeriesSafeBottomHeight, self.flashButton.frame.size.width, self.flashButton.frame.size.height);
+    self.flashButton.frame = CGRectMake(60, self.frame.size.height - self.flashButton.frame.size.height - 40 - kiPhoneXSeriesSafeBottomHeight, self.flashButton.frame.size.width + 10, self.flashButton.frame.size.height);
     
     self.photoButton.frame = CGRectMake(self.frame.size.width - self.photoButton.frame.size.width - 60, self.frame.size.height - self.photoButton.frame.size.height - 40 - kiPhoneXSeriesSafeBottomHeight, self.photoButton.frame.size.width, self.photoButton.frame.size.height);
 }
@@ -346,7 +351,7 @@
 - (UILabel *)tipsLabel {
     if(!_tipsLabel) {
         _tipsLabel = UILabel.new;
-        _tipsLabel.text = @"Put QR Code with in frame to scan";
+        _tipsLabel.text = LocalizableString(@"Put_QR_Code_in_the_frame_to_scan", @"将二维码放入框内进行扫描");
         _tipsLabel.textColor = UIColor.whiteColor;
         _tipsLabel.font = [UIFont systemFontOfSize:14];
         _tipsLabel.textAlignment = NSTextAlignmentCenter;
@@ -362,8 +367,8 @@
         btn.spacingBetweenImageAndTitle = 10;
         [btn setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
         btn.titleLabel.font = [UIFont systemFontOfSize:16];
-        [btn setTitle:@"打开手电筒" forState:UIControlStateNormal];
-        [btn setTitle:@"关闭手电筒" forState:UIControlStateSelected];
+        [btn setTitle:LocalizableString(@"Turn_on_flashlight", @"打开手电筒") forState:UIControlStateNormal];
+        [btn setTitle:LocalizableString(@"Turn_off_flashlight", @"关闭手电筒") forState:UIControlStateSelected];
         [btn setImage:[UIImage imageNamed:@"icon_scan_open" inBundle:[NSBundle hd_ScanCodeResources] compatibleWithTraitCollection:nil] forState:UIControlStateNormal];
         [btn setImage:[UIImage imageNamed:@"icon_scan_close" inBundle:[NSBundle hd_ScanCodeResources] compatibleWithTraitCollection:nil] forState:UIControlStateSelected];
         [btn addTouchUpInsideHandler:^(UIButton * _Nonnull btn) {
@@ -386,7 +391,7 @@
         btn.spacingBetweenImageAndTitle = 10;
         [btn setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
         btn.titleLabel.font = [UIFont systemFontOfSize:16];
-        [btn setTitle:@"从相册选取" forState:UIControlStateNormal];
+        [btn setTitle:LocalizableString(@"Choose_from_album", @"从相册选取") forState:UIControlStateNormal];
         [btn setImage:[UIImage imageNamed:@"icon_scan_photo" inBundle:[NSBundle hd_ScanCodeResources] compatibleWithTraitCollection:nil] forState:UIControlStateNormal];
         @HDWeakify(self);
         [btn addTouchUpInsideHandler:^(UIButton * _Nonnull btn) {
@@ -398,6 +403,17 @@
         [btn sizeToFit];
     }
     return _photoButton;
+}
+
+static NSString *const kCurrentLanguageCacheKey = @"kCurrentLanguageCache";
+
+- (NSString *)getCurrentLanguage {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *currentLanguage = [defaults valueForKey:kCurrentLanguageCacheKey];
+    if (!currentLanguage) {
+        currentLanguage = @"en-US";  /// 默认英文
+    }
+    return currentLanguage;
 }
 
 - (void)dealloc {

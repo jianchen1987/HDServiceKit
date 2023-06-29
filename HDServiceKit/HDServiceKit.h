@@ -358,6 +358,10 @@ static NSString *const HDServiceKit_VERSION = @"1.6.41";
 #import "NSBundle+HDScanCode.h"
 #endif
 
+#if __has_include("HDScanMoreCodeViewController.h")
+#import "HDScanMoreCodeViewController.h"
+#endif
+
 #if __has_include("HDScanCodeDefines.h")
 #import "HDScanCodeDefines.h"
 #endif

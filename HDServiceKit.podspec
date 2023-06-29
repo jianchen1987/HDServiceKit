@@ -93,6 +93,7 @@ Pod::Spec.new do |s|
       ss.dependency  'HDUIKit/MainFrame'
       ss.dependency  'HDUIKit/Components/HDUIButton'
       ss.dependency  'HDKitCore/Core'
+      ss.dependency  'Masonry'
       ss.resource_bundles = {'HDScanCodeResources' => ['HDServiceKit/ScanCode/Resources/*.*']}
     end
 
