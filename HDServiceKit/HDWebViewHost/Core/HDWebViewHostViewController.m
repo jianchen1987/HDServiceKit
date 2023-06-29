@@ -728,7 +728,10 @@ BOOL kGCDWebServer_logging_enabled = false;
         webview.scrollView.delegate = self;
         webview.allowsBackForwardNavigationGestures = true;
         webview.allowsLinkPreview = true;
-
+        //iOS 16.4后需要设置inspectable 才能safari调试 https://developer.apple.com/documentation/javascriptcore/jscontext/4111147-isinspectable
+        if (@available(iOS 16.4, *)) {
+            webview.inspectable = true;
+        }
         _webView = webview;
     }
     return _webView;
