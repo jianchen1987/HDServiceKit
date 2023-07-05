@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma - 网络请求数据
 /** 请求唯一ID */
-@property (nonatomic, copy, readonly) NSString *traceId;
+@property (nonatomic, copy, readonly) NSString *identifier;
 /** 请求开始时间，用于记录请求过程耗时*/
 @property (nonatomic, assign, readonly) NSTimeInterval startTime;
 

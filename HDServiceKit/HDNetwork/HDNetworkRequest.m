@@ -29,7 +29,7 @@
 @property (nonatomic, strong) NSMutableSet<NSNumber *> *taskIDRecord;
 
 /** 请求唯一ID */
-@property (nonatomic, copy) NSString *traceId;
+@property (nonatomic, copy) NSString *identifier;
 /** 请求开始时间，用于记录请求过程耗时*/
 @property (nonatomic, assign) NSTimeInterval startTime;
 
@@ -50,11 +50,7 @@
         self.taskIDRecord = [NSMutableSet set];
         self.requestTimeoutInterval = 30;
         self.startTime = [NSDate.new timeIntervalSince1970];
-        NSDateFormatter *fmt = [[NSDateFormatter alloc] init];
-        [fmt setDateFormat:@"mmss"];
-        [fmt setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]];
-        NSString *dateStr = [fmt stringFromDate:NSDate.date];
-        self.traceId = [dateStr stringByAppendingFormat:@"%05d", arc4random() % 100000];
+        self.identifier = [NSString stringWithFormat:@"%.0f-%05d", [[NSDate new] timeIntervalSince1970], arc4random() % 100000];
     }
     return self;
 }

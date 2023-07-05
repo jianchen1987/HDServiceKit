@@ -114,7 +114,7 @@
 
         // 判断是否是致命错误，无需重试
         if ([self isErrorFatal:error]) {
-            [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%.4fs]收到严重错误，请查看屏蔽列表，将停止重试，直接触发回调，原因：[%ld]%@", oriRequest.traceId, [NSDate.new timeIntervalSince1970] - oriRequest.startTime, error.code, error.localizedDescription]];
+            [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%@][%.4fs]收到严重错误，请查看屏蔽列表，将停止重试，直接触发回调，原因：[%ld]%@", oriRequest.identifier, oriRequest.requestURI, [NSDate.new timeIntervalSince1970] - oriRequest.startTime, error.code, error.localizedDescription]];
             !completion ?: completion(wrappedResponse);
             return;
         }
@@ -123,7 +123,7 @@
         NSHTTPURLResponse *taskResponse = (NSHTTPURLResponse *)task.response;
         for (NSNumber *fatalStatusCode in retryConfig.fatalStatusCodes) {
             if (taskResponse.statusCode == fatalStatusCode.integerValue) {
-                [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%.4fs]请求得到状态码 %zd ，在指定不再尝试的 statusCode 数组中，将停止重试，原因：%@", oriRequest.traceId, [NSDate.new timeIntervalSince1970] - oriRequest.startTime, fatalStatusCode.integerValue, error.localizedDescription]];
+                [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%@][%.4fs]请求得到状态码 %zd ，在指定不再尝试的 statusCode 数组中，将停止重试，原因：%@", oriRequest.identifier, oriRequest.requestURI, [NSDate.new timeIntervalSince1970] - oriRequest.startTime, fatalStatusCode.integerValue, error.localizedDescription]];
                 !completion ?: completion(wrappedResponse);
                 return;
             }
@@ -132,25 +132,25 @@
         if (retryConfig.remainingRetryCount > 0) {
             BOOL shouldRetry = retryConfig.shouldRetryBlock ? retryConfig.shouldRetryBlock(wrappedResponse) : YES;
             if (shouldRetry) {
-                [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%.4fs]异常码:[(%ld)%@]外部判断应该重试，还剩：%zd 次", oriRequest.traceId, [NSDate.new timeIntervalSince1970] - oriRequest.startTime, error.code, error.localizedDescription, retryConfig.remainingRetryCount]];
+                [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%@][%.4fs]异常码:[(%ld)%@]外部判断应该重试，还剩：%zd 次", oriRequest.identifier, oriRequest.requestURI, [NSDate.new timeIntervalSince1970] - oriRequest.startTime, error.code, error.localizedDescription, retryConfig.remainingRetryCount]];
                 int64_t delay;
                 if (retryConfig.isRetryProgressive) {
                     delay = (int64_t)(retryConfig.retryInterval * pow(2, retryConfig.maxRetryCount - retryConfig.maxRetryCount));
                 } else {
                     delay = retryConfig.retryInterval;
                 }
-                [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%.4fs]延迟重试时间：%llu", oriRequest.traceId, [NSDate.new timeIntervalSince1970] - oriRequest.startTime, delay]];
+                [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%@][%.4fs]延迟重试时间：%llu", oriRequest.identifier, oriRequest.requestURI, [NSDate.new timeIntervalSince1970] - oriRequest.startTime, delay]];
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                    [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%.4f]延迟时间 %lld 到，开始发起重试", oriRequest.traceId, [NSDate.new timeIntervalSince1970] - oriRequest.startTime, delay]];
+                    [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%@][%.4f]延迟时间 %lld 到，开始发起重试", oriRequest.identifier, oriRequest.requestURI, [NSDate.new timeIntervalSince1970] - oriRequest.startTime, delay]];
                     [self startDataTaskWithManager:manager URLRequest:URLRequest retryConfig:retryConfig oriRequest:oriRequest uploadProgress:uploadProgress downloadProgress:downloadProgress completion:completion];
                     retryConfig.remainingRetryCount -= 1;
                 });
             } else {
-                [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%.4fs]重试次数还剩：%zd 次，但 shouldRetryBlock 返回 false，将不再重试，回调数据", oriRequest.traceId, [NSDate.new timeIntervalSince1970] - oriRequest.startTime, retryConfig.remainingRetryCount]];
+                [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%@][%.4fs]重试次数还剩：%zd 次，但 shouldRetryBlock 返回 false，将不再重试，回调数据", oriRequest.identifier, oriRequest.requestURI, [NSDate.new timeIntervalSince1970] - oriRequest.startTime, retryConfig.remainingRetryCount]];
                 !completion ?: completion(wrappedResponse);
             }
         } else {
-            [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%.4fs]重试次数已达最大次数 %zd，将回调数据", oriRequest.traceId, [NSDate.new timeIntervalSince1970] - oriRequest.startTime, retryConfig.maxRetryCount]];
+            [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][@%][%.4fs]重试次数已达最大次数 %zd，将回调数据", oriRequest.identifier, oriRequest.requestURI, [NSDate.new timeIntervalSince1970] - oriRequest.startTime, retryConfig.maxRetryCount]];
 
             !completion ?: completion(wrappedResponse);
         }

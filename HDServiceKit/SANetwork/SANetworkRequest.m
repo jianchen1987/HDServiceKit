@@ -23,18 +23,21 @@
     if (self = [super init]) {
         self.baseURI = @"http://japi.juhe.cn";
         self.requestMethod = HDRequestMethodPOST;
+        self.cipherMode = SANetworkRequestCipherModeMD5V1;
     }
     return self;
 }
 
 #pragma mark - 签名
 /// 获取签名
-- (NSString *)getSignatureWithRequestTime:(NSString *)requestTime deviceId:(NSString *)deviceId {
+- (NSString *)getSignatureWithEncryptFactors:(NSDictionary *)factors {
 
     NSMutableDictionary *finalParams = [NSMutableDictionary dictionary];
     [finalParams addEntriesFromDictionary:[self hd_preprocessParameter:self.requestParameter]];
-    [finalParams addEntriesFromDictionary:@{@"requestTm": requestTime,
-                                            @"deviceId": deviceId}];
+    [finalParams addEntriesFromDictionary:factors];
+    if([self respondsToSelector:@selector(sa_customSignatureEncryptFactors)]) {
+        [finalParams addEntriesFromDictionary:[self sa_customSignatureEncryptFactors]];
+    }
 
     NSArray *keys = [[finalParams allKeys] sortedArrayUsingComparator:^NSComparisonResult(NSString *str1, NSString *str2) {
         return (NSComparisonResult)[str1 compare:str2 options:NSNumericSearch];
@@ -46,8 +49,9 @@
     }];
     NSString *oriSign = [kvPairs componentsJoinedByString:@"&"];
     NSString *signature = @"";
-
-    if (self.cipherMode == SANetworkRequestCipherModeMD5) {
+//    HDLog(@"[%@][%@] 参与签名的参数:%@", self.identifier, self.requestURI, finalParams);
+//    HDLog(@"[%@][%@] orignature:%@", self.identifier, self.requestURI, oriSign);
+    if (self.cipherMode == SANetworkRequestCipherModeMD5V1 || self.cipherMode == SANetworkRequestCipherModeMD5V2) {
         signature = oriSign.hd_md5;
     } else if (self.cipherMode == SANetworkRequestCipherModeRSA) {
         if (HDIsStringNotEmpty(self.rsaPublicKeyString)) {
@@ -56,12 +60,13 @@
             signature = [RSACipher encrypt:oriSign keyFilePath:self.rsaPublicKeyFile];
         }
     }
+//    HDLog(@"[%@][%@] signature:%@", self.identifier, self.requestURI, signature);
     return signature;
 }
 
 /** 对数组或者字典嵌套递归输出用于加密的字符串 */
 - (NSString *)stringForRecursiveNestedObject:(id)object {
-    NSString *jsonStr = object;
+    NSString *jsonStr = @"";
 
     if ([object isKindOfClass:NSDictionary.class]) {
         NSDictionary *dictionary = (NSDictionary *)object;
@@ -94,6 +99,12 @@
             jsonStr = [jsonStr stringByAppendingString:[NSString stringWithFormat:@"%@", value]];
         }
         jsonStr = [jsonStr stringByAppendingString:@"]"];
+        
+    } else if([object isKindOfClass:NSNumber.class]) {
+        jsonStr = [jsonStr stringByAppendingString:[(NSNumber *)object stringValue]];
+        
+    } else {
+        jsonStr = object;
     }
     return jsonStr;
 }
@@ -122,33 +133,46 @@
 - (AFHTTPRequestSerializer *)requestSerializer {
     AFJSONRequestSerializer *serializer = [AFJSONRequestSerializer new];
     // 设置 HTTPHeaderField
-    NSDateFormatter *fmt = [[NSDateFormatter alloc] init];
-    [fmt setDateFormat:@"yyyyMMddHHmmss"];
-    [fmt setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]];
-    NSString *requestTm = [fmt stringFromDate:NSDate.date];
-    requestTm = [requestTm stringByAppendingFormat:@"%04d", arc4random() % 10000];
+    NSString *requestTm = [NSString stringWithFormat:@"%.0f", [[NSDate new] timeIntervalSince1970] * 1000.0];
     NSString *deviceId = HDDeviceInfo.getUniqueId;
+    
+    NSDateFormatter *fmt = [[NSDateFormatter alloc] init];
+    [fmt setDateFormat:@"ddHHmmss"];
+    [fmt setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]];
+    NSString *traceId = [NSString stringWithFormat:@"%@%04d", [fmt stringFromDate:[NSDate new]], arc4random() % 10000];
+    
     NSMutableDictionary<NSString *, NSString *> *headerFieldsDict = [NSMutableDictionary dictionaryWithDictionary:@{
         @"requestTm": requestTm,
         @"deviceId": deviceId,
-        @"signVer": @"1.0",
+        @"traceId" : traceId,
         @"Content-Type": @"application/json",
     }];
+    
+    if(self.cipherMode == SANetworkRequestCipherModeMD5V2) {
+        [headerFieldsDict addEntriesFromDictionary:@{@"signVer": @"2.0"}];
+    } else {
+        [headerFieldsDict addEntriesFromDictionary:@{@"signVer": @"1.0"}];
+    }
+    
     [headerFieldsDict addEntriesFromDictionary:[self sa_preprocessHeaderFields:headerFieldsDict]];
+    
     if ([self respondsToSelector:@selector(sa_customSignatureProcess)]) {
         [headerFieldsDict addEntriesFromDictionary:@{
             @"sign": [self sa_customSignatureProcess]
         }];
     } else {
-        [headerFieldsDict addEntriesFromDictionary:@{
-            @"sign": [self getSignatureWithRequestTime:requestTm deviceId:deviceId]
-        }];
+        if(self.cipherMode == SANetworkRequestCipherModeMD5V2) {
+            [headerFieldsDict addEntriesFromDictionary:@{ @"sign": [self getSignatureWithEncryptFactors: @{ @"requestTm" : requestTm, @"deviceId" : deviceId, @"traceId" : traceId }] }];
+        } else {
+            [headerFieldsDict addEntriesFromDictionary:@{ @"sign": [self getSignatureWithEncryptFactors: @{ @"requestTm" : requestTm, @"deviceId" : deviceId}] }];
+        }
     }
 
     [headerFieldsDict enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull key, NSString *_Nonnull obj, BOOL *_Nonnull stop) {
         [serializer setValue:obj forHTTPHeaderField:key];
     }];
     serializer.HTTPShouldHandleCookies = NO;
+    
     return serializer;
 }
 

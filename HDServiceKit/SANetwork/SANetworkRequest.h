@@ -11,8 +11,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, SANetworkRequestCipherMode) {
-    SANetworkRequestCipherModeMD5 = 0,  ///< md5 方案
-    SANetworkRequestCipherModeRSA       ///< RSA 方案
+    SANetworkRequestCipherModeMD5V1 = 0,  ///< md5  1.0方案
+    SANetworkRequestCipherModeRSA = 1,       ///< RSA 方案
+    SANetworkRequestCipherModeMD5V2 = 2   ///< md5 2.0 方案
 };
 
 @interface SANetworkRequest : HDNetworkRequest
@@ -50,6 +51,9 @@ typedef NS_ENUM(NSInteger, SANetworkRequestCipherMode) {
 @interface SANetworkRequest (SA_RequestSignInterceptor)
 /** 自定义签名算法*/
 - (NSString *)sa_customSignatureProcess;
+
+/** 自定义加密因子，参与加签的资源 */
+- (NSDictionary *)sa_customSignatureEncryptFactors;
 
 @end
 
