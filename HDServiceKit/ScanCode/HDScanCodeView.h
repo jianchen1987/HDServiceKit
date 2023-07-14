@@ -24,6 +24,8 @@ typedef void (^HDScanCodeClickedFlashLightBlock)(BOOL isOpen);
  */
 @property (nonatomic, copy) HDScanCodeClickedFlashLightBlock clickedFlashLightBlock;
 
+@property (nonatomic, copy) dispatch_block_t clickedPhotoButtonBlock;
+
 #pragma mark - 扫码区域
 
 /// 扫码区域 默认为正方形，边长为宽 0.7倍, 居中
@@ -78,7 +80,7 @@ typedef void (^HDScanCodeClickedFlashLightBlock)(BOOL isOpen);
  是否显示闪光灯开关
  @param show YES or NO
  */
-- (void)showFlashSwitch:(BOOL)show;
+//- (void)showFlashSwitch:(BOOL)show;
 
 @end
 

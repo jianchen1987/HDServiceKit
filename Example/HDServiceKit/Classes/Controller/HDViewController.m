@@ -33,6 +33,7 @@
     [self.dataSource addObject:[ExampleItem itemWithDesc:@"定位服务" routeURL:@"superapp://DemoTarget/locationViewController?address=广州&source=superapp"]];
     [self.dataSource addObject:[ExampleItem itemWithDesc:@"H5 容器" mediatorAction:@"h5ViewController"]];
     [self.dataSource addObject:[ExampleItem itemWithDesc:@"扫一扫" routeURL:@"superapp://DemoTarget/scanCodeViewController"]];
+    [self.dataSource addObject:[ExampleItem itemWithDesc:@"扫一扫能识别多个二维码" routeURL:@"superapp://DemoTarget/scanMoreCodeViewController"]];
     [self.dataSource addObject:[ExampleItem itemWithDesc:@"执行加法计算" routeURL:nil]];
     [self.dataSource addObject:[ExampleItem itemWithDesc:@"打开网页" routeURL:@"https://www.baidu.com"]];
     [self.dataSource addObject:[ExampleItem itemWithDesc:@"RSA加解密" routeURL:@"superapp://DemoTarget/rsaCipherViewController"]];

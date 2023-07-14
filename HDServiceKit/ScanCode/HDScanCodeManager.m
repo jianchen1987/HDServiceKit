@@ -66,11 +66,20 @@
 
 #pragma mark - public methods
 - (void)sessionStartRunning {
-    [_session startRunning];
+    if(![_session isRunning]){
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [_session startRunning];
+        });
+    }
 }
 
 - (void)sessionStopRunning {
-    [_session stopRunning];
+    if([_session isRunning]){
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [_session stopRunning];
+        });
+    }
+
 }
 
 - (void)scanImageQRCode:(UIImage *)imageCode {

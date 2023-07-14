@@ -27,6 +27,15 @@
     return vc;
 }
 
+- (UIViewController *)scanMoreCodeViewController {
+    UIViewController *vc = [self performTarget:@"DemoTarget" action:@"scanMoreCodeViewController" shouldCacheTarget:false];
+    if (!vc) {
+        vc = UIViewController.new;
+    }
+    return vc;
+}
+
+
 - (UIViewController *)defaultViewController {
     UIViewController *vc = [self performTarget:@"DemoTarget" action:@"anyNotExistAction" shouldCacheTarget:false];
     if (!vc) {
