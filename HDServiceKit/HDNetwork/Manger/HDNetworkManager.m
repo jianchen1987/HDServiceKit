@@ -143,6 +143,7 @@
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                     [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%@][%.4f]延迟时间 %lld 到，开始发起重试", oriRequest.identifier, oriRequest.requestURI, [NSDate.new timeIntervalSince1970] - oriRequest.startTime, delay]];
                     
+                    [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%@][%.4f]原请求头%@", oriRequest.identifier, oriRequest.requestURI, [NSDate.new timeIntervalSince1970] - oriRequest.startTime, URLRequest.allHTTPHeaderFields]];
                     // 重新构建网络请求数据，重新生成流水号时间戳
                     NSString *method = [oriRequest requestMethodString];
                     AFHTTPRequestSerializer *serializer = [self requestSerializerForRequest:oriRequest];
@@ -159,6 +160,8 @@
                             return;
                         }
                     }
+                    
+                    [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%@][%.4f]新请求头%@", oriRequest.identifier, oriRequest.requestURI, [NSDate.new timeIntervalSince1970] - oriRequest.startTime, newURLRequest.allHTTPHeaderFields]];
                     
                     [self startDataTaskWithManager:manager URLRequest:newURLRequest retryConfig:retryConfig oriRequest:oriRequest uploadProgress:uploadProgress downloadProgress:downloadProgress completion:completion];
                     retryConfig.remainingRetryCount -= 1;
