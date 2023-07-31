@@ -107,7 +107,6 @@
         HDNetworkResponse *wrappedResponse = [HDNetworkResponse responseWithSessionTask:task responseObject:responseObject error:error];
         // 请求成功，直接返回，无需重试
         if (!error) {
-            //            [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%.4fs]请求成功，无需重试，直接返回", oriRequest.traceId, [NSDate.new timeIntervalSince1970] - oriRequest.startTime]];
             !completion ?: completion(wrappedResponse);
             return;
         }
@@ -140,17 +139,37 @@
                     delay = retryConfig.retryInterval;
                 }
                 [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%@][%.4fs]延迟重试时间：%llu", oriRequest.identifier, oriRequest.requestURI, [NSDate.new timeIntervalSince1970] - oriRequest.startTime, delay]];
+                
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                     [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%@][%.4f]延迟时间 %lld 到，开始发起重试", oriRequest.identifier, oriRequest.requestURI, [NSDate.new timeIntervalSince1970] - oriRequest.startTime, delay]];
-                    [self startDataTaskWithManager:manager URLRequest:URLRequest retryConfig:retryConfig oriRequest:oriRequest uploadProgress:uploadProgress downloadProgress:downloadProgress completion:completion];
+                    
+                    // 重新构建网络请求数据，重新生成流水号时间戳
+                    NSString *method = [oriRequest requestMethodString];
+                    AFHTTPRequestSerializer *serializer = [self requestSerializerForRequest:oriRequest];
+                    NSString *URLString = [oriRequest validRequestURLString];
+                    id parameter = [oriRequest validRequestParameter];
+
+                    // 构建 URLRequest
+                    NSError *error = nil;
+                    NSMutableURLRequest *newURLRequest = [serializer requestWithMethod:method URLString:URLString parameters:parameter error:&error];
+                    
+                    if (error) {
+                        if (completion) {
+                            completion([HDNetworkResponse responseWithSessionTask:nil responseObject:nil error:error]);
+                            return;
+                        }
+                    }
+                    
+                    [self startDataTaskWithManager:manager URLRequest:newURLRequest retryConfig:retryConfig oriRequest:oriRequest uploadProgress:uploadProgress downloadProgress:downloadProgress completion:completion];
                     retryConfig.remainingRetryCount -= 1;
+                    
                 });
             } else {
                 [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%@][%.4fs]重试次数还剩：%zd 次，但 shouldRetryBlock 返回 false，将不再重试，回调数据", oriRequest.identifier, oriRequest.requestURI, [NSDate.new timeIntervalSince1970] - oriRequest.startTime, retryConfig.remainingRetryCount]];
                 !completion ?: completion(wrappedResponse);
             }
         } else {
-            [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][@%][%.4fs]重试次数已达最大次数 %zd，将回调数据", oriRequest.identifier, oriRequest.requestURI, [NSDate.new timeIntervalSince1970] - oriRequest.startTime, retryConfig.maxRetryCount]];
+            [self logMessageLogEnabled:retryConfig.logEnabled string:[NSString stringWithFormat:@"🚀[%@][%@][%.4fs]重试次数已达最大次数 %zd，将回调数据", oriRequest.identifier, oriRequest.requestURI, [NSDate.new timeIntervalSince1970] - oriRequest.startTime, retryConfig.maxRetryCount]];
 
             !completion ?: completion(wrappedResponse);
         }
