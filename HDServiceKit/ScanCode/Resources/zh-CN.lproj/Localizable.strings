@@ -2,3 +2,7 @@
 "Turn_off_flashlight" = "关闭手电筒";
 "Choose_from_album" = "从相册选取";
 "Put_QR_Code_in_the_frame_to_scan" = "将二维码放入框内进行扫描";
+"camera_use_auth_tip" = "请允许应用在\"设置-隐私-相机\"中使用您的照相机";
+"confirm" = "确定";
+"call_microphone_Go Turn On" = "去开启";
+"call_microphone_Set up later" = "稍后设置";

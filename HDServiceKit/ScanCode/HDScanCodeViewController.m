@@ -10,6 +10,13 @@
 #import "HDScanCodeView.h"
 #import "NSBundle+HDScanCode.h"
 #import <HDKitCore/HDLog.h>
+#import <HDUIKit/NAT.h>
+#import <HDKitCore/HDCommonDefines.h>
+#import <HDKitCore/NSBundle+HDKitCore.h>
+#import <HDServiceKit/HDSystemCapabilityUtil.h>
+
+#define LocalizableString(key, value) \
+    HDLocalizedStringInBundleForLanguageFromTable([NSBundle hd_bundleInFramework:@"HDServiceKit" bundleName:@"HDScanCodeResources"], [self getCurrentLanguage], key, value, nil)
 
 @interface HDScanCodeViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 @property (nonatomic, strong) HDScanCodeManager *scanTool;
@@ -32,6 +39,8 @@
 
     [self setup];
     self.hd_interactivePopDisabled = YES;
+    
+    [self checkCameraPermission];
 }
 
 - (void)dealloc {
@@ -128,6 +137,31 @@
     [_scanView startScanAnimation];
 }
 
+- (void)checkCameraPermission {
+        
+    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+    // 已禁止麦克风权限，用户选择是否去开启
+    if (authStatus == AVAuthorizationStatusDenied || authStatus == AVAuthorizationStatusRestricted) {
+        // 弹窗提示
+        [NAT
+         showAlertWithTitle:nil
+         message:LocalizableString(@"camera_use_auth_tip", @"请在iPhone的”设置-隐私-相机“选项中，允许App访问你的相机")
+         confirmButtonTitle:LocalizableString(@"call_microphone_Go Turn On",@"去开启")
+         confirmButtonHandler:^(HDAlertView * _Nonnull alertView, HDAlertViewButton * _Nonnull button) {
+            [alertView dismiss];
+
+                //跳转到系统设置开启麦克风
+                [HDSystemCapabilityUtil openAppSystemSettingPage];
+            
+            
+        }
+         cancelButtonTitle:LocalizableString(@"call_microphone_Set up later",@"稍后设置")
+         cancelButtonHandler:^(HDAlertView * _Nonnull alertView, HDAlertViewButton * _Nonnull button) {
+            [alertView dismiss];
+        }];
+    }
+}
+
 #pragma mark - setter
 - (void)setCustomerTitle:(NSString *)customerTitle {
     _customerTitle = customerTitle;
@@ -178,5 +212,14 @@
                              completion:^{
                                  [weakSelf.scanTool scanImageQRCode:image];
                              }];
+}
+
+- (NSString *)getCurrentLanguage {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *currentLanguage = [defaults valueForKey:@"kCurrentLanguageCache"];
+    if (!currentLanguage) {
+        currentLanguage = @"en-US";  /// 默认英文
+    }
+    return currentLanguage;
 }
 @end

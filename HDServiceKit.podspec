@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "HDServiceKit"
-  s.version          = "1.7.3"
+  s.version          = "1.7.4"
   s.summary          = "混沌 iOS 服务"
   s.description      = <<-DESC
                        HDServiceKit 是一系列服务以及能力，用于快速在其他项目使用或者第三方接入
@@ -93,6 +93,8 @@ Pod::Spec.new do |s|
       ss.dependency  'HDUIKit/MainFrame'
       ss.dependency  'HDUIKit/Components/HDUIButton'
       ss.dependency  'HDKitCore/Core'
+      ss.dependency  'HDServiceKit/SystemCapability'
+      ss.dependency  'HDUIKit/Components/NAT'
       ss.dependency  'Masonry'
       ss.resource_bundles = {'HDScanCodeResources' => ['HDServiceKit/ScanCode/Resources/*.*']}
     end

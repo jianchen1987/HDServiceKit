@@ -405,11 +405,9 @@
     return _photoButton;
 }
 
-static NSString *const kCurrentLanguageCacheKey = @"kCurrentLanguageCache";
-
 - (NSString *)getCurrentLanguage {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString *currentLanguage = [defaults valueForKey:kCurrentLanguageCacheKey];
+    NSString *currentLanguage = [defaults valueForKey:@"kCurrentLanguageCache"];
     if (!currentLanguage) {
         currentLanguage = @"en-US";  /// 默认英文
     }

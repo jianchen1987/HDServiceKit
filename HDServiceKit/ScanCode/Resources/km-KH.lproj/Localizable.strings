@@ -2,3 +2,7 @@
 "Turn_off_flashlight" = "បិទពិល";
 "Choose_from_album" = "ជ្រើសរើសពីរូបថត";
 "Put_QR_Code_in_the_frame_to_scan" = "ដាក់ QR Code ក្នុងស៊ុមដើម្បីស្កេន";
+"camera_use_auth_tip" = "សូមអនុញ្ញាតឱ្យកម្មវិធីប្រើកាមេរ៉ារបស់អ្នកនៅក្នុង 'ការកំណត់ - ឯកជន - កាមេរ៉ា '";
+"confirm" = "បញ្ជាក់";
+"call_microphone_Go Turn On" = "ទៅបើក";
+"call_microphone_Set up later" = "រៀបចំ​ពេល​ក្រោយ";
