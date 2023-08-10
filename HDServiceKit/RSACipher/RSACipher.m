@@ -49,17 +49,17 @@ static NSData *base64_decode(NSString *str) {
     return result;
 }
 
-+ (NSString *)decrypt:(NSString *)ciphertext privateKey:(NSString *)privKey {
++ (NSString * _Nullable)decrypt:(NSString * _Nonnull)ciphertext privateKey:(NSString * _Nonnull)privKey tag:(NSString *_Nonnull)tag {
     if (ciphertext.length == 0 || privKey.length == 0) {
         return nil;
     }
     NSData *data = [[NSData alloc] initWithBase64EncodedString:ciphertext options:NSDataBase64DecodingIgnoreUnknownCharacters];
-    data = [self decryptData:data privateKey:privKey];
+    data = [self decryptData:data privateKey:privKey tag:tag];
     NSString *ret = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     return ret;
 }
 
-+ (NSString *)decrypt:(NSString *)ciphertext keyFilePath:(NSString *)path filePwd:(NSString *)pwd {
++ (NSString * _Nullable)decrypt:(NSString * _Nonnull)ciphertext keyFilePath:(NSString * _Nonnull)path filePwd:(NSString * _Nonnull)pwd tag:(NSString *_Nonnull)tag {
     if (ciphertext.length == 0 || path.length == 0) {
         return nil;
     }
@@ -69,7 +69,7 @@ static NSData *base64_decode(NSString *str) {
     if ([path hasSuffix:@".pem"]) {
         NSString *privKey = [self readPrivKeyFromPem:path];
         NSData *data = [[NSData alloc] initWithBase64EncodedString:ciphertext options:NSDataBase64DecodingIgnoreUnknownCharacters];
-        data = [self decryptData:data privateKey:privKey];
+        data = [self decryptData:data privateKey:privKey tag:tag];
         result = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     } else {
         result = [self decryptString:ciphertext privateKeyRef:[self getPrivateKeyRefWithContentsOfFile:path password:pwd]];
@@ -77,11 +77,11 @@ static NSData *base64_decode(NSString *str) {
     return result;
 }
 
-+ (NSString *)signText:(NSString *)plaintext privateKey:(NSString *)privKey {
-    if (plaintext.length == 0 || privKey.length == 0) {
++ (NSString * _Nullable)signText:(NSString * _Nonnull)plaintext privateKey:(NSString * _Nonnull)privKey tag:(NSString * _Nonnull)tag {
+    if (plaintext.length == 0 || privKey.length == 0 || tag.length == 0) {
         return nil;
     }
-    NSData *data = [self signData:[plaintext dataUsingEncoding:NSUTF8StringEncoding] privateKey:privKey];
+    NSData *data = [self signData:[plaintext dataUsingEncoding:NSUTF8StringEncoding] privateKey:privKey tag:tag];
     NSString *ret = base64_encode_data(data);
     return ret;
 }
@@ -347,18 +347,45 @@ static NSData *base64_decode(NSString *str) {
     return ret;
 }
 
-+ (NSData *)decryptData:(NSData *)data privateKey:(NSString *)privKey {
++ (NSData * _Nullable)decryptData:(NSData * _Nonnull)data privateKey:(NSString * _Nonnull)privKey tag:(NSString *_Nonnull)tag {
     if (!data || !privKey) {
         return nil;
     }
-    SecKeyRef keyRef = [self addPrivateKey:privKey];
+    SecKeyRef keyRef = [self matchRSAKeyWithTag:tag];
+    if(!keyRef) {
+        keyRef = [self addPrivateKey:privKey tag:tag];
+    }
     if (!keyRef) {
         return nil;
     }
+    CFAutorelease(keyRef);
     return [self decryptData:data withKeyRef:keyRef];
 }
 
-+ (SecKeyRef)addPrivateKey:(NSString *)key {
++ (SecKeyRef)matchRSAKeyWithTag:(NSString *_Nonnull)tag {
+    //a tag to read/write keychain storage
+    NSData *d_tag = [NSData dataWithBytes:[tag UTF8String] length:[tag length]];
+
+    // Delete any old lingering key with the same tag
+    NSMutableDictionary *rsaKey = [[NSMutableDictionary alloc] init];
+    [rsaKey setObject:(__bridge id)kSecClassKey forKey:(__bridge id)kSecClass];
+    [rsaKey setObject:(__bridge id)kSecAttrKeyTypeRSA forKey:(__bridge id)kSecAttrKeyType];
+    [rsaKey setObject:d_tag forKey:(__bridge id)kSecAttrApplicationTag];
+    [rsaKey setObject:(__bridge id)kSecAttrKeyClassPrivate forKey:(__bridge id)kSecAttrKeyClass];
+    [rsaKey setObject:(__bridge id)kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly forKey:(__bridge id)kSecAttrAccessible];
+    [rsaKey setObject:[NSNumber numberWithBool:YES] forKey:(__bridge id)kSecReturnRef];
+    [rsaKey setObject:(__bridge id)kSecAttrKeyTypeRSA forKey:(__bridge id)kSecAttrKeyType];
+    
+    // Now fetch the SecKeyRef version of the key
+    SecKeyRef keyRef = nil;
+    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)rsaKey, (CFTypeRef *)&keyRef);
+    if (status != noErr) {
+        return nil;
+    }
+    return keyRef;
+}
+
++ (SecKeyRef)addPrivateKey:(NSString *_Nonnull)key tag:(NSString *_Nonnull)tag {
     NSRange spos = [key rangeOfString:@"-----BEGIN RSA PRIVATE KEY-----"];
     NSRange epos = [key rangeOfString:@"-----END RSA PRIVATE KEY-----"];
     if (spos.location != NSNotFound && epos.location != NSNotFound) {
@@ -380,7 +407,6 @@ static NSData *base64_decode(NSString *str) {
     }
 
     //a tag to read/write keychain storage
-    NSString *tag = @"RSAUtil_PrivKey";
     NSData *d_tag = [NSData dataWithBytes:[tag UTF8String] length:[tag length]];
 
     // Delete any old lingering key with the same tag
@@ -399,7 +425,7 @@ static NSData *base64_decode(NSString *str) {
                    forKey:(__bridge id)
                               kSecReturnPersistentRef];
     
-    [privateKey setObject:(__bridge id)kSecAttrAccessibleAlwaysThisDeviceOnly
+    [privateKey setObject:(__bridge id)kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
                    forKey:(__bridge id)kSecAttrAccessible];
 
     CFTypeRef persistKey = nil;
@@ -425,14 +451,19 @@ static NSData *base64_decode(NSString *str) {
     return keyRef;
 }
 
-+ (NSData *)signData:(NSData *)data privateKey:(NSString *)privKey {
-    if (!data || !privKey) {
++ (NSData * _Nullable)signData:(NSData * _Nonnull)data privateKey:(NSString * _Nonnull)privKey tag:(NSString *_Nonnull)tag {
+    if (!data || !privKey || !tag) {
         return nil;
     }
-    SecKeyRef keyRef = [self addPrivateKey:privKey];
+    SecKeyRef keyRef = [self matchRSAKeyWithTag:tag];
+    if(!keyRef) {
+        keyRef = [self addPrivateKey:privKey tag:tag];
+    }
+    
     if (!keyRef) {
         return nil;
     }
+    CFAutorelease(keyRef);
     return [self signData:data withKeyRef:keyRef];
 }
 

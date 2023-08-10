@@ -13,7 +13,7 @@
 /// RSA字符串私钥签名
 /// @param plaintext 明文
 /// @param privKey 私钥字符串
-+ (NSString *)signText:(NSString *)plaintext privateKey:(NSString *)privKey;
++ (NSString * _Nullable)signText:(NSString * _Nonnull)plaintext privateKey:(NSString * _Nonnull)privKey tag:(NSString * _Nonnull)tag;
 
 /// RSA 字符串公钥加密
 /// @param plaintext 明文，待加密的字符串
@@ -28,7 +28,7 @@
 /// RSA 私钥字符串解密
 /// @param ciphertext 密文，需要解密的字符串
 /// @param privKey 私钥字符串
-+ (NSString *)decrypt:(NSString *)ciphertext privateKey:(NSString *)privKey;
++ (NSString * _Nullable)decrypt:(NSString *_Nonnull)ciphertext privateKey:(NSString *_Nonnull)privKey tag:(NSString *_Nonnull)tag;
 
 /**
  * -------RSA 私钥文件解密-------
@@ -42,6 +42,6 @@
 /// @param ciphertext 密文，需要解密的字符串
 /// @param path 私钥文件路径，p12或pem格式(pem私钥需为pcks8格式)
 /// @param pwd 私钥文件的密码
-+ (NSString *)decrypt:(NSString *)ciphertext keyFilePath:(NSString *)path filePwd:(NSString *)pwd;
++ (NSString * _Nullable)decrypt:(NSString *_Nonnull)ciphertext keyFilePath:(NSString *_Nonnull)path filePwd:(NSString *_Nonnull)pwd tag:(NSString *_Nonnull)tag;
 
 @end
