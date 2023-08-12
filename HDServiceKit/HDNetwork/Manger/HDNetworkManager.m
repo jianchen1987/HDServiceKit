@@ -233,9 +233,9 @@
         case kCFURLErrorUserCancelledAuthentication:
         case kCFURLErrorUserAuthenticationRequired:
         case kCFURLErrorZeroByteResource:
-        case kCFURLErrorCannotDecodeRawData:
-        case kCFURLErrorCannotDecodeContentData:
-        case kCFURLErrorCannotParseResponse:
+//        case kCFURLErrorCannotDecodeRawData:
+//        case kCFURLErrorCannotDecodeContentData:
+//        case kCFURLErrorCannotParseResponse:
         case kCFURLErrorInternationalRoamingOff:
         case kCFURLErrorCallIsActive:
         case kCFURLErrorDataNotAllowed:
