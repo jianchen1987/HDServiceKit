@@ -238,7 +238,7 @@
 //        case kCFURLErrorCannotParseResponse:
         case kCFURLErrorInternationalRoamingOff:
         case kCFURLErrorCallIsActive:
-        case kCFURLErrorDataNotAllowed:
+//        case kCFURLErrorDataNotAllowed:
         case kCFURLErrorRequestBodyStreamExhausted:
         case kCFURLErrorFileDoesNotExist:
         case kCFURLErrorFileIsDirectory:
