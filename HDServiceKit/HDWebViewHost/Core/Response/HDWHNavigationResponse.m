@@ -141,5 +141,11 @@ wh_doc_end;
             [self.navigationController popViewControllerAnimated:NO];
         }
     }
+    
+    if (!self.webViewHost.isExecutedCloseByUser && self.webViewHost.closeByUser) {
+        self.webViewHost.closeByUser();
+        self.webViewHost.isExecutedCloseByUser = YES;
+    }
 }
+
 @end

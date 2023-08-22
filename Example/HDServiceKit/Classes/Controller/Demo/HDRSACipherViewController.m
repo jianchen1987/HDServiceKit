@@ -42,7 +42,8 @@
     // RSA 加密
     NSString *encryptStr = [RSACipher encrypt:self.userPassword publicKey:self.publickey];
     // RSA 解密
-    NSString *decryptStr = [RSACipher decrypt:encryptStr privateKey:self.privateKey];
+//    NSString *decryptStr = [RSACipher decrypt:encryptStr privateKey:self.privateKey];
+    NSString *decryptStr = [RSACipher decrypt:encryptStr privateKey:self.privateKey tag:@""];
 
     NSMutableString *mStr = [NSMutableString stringWithString:self.textView.text];
     [mStr appendFormat:@"\nRSA公钥：\n%@\nRSA私钥：\n%@\nRSA加密密文：\n%@\nRSA解密结果：\n%@", self.publickey, self.privateKey, encryptStr, decryptStr];
@@ -53,7 +54,8 @@
     NSString *p12PrivKeyPath = [[NSBundle mainBundle] pathForResource:@"rsa_1024_private_key.p12" ofType:nil];
     NSString *enWithDer = [RSACipher encrypt:self.userPassword keyFilePath:derPubKeyPath];
     HDLog(@"1024 位 Der 格式公钥加密结果：\n%@", enWithDer);
-    NSString *deWithP12 = [RSACipher decrypt:enWithDer keyFilePath:p12PrivKeyPath filePwd:nil];
+//    NSString *deWithP12 = [RSACipher decrypt:enWithDer keyFilePath:p12PrivKeyPath filePwd:nil];
+    NSString *deWithP12 = [RSACipher decrypt:enWithDer keyFilePath:p12PrivKeyPath filePwd:nil tag:@""];
     HDLog(@"1024 位 p12 格式私钥解密结果：\n%@", deWithP12);
     /**
      * 测试 PEM 文本文件格式秘钥加解密，若 pem 私钥不是 pkcs8 格式，需要转为 pks8 格式
@@ -65,11 +67,13 @@
     NSString *g2048PrivKeyPath = [[NSBundle mainBundle] pathForResource:@"rsa_2048_private_key_pkcs8.pem" ofType:nil];
     NSString *enWith1024Key = [RSACipher encrypt:self.userPassword keyFilePath:g1024PubKeyPath];
     HDLog(@"1024 位 PEM 格式公钥加密结果：\n%@", enWith1024Key);
-    NSString *deWith1024Key = [RSACipher decrypt:enWith1024Key keyFilePath:g1024PrivKeyPath filePwd:nil];
+//    NSString *deWith1024Key = [RSACipher decrypt:enWith1024Key keyFilePath:g1024PrivKeyPath filePwd:nil];
+    NSString *deWith1024Key = [RSACipher decrypt:enWith1024Key keyFilePath:g1024PrivKeyPath filePwd:nil tag:@""];
     HDLog(@"1024 位 PEM 格式私钥解密结果：\n%@", deWith1024Key);
     NSString *enWith2048Key = [RSACipher encrypt:self.userPassword keyFilePath:g2048PubKeyPath];
     HDLog(@"2048 位 PEM 格式公钥加密结果：\n%@", enWith2048Key);
-    NSString *deWith2048Key = [RSACipher decrypt:enWith2048Key keyFilePath:g2048PrivKeyPath filePwd:nil];
+//    NSString *deWith2048Key = [RSACipher decrypt:enWith2048Key keyFilePath:g2048PrivKeyPath filePwd:nil];
+    NSString *deWith2048Key = [RSACipher decrypt:enWith2048Key keyFilePath:g2048PrivKeyPath filePwd:nil tag:@""];
     HDLog(@"2048 位 PEM 格式私钥解密结果：\n%@", deWith2048Key);
 }
 

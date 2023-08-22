@@ -76,6 +76,8 @@ static NSString *kWebViewHostNotificationReload = @"kWebViewHostNotificationRelo
 @property (nonatomic, strong, readonly) HDWHSchemeTaskDelegate *taskDelegate API_AVAILABLE(ios(11.0));
 /// 主动关闭回调
 @property (nonatomic, copy) void (^closeByUser)(void);
+/// 是否已执行过主动关闭回调，未执行有调用closeByUser的情况在dealloc情况再执行一次
+@property (nonatomic, assign) BOOL isExecutedCloseByUser;
 
 @property (nonatomic, assign) HDViewControllerNavigationBarStyle navigationBarStyle;  ///< 导航栏样式
 @property (nonatomic, copy) NSString *startupScript;                                  ///< 启动脚本

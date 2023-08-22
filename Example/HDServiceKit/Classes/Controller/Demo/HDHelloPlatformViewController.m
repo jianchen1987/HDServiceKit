@@ -78,12 +78,14 @@
     HDLog(@"实验数据:%@", [data yy_modelToJSONString]);
 
     NSString *serectText = [RSACipher encrypt:[data yy_modelToJSONString] publicKey:platformPubKey];
-    NSString *signature = [RSACipher signText:[data yy_modelToJSONString] privateKey:userPriKey];
+//    NSString *signature = [RSACipher signText:[data yy_modelToJSONString] privateKey:userPriKey];
+    NSString *signature = [RSACipher signText:[data yy_modelToJSONString] privateKey:userPriKey tag:@""];
 
     HDLog(@"用户发送密文:%@", serectText);
     HDLog(@"用户发送签名:%@", signature);
-
-    NSString *plainText = [RSACipher decrypt:serectText privateKey:platformPriKey];
+//    NSString *plainText = [RSACipher decrypt:serectText privateKey:platformPriKey];
+    NSString *plainText = [RSACipher decrypt:serectText privateKey:platformPriKey tag:@""];
+    
     HDLog(@"服务端解密明文:%@", plainText);
 
     //    BOOL result = [RSACipher veriryData:[data yy_modelToJSONString] signature:signature publicKey:userPubKey];

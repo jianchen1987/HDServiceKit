@@ -167,6 +167,11 @@ BOOL kGCDWebServer_logging_enabled = false;
     //发送通知告诉HDWHResponseManager清除缓存记录
     [NSNotificationCenter.defaultCenter postNotificationName:@"kNotificationNameWebViewHostDealloc" object:self];
     
+    if(!self.isExecutedCloseByUser && self.closeByUser) {
+        self.closeByUser();
+        self.isExecutedCloseByUser = YES;
+    }
+    
     HDWHLog(@"HDWebViewHostViewController dealloc");
 }
 
@@ -635,7 +640,10 @@ BOOL kGCDWebServer_logging_enabled = false;
     } else {
         [self.navigationController popViewControllerAnimated:YES];
     }
-    !self.closeByUser ?: self.closeByUser();
+    if(!self.isExecutedCloseByUser && self.closeByUser) {
+       self.closeByUser();
+       self.isExecutedCloseByUser = YES;
+    }
 }
 
 #pragma mark - setters
