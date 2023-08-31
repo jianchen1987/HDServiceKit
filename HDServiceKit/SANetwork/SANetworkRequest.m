@@ -137,9 +137,9 @@
     NSString *deviceId = HDDeviceInfo.getUniqueId;
     
     NSDateFormatter *fmt = [[NSDateFormatter alloc] init];
-    [fmt setDateFormat:@"ddHHmmss"];
+    [fmt setDateFormat:@"SSSddHHmmss"];
     [fmt setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]];
-    NSString *traceId = [NSString stringWithFormat:@"%@%04d", [fmt stringFromDate:[NSDate new]], arc4random() % 10000];
+    NSString *traceId = [NSString stringWithFormat:@"%@%06d", [fmt stringFromDate:[NSDate new]], arc4random() % 1000000];
     
     NSMutableDictionary<NSString *, NSString *> *headerFieldsDict = [NSMutableDictionary dictionaryWithDictionary:@{
         @"requestTm": requestTm,

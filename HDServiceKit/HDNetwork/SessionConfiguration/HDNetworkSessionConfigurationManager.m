@@ -29,6 +29,8 @@
 
 - (NSURLSessionConfiguration *)defaultSessionConfiguration {
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    configuration.HTTPMaximumConnectionsPerHost = 20;
+    configuration.waitsForConnectivity = YES;
     if (self.protocols.count) {
         configuration.protocolClasses = [self.protocols mutableCopy];
     }
